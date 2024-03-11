@@ -1,0 +1,212 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+    <title>Login Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login and Registration Form with HTML5 and CSS3" />
+    <meta name="keywords" content="html5, css3, form, switch, animation, :target, pseudo-class" />
+    <meta name="author" content="Codrops" />
+
+    <link rel="stylesheet" type="text/css" href="~/Content/LoginRegistration/css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/LoginRegistration/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/LoginRegistration/css/animate-custom.css" />
+
+    <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="~/Scripts/CustomJS/OperationalMessage.js"></script>
+    @*<link href="~/Content/CustomCSS/toastr.css" rel="stylesheet" />
+    <script src="~/Scripts/CustomJS/toastr.js"></script>*@
+    <script src="~/Content/LoginRegistration/jquery.cookie.min.js"></script>
+    <script src="~/Scripts/CustomJS/InputValidator.js"></script>
+
+    <script src="~/Scripts/CustomJS/ResetText.js"></script>
+    <script type="text/javascript">
+
+        ///*************Start Documnet Ready*************************//
+        $(document).ready(function () {
+
+            function disableBack() {
+                window.history.forward()
+            }
+            window.onload = disableBack();
+            window.onpageshow = function (evt) {
+                if (evt.persisted) disableBack()
+            }
+
+            $.ajaxSetup({
+                beforeSend: function () {
+                    $("#divLoading").show();
+                },
+                complete: function () {
+                    $("#divLoading").hide();
+                }
+            });
+           
+
+            //chkRemember();
+            //function chkRemember() {
+
+            //    var remember = $.cookie('loginkeeping');
+            //    if (remember == 'true') {
+
+            //        var userId = $.cookie('UserID');
+            //        var password = $.cookie('Password');
+
+            //        $("#loginkeeping").attr('checked', true);
+            //        $('#UserID').attr('value', userId);
+            //        $('#Password').attr('value', password);
+            //    }
+            //}
+
+
+            $('#loginkeeping').click(function () {
+
+                var chk = $(this).is(':checked');
+                if (chk == true) {
+                    var UserID = $('#UserID').val();
+                    var Password = $('#Password').val();
+
+                    $.cookie('UserID', UserID, { expires: 30 });
+                    $.cookie('Password', Password, { expires: 30 });
+                    $.cookie('loginkeeping', true, { expires: 30 });
+                }
+                else {
+                    $.cookie('UserID', null);
+                    $.cookie('Password', null);
+                    $.cookie('loginkeeping', null);
+                }
+
+            });
+            $("input[type=text]").focus(function () {
+                ClearBorderRequiredMsg();
+
+            });
+            $('#Password').keydown(function (e) {
+                if (e.keyCode === 13) {
+                    Login();
+                }
+            });
+            $('#UserID').keydown(function (e) {
+                if (e.keyCode === 13) {
+                    var Input = InputValidation('UserID')
+                    if (Input == 0) {
+                        $("#Password").focus();
+                    }
+                }
+            });
+            function Login() {
+                var Input = InputValidation('UserID') + InputValidation('Password');
+
+                if (Input == 0) {
+
+                    master.UserID = $('#UserID').val();
+                    master.Password = $('#Password').val();
+
+
+                    $.ajax({
+                        url: '/LoginRegistration/CheckUser',
+                        data: JSON.stringify(master),
+                        type: 'POST',
+                        contentType: 'application/json;',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.Status == 'success') {
+                                window.location.href = '@Url.Action("frmHome", "Home")';
+                            }
+                           else if (data.Status == 'failed') {
+                                $('#txtPassword').val('');
+                                $("#MessageText").show(500).css("color", "red").html("Enter Valid User !!").fadeOut(1000);
+
+                            }
+                            else {
+                               ErrorFrmServerMsg(data.Status);
+                            }
+                        },
+                        error: function (xhr, Status, error) {
+                            // var details = eval("(" + xhr.responseText + ")");
+                            alert(xhr.responseText);                  
+                        }   
+                        //error: function () { ErrorFrmClientMsg(); },
+                        // complete: function () { CompletedMsg(); },
+                    }); //End of ajax call
+                }
+            }
+            $('#btnLogin').click(function () {
+                Login();
+            });
+
+
+            $("input[type=text]").focus(function () {
+                ClearBorderRequiredMsg();
+
+            });
+
+            var master = { "UserID": "", "Password": "", "loginkeeping": "" };
+        });
+    </script>
+
+</head>
+@*<body>*@
+
+<body  style="background: url('../Content/Images/EDCR.gif')">
+    <div class="container">
+        <header>
+            @*<h1 style="color:#fff"><b>Electronic</b><span style="color: #fff"> Doctor Call Record</span></h1>*@
+            <br/>
+            <br />
+            <br />
+        </header>
+        <section>
+            <div id="container_demo">
+                <a class="hiddenanchor" id="toregister"></a>
+                <a class="hiddenanchor" id="tologin"></a>
+                <div id="wrapper">
+                    <div id="login" class="animate form">
+                        <h1>Log in</h1>
+                        <div id="MessageText"></div>
+                        <p>
+                            <label for="UserID" class="UserID" data-icon="u"> User ID </label>
+                            <input id="UserID" name="UserID" required="required" class="RequiredField" type="text" placeholder="User ID" />
+
+                        </p>
+                        <p>
+                            <label for="Password" class="Password" data-icon="p"> Password </label>
+                            <input id="Password" name="Password" required="required" class="RequiredField" type="Password" placeholder="Password" />
+
+                        </p>
+                        <p class="keeplogin">
+                            <input type="checkbox" name="loginkeeping" id="loginkeeping" value="loginkeeping" />
+                            <label for="loginkeeping">Keep me logged in</label>
+                        </p>
+                        <p class="login button">
+                            <input type="button" id="btnLogin" value="Login" />
+                        </p>
+
+                        <p class="change_link">
+                            Powered by: Square InformatiX Limited.
+                            
+                        </p>
+
+                    </div>
+                    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+                                top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+                                opacity: .8; filter: alpha(opacity=70);display:none">
+                        <p style="position: absolute; top: 50%; left: 50%; color: White;">
+                            <img src="~/Content/Images/loading.gif" />
+                        </p>
+                    </div>
+
+                  
+
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

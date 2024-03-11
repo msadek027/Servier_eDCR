@@ -1,0 +1,433 @@
+﻿
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box-header with-border">
+
+    <form class="form" action="/ReportMarketWiseDoctor/Export" id="R1Form" method="post" name="H1Form" target="_blank">
+   
+        
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+            <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                <div style="text-align:right;">
+                    <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                    <button id="btnExcel" class="btn btn-primary btn-sm" name="ExportType" value="Excel" type="submit"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                    <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PdfGroup_Rowspan" type="submit"><i class="glyphicon glyphicon-book"></i> Pdf Group Rowspan</button>
+                    <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PdfGroup_Colspan" type="submit"><i class="glyphicon glyphicon-book"></i> Pdf Group Colspan</button>
+                    <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PDF" type="submit"><i class="glyphicon glyphicon-book"></i> PDF </button>
+                    <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                </div>
+            </div>
+        </div>
+
+    
+
+        <div class="box-body">
+
+            <div class="row" id="divValueParameter">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">Month - Year:</div>
+                    <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                        <div class="input-group">
+
+                            <span class="input-group-btn" style="width:2px;"></span>
+                            <select id="MonthNumber" name="MonthNumber" class=" RequiredField form-control"></select>
+                            <span class="input-group-btn" style="width:2px;"></span>
+                            <input type="text" id="Year" name="Year" class="datepicker RequiredField form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">Region Name :</div>
+                    <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                        <select id="RegionCode" name="RegionCode" class="RequiredField form-control"></select>
+                        <input type="hidden" id="RegionName" name="RegionName" class="RequiredField form-control">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">TM Name :</div>
+                    <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                        <select id="TerritoryManagerID" name="TerritoryManagerID" class="RequiredField form-control"></select>
+                        <input type="hidden" id="TerritoryManagerName" name="TerritoryManagerName" class="RequiredField form-control">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">MPO Name :</div>
+                    <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                        <select id="MPGroup" name="MPGroup" class="RequiredField form-control"></select>
+                        <input type="hidden" id="MPOName" name="MPOName" class="RequiredField form-control">
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </form>
+</div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div id="MainGrid" class="MainGrid"></div>
+        </div>
+    </div>
+
+
+    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+        <p style="position: absolute; top: 50%; left: 50%; color: White;">
+            <img src="~/Content/Images/loading.gif" />
+        </p>
+    </div>
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+      
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+        EventPermission();
+        //$("#btnExcel").attr("disabled", true);
+        //$("#btnPDF").attr("disabled", true);
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+        LoadMonth();
+        function LoadMonth() {
+
+            $.ajax({
+                url: '@Url.Action("GetGenMonth", "Default")',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load !!");
+                }
+            });
+        }
+
+        LoadRegion();
+
+
+        function LoadRegion() {
+            $.ajax({
+                url: '/Default/GetRegion',
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
+                        if (i === 0) {
+                            LoadTM(item.RegionCode);
+                        }
+                        $('#RegionName').val(item.RegionName);
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+        $('#RegionCode').on('change', function () {
+            LoadTM($(this).val());
+            $('#RegionName').val($("#RegionCode option:selected").text());
+        }).trigger('change');;
+
+        function LoadTM(RegionCode) {
+            $.ajax({
+                url: '/Default/GetTerritoryFromRegion',
+                data: { RegionCode: RegionCode },
+                type: 'Post',
+                dataType: 'json',
+                success: function (data) {
+                    $('#TerritoryManagerID').empty();
+                    $.each(data, function (i, item) {
+                        if (i === 0) {
+                            if (data.length > 1) {
+                                $('#TerritoryManagerID').append('<option value="" selected="selected"></option>');
+                            }
+                            LoadMPO(item.TerritoryManagerID);
+                            $('#TerritoryManagerName').val(item.TerritoryManagerName);
+                        }
+                        $('#TerritoryManagerID').append($('<option>', { value: item.TerritoryManagerID, html: item.TerritoryManagerName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+
+
+
+        $('#TerritoryManagerID').on('change', function () {
+            LoadMPO($(this).val());
+            $('#TerritoryManagerName').val($("#TerritoryManagerID option:selected").text());
+        }).trigger('change');;
+
+
+
+
+        function LoadMPO(TerritoryManagerID) {
+
+            $.ajax({
+                url: '/Default/GetMPOPopupList',
+                data: { TerritoryManagerID: TerritoryManagerID },
+                type: 'Post',
+                dataType: 'json',
+                success: function (data) {
+                    $('#MPGroup').empty();
+                    $.each(data, function (i, item) {
+                        if (i == 0) {
+                            $('#MPGroup').append('<option value="" selected="selected"></option>');
+                            $('#MPOName').val(item.MPOName);
+                        }
+                        $('#MPGroup').append($('<option>', { value: item.MPGroup, html: item.MPOName }, '<option/>'));
+
+                    });
+                },
+
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+
+        }
+        LoadTM($("#RegionCode").val());
+        LoadMPO($("#TerritoryManagerID").val());
+
+        $('#MPGroup').on('change', function () {
+            $('#MPOName').val($("#MPGroup option:selected").text());
+        }).trigger('change');;
+
+        $("#TerritoryManagerID,#MPGroup").on('change', function (e) {
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+        });
+        
+
+        //Initializing Main page details Kendo Grid Colums
+        var MainGrid = $('#MainGrid').kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: false,
+                schema: {
+                    model: {
+                        id: "DoctorID",
+                        fields: {
+                            SL: { type: "string" },
+                            DoctorID: { type: "string" },
+                            DoctorName: { type: "string" },
+                            Degrees: { type: "string" },
+                            Designation: { type: "string" },
+                            Specialization: { type: "string" },
+                            MorningLocation: { type: "string" },
+                            EveningLocation: { type: "string" },
+                            Potential: { type: "string" },
+                            Phone: { type: "string" },
+                            Email: { type: "string" },
+                            Religion: { type: "string" },
+                            Gender: { type: "string" },
+
+                            Address1: { type: "string" },
+                            Address2: { type: "string" },
+                            Address3: { type: "string" },
+                            Address4: { type: "string" },                       
+
+                            MarketCode: { type: "string" },
+                            MarketName: { type: "string" },
+                            Region: { type: "string" },
+                            Territory: { type: "string" },
+                         
+                            
+                        }
+                    }
+                },
+                pageSize: 100,
+            }),
+            pageable: {
+                //refresh: true,
+                pageSizes: true, buttonCount: 10
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+            },           
+           
+            //selectable: "multiple",
+            toolbar: [{ template: "<input type='text' id='txtGridMarketName'  style='float:right' placeholder='Market Name...' class='k-textbox'>" },{ template: "<input type='text' id='txtGridMarketCode'  style='float:right' placeholder='Market Code...' class='k-textbox'>" }, { template: "<input type='text' id='txtGridDoctorName'  style='float:right' placeholder='DoctorName...' class='k-textbox'>" },{ template: "<input type='text' id='txtGridDoctorId'  style='float:right' placeholder='DoctorId...' class='k-textbox'>" }, ],
+           
+            navigatable: true,
+            height: 400,
+            scrollable: true,
+            sortable: true,
+            filterable: false,
+            editable: false,
+            navigatable: false,
+            columnMenu: false,
+            reorderable: false,
+            //resize: function (e) {
+            //    this.table.height(this.element.height() + this.table.height() - 1);
+            //},
+            columns: [
+             
+                { field: "SL", title: "S/L" },
+                { field: "MarketName", title: "MarketName" },
+                { field: "DoctorID", title: "DoctorID" },
+                { field: "DoctorName", title: "DoctorName" },
+                { field: "Degrees", title: "Degrees" },
+                { field: "Designation", title: "Designation" },
+                { field: "MorningLocation", title: "MorningLocation" },
+                { field: "EveningLocation", title: "EveningLocation" },
+                { field: "Address1", title: "Address1" },
+                { field: "Address2", title: "Address2" },
+                { field: "Address3", title: "Address3" },
+                { field: "Address4", title: "Address4" },
+                { field: "Specialization", title: "Specialization" },
+                { field: "Potential", title: "Potential" },
+                { field: "RegNo", title: "RegNo" },
+                 { field: "Phone", title: "Phone" },
+                 { field: "Email", title: "Email" },      
+    
+              
+                 { field: "Religion", title: "Religion", hidden: false },              
+                 { field: "Gender", title: "Gender", hidden: false },
+                { field: "MarketCode", title: "MarketCode" },
+                { field: "Territory", title: "Territory" },
+                { field: "Region", title: "Region" },
+
+            ]
+        }).data('kendoGrid');
+
+
+
+        
+
+
+        $("#txtGridDoctorId").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "DoctorID", operator: "contains", value: val },
+                ]
+            });
+        });
+
+        //Produc Name twise Filter table row
+        $("#txtGridDoctorName").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [          
+                    { field: "DoctorName", operator: "contains", value: val },         
+                ]
+            });
+        });
+        //Produc Name twise Filter table row
+ 
+        //Produc Name twise Filter table row
+        $("#txtGridMarketCode").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "MarketCode", operator: "contains", value: val },              
+                ]
+            });
+        });
+        //Produc Name twise Filter table row
+        $("#txtGridMarketName").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "MarketName", operator: "contains", value: val },
+                ]
+            });
+        });
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+        $('#btnView').click(function () {         
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            var model = {};
+        
+            model.TerritoryManagerID = $("#TerritoryManagerID").val();
+            model.MPGroup = $("#MPGroup").val();
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+
+            var Input = InputValidation('TerritoryManagerID') + InputValidation('Year') + InputValidation('MonthNumber');
+
+
+            $.ajax({
+                type: "POST",
+                url: "/ReportMarketWiseDoctor/GetMarketWiseDoctor",
+                data: JSON.stringify({ model: model }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                        $("#btnExcel").attr("disabled", false);
+                        $("#btnPDF").attr("disabled", false);
+
+                    }
+                    else {
+                        AcknowledgeMsg();
+                        toastr.info($("#MessageText").html());
+
+                    }
+                },
+
+            });
+        });
+     
+
+      
+    });
+</script>
+
+ 
+
+
+
+

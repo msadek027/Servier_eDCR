@@ -1,0 +1,306 @@
+﻿@{
+    Layout = null;// "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Plan Vs Execution</title>
+
+
+    <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link href="~/Content/CSS/InputText.css" rel="stylesheet" />
+
+
+
+    <style>
+        /* BASICS: */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box; /* in case block elements are used inside table cells */
+        }
+
+        html {
+            font-size: 62.5%; /* standardizes older IEs */
+        }
+
+        body {
+            font: normal 1.3em Verdana; /* = 13px */
+            padding: 1px;
+        }
+
+
+
+        table {
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        td {
+            border: 1px solid black;
+            /*padding: 4px;*/
+        }
+        /* SCROLL TABLE ESSENTIALS (+ SOME ADDITIONAL CSS): */
+        div#scrollTableContainer {
+            width: 100%;
+            table-layout: fixed;
+            /*margin: 5px;*/ /* just for presentation purposes */
+            /*border: 1px solid black;*/
+        }
+
+        .touchScreen div#scrollTableContainer {
+            width: 100%; /* touch devices do not form scrollbars (= 17 px wide) */
+        }
+
+        #tHeadContainer {
+            background: #666633;
+            color: white;
+            font-size: xx-small;
+            text-align: center;
+            width: 99%;
+            /*table-layout: fixed;*/
+        }
+
+
+        #tBodyContainer {
+            min-height: 300px;
+            max-height: 450px;
+            width: 100%;
+            overflow-y: scroll;
+            font-size: 5pt;
+            text-align: center;
+            overflow-x: hidden;
+            table-layout: fixed;
+        }
+
+
+        .touchScreen #tBodyContainer {
+            -webkit-overflow-scrolling: touch; /* smooths scrolling on touch screens */
+        }
+        /* FINER LAYOUT MATTERS: */
+        tr:first-child td {
+            border-top: 0;
+        }
+
+
+
+        #tBody tr.lastRow td {
+            border-bottom: 0;
+        }
+
+
+        /* AND SOME CSS TO INFORM TOUCH SCREEN USERS: */
+        p#touchDeviceText {
+            display: none;
+        }
+
+        .touchScreen p#touchDeviceText {
+            display: block;
+        }
+
+
+
+
+        .Date {
+            width: 5%;
+        }
+
+        .DoctorID {
+            width: 5%;
+            display: none;
+        }
+
+        .DoctorName {
+            width: 10%;
+        }
+
+        .Item {
+            width: 10%;
+        }
+
+        .ShiftName {
+            width: 5%;
+        }
+
+        .Accompany {
+            width: 5%;
+        }
+
+        .Remark {
+            width: 10%;
+        }
+    </style>
+
+
+    <script>
+        if ('ontouchstart' in window || (window.DocumentTouch && document instanceof DocumentTouch)) {
+            document.documentElement.className += ' touchScreen ';
+        }
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+        var FromDate = "";
+        var ToDate = "";
+
+        var TerritoryManagerID = "";
+        var MarketCode = "";
+        var MPGroup = "";
+        var MPGroup = "";
+
+        var ReportHeader = "";
+
+
+        $(document).ready(function () {
+
+
+            $.ajaxSetup({
+                beforeSend: function () {
+                    $("#divLoading").show();
+                },
+                complete: function () {
+                    $("#divLoading").hide();
+                }
+            });
+            FromDate = sessionStorage.getItem('keyFromDate');
+            ToDate = sessionStorage.getItem('keyToDate');
+            TerritoryManagerID = sessionStorage.getItem('keyTerritoryManagerID');
+            MarketCode = sessionStorage.getItem('keyMarketCode');
+            MPGroup = sessionStorage.getItem('keyMPGroup');
+
+
+            ReportHeader = sessionStorage.getItem('keyReportHeader');
+            $('#ReportHeader').html(ReportHeader);
+            MainGridView();
+
+            function MainGridView() {
+                var model = {};
+
+                model.FromDate = FromDate;
+                model.ToDate = ToDate;
+                model.TerritoryManagerID = TerritoryManagerID;
+                model.MarketCode = MarketCode;
+                model.MPGroup = MPGroup;
+
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportDCRPlanExecution/GetMainGrid",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+
+                        $.each(data, function (i, val) {
+                            var trow = $('<tr></tr>');
+                            trow.append('<td class=Date>' + val.Date + '</td>');
+                            trow.append('<td class=DoctorID>' + val.DoctorID + '</td>');
+                            trow.append('<td class=DoctorName>' + val.DoctorName + '</td>');
+
+
+                            trow.append('<td class=Item>' + val.PlanSelected + '</td>');
+                            trow.append('<td class=Item>' + val.PlanSample + '</td>');
+                            trow.append('<td class=Item>' + val.PlanGift + '</td>');
+
+
+
+                            trow.append('<td class=Item>' + val.DCRSelected + '</td>');
+                            trow.append('<td class=Item>' + val.DCRSample + '</td>');
+                            trow.append('<td class=Item>' + val.DCRGift + '</td>');
+
+
+                            trow.append('<td class=ShiftName>' + val.ShiftName + '</td>');
+                            trow.append('<td class=Accompany>' + val.Accompany + '</td>');
+                            trow.append('<td class=Remark>' + val.Remark + '</td>');
+
+
+
+
+                            $('#tBody').append(trow);
+                        });
+                    },
+
+                });
+            }
+        });
+    </script>
+
+
+
+
+</head>
+<body>
+
+    <br />
+
+    <div style="text-align:center">
+        <span style="background-color: #666633;color: white;" id="ReportHeader"></span>
+    </div>
+    <br />
+    <div id="scrollTableContainer">
+        <div id="tHeadContainer">
+            <table id="tHead">
+                <tr>
+
+                    <td class="Date"></td>
+                    <td class="DoctorID"></td>
+                    <td class="DoctorName"></td>
+                    <td colspan="3">Plan </td>
+                    <td colspan="3">DCR</td>
+
+                    <td class="ShiftName"></td>
+                    <td class="Accompany"></td>
+                    <td class="Remark"></td>
+
+              
+
+                </tr>
+                <tr>
+                    <td class="Date">Date</td>
+                    <td class="DoctorID">Doctor<br />ID</td>
+                    <td class="DoctorName">Doctor<br />Name</td>
+                    <td class="Item">Selected<br />Item</td>
+                    <td class="Item">Sample<br />Item</td>
+                    <td class="Item">Gift<br />Item</td>
+
+                    <td class="Item">Selected<br />Item</td>
+                    <td class="Item">Sample<br />Item</td>
+                    <td class="Item">Gift<br />Item</td>
+
+
+                    <td class="ShiftName">Shift<br />Name</td>
+                    <td class="Accompany">Accompany</td>
+                    <td class="Remark">Remark</td>
+
+                  
+
+
+                </tr>
+            </table>
+        </div><!-- tHeadContainer -->
+        <div id="tBodyContainer">
+            <table id="tBody"></table>
+
+        </div><!-- tBodyContainer -->
+    </div><!-- scrollTableContainer -->
+
+    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+        <p style="position: absolute; top: 50%; left: 50%; color: White;">
+            <img src="~/Content/Images/loading.gif" />
+        </p>
+    </div>
+</body>
+</html>
+
+
+
+
+

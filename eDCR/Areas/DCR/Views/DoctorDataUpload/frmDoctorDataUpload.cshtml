@@ -1,0 +1,478 @@
+﻿
+@{
+    //ViewBag.Title = "frmImportExcelToGrid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box-header with-border">
+    @*Form Title*@
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"> <div id="MessageText"></div></div>
+        <div class="col-xs-0 col-sm-0 col-md-8 col-lg-8">
+            <div style="text-align:right;">
+                <button id="btnTemplateDownload" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-refresh"></i> Template</button>
+
+                <button id="btnReset" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-refresh"></i> Reset</button>
+                <button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-save-file"></i> Save</button>
+                <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+            </div>
+        </div>
+    </div>
+    </div>
+<div class="box-body">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+            Month -Year:
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+            <div class="input-group">
+                <span class="input-group-btn" style="width:2px;"></span>
+                <select id="MonthNumber" name="MonthNumber" class=" RequiredField form-control"></select>
+                <span class="input-group-btn" style="width:2px;"></span>
+                <input type="text" id="Year" class="datepicker RequiredField form-control" />
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2"><label for="myfile">Select a file:</label></div>
+        <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+            <input type="file" id="myfile" name="myfile" class="files btn btn-primary btn-sm" accept=".xlsx"><br><br>
+
+        </div>
+        <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+        <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+        <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div id="MainGrid" class="MainGrid">
+                <div class="k-loading-mask" style="width:100%;height:100%">
+                    <span class="k-loading-text">Loading...</span>
+                    <div class="k-loading-image">
+                        <div class="k-loading-color">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<script src="~/Scripts/xlsx_0.7.12_xlsx.full.min.js"></script>
+<script type="text/javascript">
+
+    //// Start  $(document).ready(function ()
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+       
+        //upload change event
+        $("#myfile").change(function (evt) {
+
+            var file = evt.target.files[0] //retrieve the uploaded file
+            fnConvertExcelToJSON(file)
+        })
+        function fnConvertExcelToJSON(file) { //method to convert excel to json
+            var reader = new FileReader()
+            reader.onload = function (event) {
+                var data = event.target.result
+                var workbook = XLSX.read(data, {
+                    type: 'binary'
+                });
+                var json_object
+                workbook.SheetNames.forEach(function (sheetName) {
+                    var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName])
+                    json_object = JSON.stringify(XL_row_object)
+                    var jsonOutput = JSON.stringify(JSON.parse(json_object), undefined, 4)
+                    // $('#jsonText').html(jsonOutput);
+                    //alert(jsonOutput.length);
+                    debugger;
+
+                    var obj = JSON.parse(jsonOutput);
+
+                    console.log(jsonOutput);
+
+                    $("#MainGrid").data("kendoGrid").dataSource.data(obj);
+
+                
+                    toastr.success("Data uploaded on grid");
+                })
+            }
+            reader.onerror = function (event) {
+                console.error("File could not be read! Code " + event.target.error.code)
+            }
+            reader.readAsBinaryString(file);
+        }
+
+        $(".k-loading-mask").hide();
+
+
+        //EventPermission();
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+        LoadMonth();
+        function LoadMonth() {
+
+            $.ajax({
+                url: '@Url.Action("GetGenMonth", "Default")',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load !!");
+                }
+            });
+        }
+
+
+        $('#btnTemplateDownload').click(function () {
+            $.ajax({
+                url: '/DoctorDataUpload/TemplateDownload',
+                method: 'POST',
+                data: JSON.stringify({}),
+                dataType: 'JSON',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data != "") {
+                        window.location.href = "/DoctorDataUpload/Download/?fileName=" + data.fileName;
+                    }
+                    else {
+                        AcknowledgeMsg();
+                        toastr.warning($("#MessageText").html());
+                    }
+
+                },
+                error: function () {
+                    alert('Error occured!');
+                },
+            });
+        });
+        $('#btnReset').click(function () {
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+          
+            $("#myfile").val('');
+            $(".txtBox").css("border-color", "");
+            $(".k-upload-files").remove();
+            $(".k-upload-status").remove();
+            $(".k-upload.k-header").addClass("k-upload-empty");
+            $(".k-upload-button").removeClass("k-state-focused");
+            ResetData();
+        });
+
+
+        //***************view function*****************
+        $('#btnView').click(function () {
+
+            var model = {};
+
+            model.MonthNumber = $('#MonthNumber').val();
+            model.Year = $('#Year').val();
+
+            var loader = $(".k-loading-mask").show();
+            if (loader) {
+                $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+                $('#MainGrid').data('kendoGrid').dataSource.data([]);
+                $('#btnReset').attr('disabled', true);
+                $('#btnSave').attr('disabled', true);
+                $('#btnView').attr('disabled', true);
+                var Input = InputValidation('MonthNumber') + InputValidation('Year');
+                if (Input == 0) {
+                    GetGridData(model);
+                }
+                else {
+                    ValidationMsg();
+                    toastr.warning($("#MessageText").html());
+                }
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+
+        });
+
+
+
+        //**************searching function**************
+        function GetGridData(model) {
+
+            $.ajax({
+                type: "POST",
+                url: "/DoctorDataUpload/GetGridData",
+                data: JSON.stringify({ model: model }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data != "") {
+                        $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                        $(".k-loading-mask").hide();
+                        $('#btnReset').attr('disabled', false);
+                        $('#btnSave').attr('disabled', false);
+                        $('#btnView').attr('disabled', false);
+                    }
+                    else {
+                        AcknowledgeMsg();
+                        toastr.warning("No Record Found!");
+
+                    }
+                },
+
+            });
+        }
+
+        //************************************ Doctor KENDO GRID *****************************************//
+
+        //Initializing Main page details Kendo Grid Colums
+        var MainGrid = $('#MainGrid').kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: true,
+                schema: {
+                    model: {
+                        id: "DoctorID",
+                        fields: {                                           
+                            DoctorID: { type: "string" },
+                            DoctorName: { type: "string" },
+                            Degrees: { type: "string" },
+                            Specialization: { type: "string" },
+                            Potential: { type: "string" },
+                            Designation: { type: "string" },
+                            RegNo: { type: "string" },
+                            Phone: { type: "string" },
+                            Email: { type: "string" },
+                            Religion: { type: "string" },
+                            Gender: { type: "string" },
+
+                            Address1: { type: "string" },
+                            Address2: { type: "string" },
+                            Address3: { type: "string" },
+                            Address4: { type: "string" },
+                            MorningLocation: { type: "string" },
+                            EveningLocation: { type: "string" },
+                         
+                            MarketCode: { type: "string" },
+                            Market: { type: "string" },
+                            Region: { type: "string" },
+                        }
+                    }
+                },
+                pageSize: 10,
+            }),
+            pageable: {
+                //refresh: true,
+                pageSizes: true, buttonCount: 5
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+            },
+            edit: function (e) {
+                $('input[name = "DoctorID"]').attr("readonly", true);
+             
+            },
+            scrollable: true,
+            sortable: true,
+            filterable: false,
+            editable: true,
+            selectable: "row",
+            //selectable: "multiple",
+            toolbar: [{ name: "excel", text: "Download" }, { template: "<input type='text' id='txtDoctor'  style='float:right' placeholder='Doctor Id or Name...' class='k-textbox'>" }, ],
+            excel: {
+                fileName: "DoctorData.xlsx",
+                allPages: true,
+                filterable: true
+            },
+            navigatable: true,
+            height: 400,        
+            columnMenu: false,
+            reorderable: true,
+            resizable: true,
+            resizable: true,
+            resize: function (e) {
+                this.table.height(this.element.height() + this.table.height() - 1);
+            },
+            columns: [              
+             
+                 { field: "DoctorID", title: "DoctorID"},
+                 { field: "DoctorName", title: "DoctorName" },
+                 { field: "Degrees", title: "Degrees" },
+                 { field: "Specialization", title: "Specialization" },
+                 { field: "Potential", title: "Potential" },
+                 { field: "Designation", title: "Designation" },
+                 { field: "RegNo", title: "RegNo" },
+                 { field: "Phone", title: "Phone" },
+                 { field: "Email", title: "Email" },
+                 { field: "Religion", title: "Religion" },
+                 { field: "Gender", title: "Gender" },
+                 { field: "Address1", title: "Address1" },
+                 { field: "Address2", title: "Address2" },
+                 { field: "Address3", title: "Address3" },
+                 { field: "Address4", title: "Address4" },            
+                 { field: "MorningLocation", title: "MorningLocation" },
+                { field: "EveningLocation", title: "EveningLocation" },             
+                { field: "MarketCode", title: "MarketCode" },
+                { field: "Market", title: "Market" },
+                { field: "Region", title: "Region" },
+       
+                 { command: [{ name: "DeletedRow", text: "Remove", imageClass: "k-icon k-i-close", click: handleDelete }], title: "Remove",  headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" } }
+            ]
+        }).data('kendoGrid');
+
+
+        function handleDelete(event) {
+            event.preventDefault();
+            dataitem = MainGrid.dataItem($(event.currentTarget).closest("tr"));
+            MainGrid.dataSource.remove(dataitem);
+       
+        };
+
+        // Filter table row
+        $("#txtDoctor").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                { field: "DoctorID", operator: "contains", value: val },
+                { field: "DoctorName", operator: "contains", value: val },
+              
+                ]
+            });
+        });
+
+
+       
+
+            var gridInput = 0;
+            function GridValidation() {
+                gridInput = 0;
+                var dataSource = $("#MainGrid").data("kendoGrid").dataSource;
+                data = dataSource.data(); // Get Detail Grid Data
+                if (data.length > 0) {
+                    for (var i = data.length - 1; i >= 0; i--) {
+                        if ((data[i].DoctorID == "") || (data[i].DoctorID == null)) {
+                            gridInput = 0;
+                        }
+
+                    }
+                }
+                else {
+                    gridInput = 1;
+                }
+            }
+
+
+     
+
+    $('#btnSave').click(function () {
+        var model = { };       
+        GridValidation();      
+        var Input = InputValidation('MonthNumber') + InputValidation('Year');
+
+        if (Input==0 && gridInput == 0) {
+        model.doctorDataUploadInfoList = [];
+        var detailDataSource = $('#MainGrid').data("kendoGrid").dataSource;
+        var detailData = detailDataSource.data();
+        if (detailData.length > 0) {
+
+            for (var i = 0; i < detailData.length; i++) {
+                var doctorDetail = {};
+                doctorDetail.Year = $("#Year").val();
+                doctorDetail.MonthNumber = $("#MonthNumber").val();
+
+                doctorDetail.Region = detailData[i].Region;
+                doctorDetail.MarketName = detailData[i].MarketName;
+
+                doctorDetail.DoctorID = detailData[i].DoctorID;
+                doctorDetail.DoctorName = detailData[i].DoctorName;
+                doctorDetail.RegNo = detailData[i].RegNo;
+                doctorDetail.Phone = detailData[i].Phone;
+                doctorDetail.Email = detailData[i].Email;
+                doctorDetail.Address = detailData[i].Address;
+                doctorDetail.Religion = detailData[i].Religion;
+                doctorDetail.Designation = detailData[i].Designation;
+                doctorDetail.Specialization = detailData[i].Specialization;
+                doctorDetail.Potential = detailData[i].Potential;
+                doctorDetail.Degree = detailData[i].Degree;
+                doctorDetail.Gender = detailData[i].Gender;
+                doctorDetail.MorningLocation = detailData[i].MorningLocation;
+                doctorDetail.EveningLocation = detailData[i].EveningLocation;
+                doctorDetail.MarketCode = detailData[i].MarketCode;
+                model.doctorDataUploadInfoList.push(doctorDetail);
+
+            }
+        }
+
+        $.ajax({
+            url: '/DoctorDataUpload/OperationsMode',
+            data: JSON.stringify(model),
+            type: 'POST',
+            contentType: 'application/json;',
+            dataType: 'json',
+            success: function (data) {
+                if (data.Status == "Yes") {
+                    //$("#FormID").val(data.ID);
+                    OperationMsg(data.Mode);
+                    toastr.success($("#MessageText").html());
+                }
+                else {
+                    ErrorFrmServerMsg(data.Status);
+                    toastr.warning($("#MessageText").html());
+                }
+
+            },
+            error: function () {
+                ErrorFrmClientMsg();
+                toastr.warning($("#MessageText").html());
+            },
+            // complete: function () { CompletedMsg(); },
+        }); //End of ajax call
+        }
+        else {
+            ValidationMsg();
+            toastr.warning($("#MessageText").html());
+        }
+
+    });
+
+
+    });
+
+
+
+
+</script>
+
+
+
+
+
+

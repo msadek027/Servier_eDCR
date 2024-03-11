@@ -1,0 +1,834 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+<style type="text/css">
+    .user-photo {
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+        /*border-radius: 50%;*/
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .user-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+</style>
+
+<style>
+    .k-grid .k-state-selected {
+        background-color: white;
+        color: black;
+    }
+</style>
+<style>
+    .has-success {
+        background: white;
+    }
+
+    .has-error {
+        /*background: red;*/
+        border: 1px Solid red !important;
+    }
+</style>
+
+<script>
+
+
+
+
+    $(document).ready(function () {
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+        var dataMPO_ImmediateSubordinate = [{ "Value": "", "Name": "" }];
+        var dataTM_ImmediateSubordinate =  [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }];
+        var dataRSM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }, { "Value": "TM", "Name": "TM" }];
+        var dataDSM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }, { "Value": "TM", "Name": "TM" }, { "Value": "RSM", "Name": "RSM" }];
+        var dataAll = [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }, { "Value": "TM", "Name": "TM" }, { "Value": "RSM", "Name": "RSM" }, { "Value": "DSM", "Name": "DSM" }];
+
+
+     
+        function Designation() {
+            var ownDesignation = $("#txtDesignation").val();
+           
+            if (ownDesignation == "MPO") {
+                $.each(dataMPO_ImmediateSubordinate, function (i, option) {
+                    $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
+                });
+            }
+            if (ownDesignation == "TM") {
+                $.each(dataTM_ImmediateSubordinate, function (i, option) {
+                    $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
+                });
+            }
+            if (ownDesignation == "RSM") {
+                $.each(dataRSM_ImmediateSubordinate, function (i, option) {
+                    $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
+                });
+            }
+            if (ownDesignation == "DSM") {
+                $.each(dataDSM_ImmediateSubordinate, function (i, option) {
+                    $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
+                });
+            }
+            if (ownDesignation == "Manager") {
+                $.each(dataAll, function (i, option) {
+                    $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
+                });
+            }
+          
+        }
+        Designation();
+        EventPermission();
+           $("#btnExcel").attr("disabled", true);
+        $("#btnPDF").attr("disabled", true);
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+        LoadMonth();
+      //  GetEmpForSup();
+        function LoadMonth() {
+            $.ajax({
+                url: '/Default/GetGenMonth',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load !!");
+                }
+            });
+        }
+        LoadRegion();
+        function LoadRegion() {
+            $.ajax({
+                url: '/Default/GetRegion',
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+
+                        if (i == 0) {
+                            if (data.length > 1) {
+                                $('#RegionCode').append('<option value="" selected="selected"></option>');
+                            }
+
+                            $('#RegionName').val(item.RegionName);
+                        }
+                        $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+        $('#RegionCode').on('change', function () {
+            $('#RegionName').val($("#RegionCode option:selected").text());          
+            $('#LocCode').empty();
+            GetEmpForSup($(this).val(), $("#Designation").val());
+        }).trigger('change');
+
+        $('#Designation').on('change', function () {
+            $('#LocCode').empty();
+            GetEmpForSup($("#RegionCode").val(), $(this).val());
+        }).trigger('change');
+
+        $('#LocCode').select2();
+        function GetEmpForSup(RegionCode, Designation) {          
+   
+          //  RegionCode = JSON.stringify(RegionCode);
+            if (Designation != "") {
+                $.ajax({
+                    type: "POST",          
+                   // url: '/Default/GetEmpForExpenseBillfrmRegionDesignationFnIn',
+                    url: '/Default/GetEmpForDesignationLocCodeSession',
+                    
+                    data: JSON.stringify({ RegionCode: RegionCode, Designation: Designation }),
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $('#LocCode').empty();
+                        $.each(data, function (i, item) {
+
+                            if (i == 0) {
+                                if (data.length > 1) {
+                                    $('#LocCode').append('<option value="" selected="selected"></option>');
+                                }
+                            }
+
+                            $('#LocCode').append($('<option>', { value: item.LocCode, html: item.LocName }, '<option/>'));
+                            $('#LocName').val(item.LocName);
+
+                        });
+
+                    },
+                    error: function () {
+                        alert("Failed to load... !!");
+                    }
+                });
+            }
+            else {
+                $('#LocCode').append('<option value="" selected="selected"></option>');
+            }
+        }
+
+
+        $('#LocCode').on('change', function () {
+            $('#LocName').val($("#LocCode option:selected").text());
+        }).trigger('change');
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+
+        $('#btnReset').click(function () {
+
+            $('#MsgStatus').html('').css('color', 'green');
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            ResetData();
+            $("#Year").val(yyyy);
+
+
+        });
+
+
+
+
+
+        //Initializing Main page details Kendo Grid Colums
+        var PopupGrid = $('#PopupWindowGrid').kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: true,
+                schema: {
+                    model: {
+                        id: "EmployeeCode",
+                        fields: {
+                            EmployeeCode: { type: "string" },
+                            EmployeeName: { type: "string" },
+                            Designation: { type: "string" },                           
+                            RegionCode: { type: "string" },
+                            LocCode: { type: "string" },
+                            MonthNumber: { type: "string" },
+                            Year: { type: "string" },
+                            MonthName: { type: "string" },
+                            BillStatus: { type: "string" },
+                           
+                        }
+                    }
+                },
+                pageSize: 20,
+            }),
+            pageable: {
+                //refresh: true,
+                pageSizes: true, buttonCount: 5
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+
+            },
+            scrollable: true,
+            sortable: false,
+            filterable: false,
+            editable: false,
+            selectable: "row",
+            //selectable: "multiple",
+            toolbar: [{ template: "<input type='text' id='txtPopupInput'  style='float:right' placeholder='Search...' class='k-textbox'>" }, ],
+            navigatable: true,
+
+            columnMenu: false,
+            reorderable: false,
+            resizable: false,
+            resize: function (e) {
+                this.table.height(this.element.height() + this.table.height() - 1);
+            },
+            columns: [
+
+                { field: "EmployeeCode", title: "EmpCode", hidden: true },
+                { field: "EmployeeName", title: "Employee Name" },
+                { field: "Designation", title: "Designation" },               
+                { field: "RegionCode", title: "RegionCode", hidden: true },
+                { field: "LocCode", title: "LocCode", hidden: false },
+                { field: "MonthNumber", title: "Month Number", hidden: true },
+                { field: "MonthName", title: "Month" },
+                { field: "Year", title: "Year" },
+                { field: "BillStatus", title: "Status" },
+
+            ]
+
+        }).data('kendoGrid');
+
+
+
+        $("#PopupWindowGrid").click(function () {
+            var gridData = $("#PopupWindowGrid").data("kendoGrid");
+            var selectedItem = (gridData.dataItem(gridData.select())); //Selected Row
+
+
+            debugger;
+            $("#Year").val(selectedItem.Year);
+            $("#MonthNumber").val(selectedItem.MonthNumber);
+            $("#RegionCode").val(selectedItem.RegionCode);
+            selectedItem.Designation = selectedItem.Designation == "SMPO" ? "MPO" : selectedItem.Designation;
+
+            $("#RegionCode").trigger('change');
+            $("#Designation").val(selectedItem.Designation);
+        
+            $("#LocCode").val(selectedItem.LocCode);
+
+
+
+            PopupWindow.close();
+            var model = {};
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+            model.RegionCode = $("#RegionCode").val();
+            model.Designation = $("#Designation").val();
+            model.LocCode = selectedItem.LocCode;
+
+
+       
+            var Input = InputValidation('MonthNumber') + InputValidation('Year') + InputValidation('RegionCode') + InputValidation('Designation');
+            if (Input == 0) {
+                var ownDesignation = $("#txtDesignation").val()
+        
+                if (ownDesignation == "TM") {
+                    if ($("#Designation").val() == "MPO") {
+                        MainGridView(model);
+                    }                  
+                }
+                if (ownDesignation == "RSM") {
+                    if ($("#Designation").val() == "MPO" || $("#Designation").val() == "TM") {
+                        MainGridView(model);
+                    }
+                }
+                if (ownDesignation == "DSM") {
+                    if ($("#Designation").val() == "MPO" || $("#Designation").val() == "TM" || $("#Designation").val() == "RSM") {
+                        MainGridView(model);
+                    }
+                }
+                if (ownDesignation == "Manager") {
+                    if ($("#Designation").val() == "MPO" || $("#Designation").val() == "TM" || $("#Designation").val() == "RSM" || $("#Designation").val() == "DSM") {
+                        MainGridView(model);
+                    }
+                }
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+        });
+
+
+
+
+        $('#btnView').click(function () {
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+            var model = {};        
+
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+            model.RegionCode = $("#RegionCode").val();
+            model.Designation = $("#Designation").val();
+            model.LocCode = $("#LocCode").val();
+            var Input = InputValidation('MonthNumber') + InputValidation('Year')  + InputValidation('Designation');
+            if (Input == 0) {
+                var ownDesignation = $("#txtDesignation").val();             
+                if (ownDesignation == "TM") {
+                    if ($("#Designation").val() == "MPO") {
+                        MainGridView(model);
+                    }
+                }
+                else if (ownDesignation == "RSM") {
+                    if ($("#Designation").val() == "MPO" || $("#Designation").val() == "TM") {
+                        MainGridView(model);
+                    }
+                }
+                else {
+                    MainGridView(model);
+                }
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+            $("#Year").val(model.Year);
+        });
+
+
+        $('#btnStatus').click(function () {
+
+            var model = {};
+
+            // $("#Year").val(yyyy);
+
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+            model.RegionCode = $("#RegionCode").val();
+            model.Designation = $("#Designation").val();
+
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+
+
+            var Input = InputValidation('MonthNumber') + InputValidation('Year') + InputValidation('RegionCode');
+            if (Input == 0) {
+
+
+
+                PopupWindow.center();
+                PopupWindow.open();
+
+                $.ajax({
+                    url: '/ExpenseBillMpoTmRsm/GetPopupView',
+                    type: 'POST',
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data != "") {
+                            $('#PopupWindowGrid').data('kendoGrid').dataSource.data(data);
+                        }
+                        else {
+                            PopupWindow.close();
+                            AcknowledgeMsg();
+                            toastr.info($("#MessageText").html());
+                        }
+
+                    },
+                    error: function () {
+                        alert('Error occured!');
+                    },
+                    //complete: function () { },
+                });
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+            $("#Year").val(model.Year);
+        });
+
+
+
+
+        var MainGrid = $('#MainGrid').kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: true,
+                schema: {
+                    model: {
+                        id: "LocCode",
+                        fields: {
+                            LocCode: { type: "string" },
+                        }
+                    }
+                },
+                pageSize: 10,
+            }),
+            pageable: {
+                //refresh: true,
+                pageSizes: true, buttonCount: 5
+            },
+
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+            },
+            editable: false,
+            edit: function (e) {
+                $('input[name = "LocCode"]').attr("readonly", true);
+                $('input[name = "Designation"]').attr("readonly", true);
+                $('input[name = "EmployeeCode"]').attr("readonly", true);
+                $('input[name = "DA"]').attr("readonly", true);
+                $('input[name = "TA"]').attr("readonly", true);
+                $('input[name = "TotalAmount"]').attr("readonly", true);
+            },
+
+              toolbar: [ { template: "<input type='text' id='txtSummaryInput'  style='float:right' placeholder='Search...' class='k-textbox'>" },],
+
+           
+
+              scrollable: true,
+              sortable: true,
+              filterable: false,
+              editable: false,
+              navigatable: false,
+              columnMenu: false,
+              reorderable: false,
+              resizable: true,
+              resize: function (e) {
+                  this.table.height(this.element.height() + this.table.height() - 1);
+              },
+
+            columns: [
+                { field: "SL", title: "SL" , width:15 },
+                { field: "EmployeeCode", title: "Employee Code", width: 20 },
+                { field: "EmployeeName", title: "Employee Name", width: 30 },
+                { field: "Designation", title: "Designation", width: 30 },
+                { field: "LocCode", title: "Loc Code", width: 20, hidden: true },
+                { field: "MarketName", title: "Market Name", width: 30 },
+                { field: "TerritoryName", title: "Territory Name", width: 30 },
+                { field: "DA", title: "Daily Allowance", width: 40 },
+                { field: "TA", title: "Travel Allowance", width: 40 },
+                { field: "TotalAmount", title: "Total", width: 40 },
+
+            { command: [{ name: "PreviewRow", text: "Preview", imageClass: "k-icon k-i-close", click: handlePreview }], title: "Preview", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" } },
+            { command: [{ name: "ApprovedRow", text: "Approve", imageClass: "k-icon k-i-close", click: handleApproved }], title: "Approve", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" } }
+            ],
+        }).data('kendoGrid');
+
+        function handlePreview(e) {
+
+                  e.preventDefault();
+            var selectedItem = MainGrid.dataItem($(e.currentTarget).closest("tr"));
+
+            if ($("#Year").val() != "" && $("#MonthNumber").val() != "") {
+                ReportHeader = "Month: " + $("#MonthNumber option:selected").text() + " " + $("#Year").val() + ", Employee: " + selectedItem.EmployeeCode + ", " + selectedItem.EmployeeName + ", " + selectedItem.Designation + "," + selectedItem.MarketName;
+            }
+
+            sessionStorage.setItem('keyYear', $("#Year").val());
+            sessionStorage.setItem('keyMonthNumber', $("#MonthNumber").val());
+
+
+            sessionStorage.setItem('keyLocCode', selectedItem.LocCode);
+            sessionStorage.setItem('keyLocName', selectedItem.MarketName);
+            sessionStorage.setItem('keyEmployeeCode', selectedItem.EmployeeCode);
+            sessionStorage.setItem('keyEmployeeName', selectedItem.EmployeeName);
+            sessionStorage.setItem('keyDesignation', selectedItem.Designation);
+            sessionStorage.setItem('keyReportHeader', ReportHeader);
+
+            var Year = $("#Year").val();
+            var MonthNumber = $("#MonthNumber").val();
+
+            var Input = InputValidation('MonthNumber') + InputValidation('Year');
+            if (Input == 0) {
+                window.open("/DCR/ExpenseBillMpoTmRsm/frmExpenseBillMpoTmRsmDetail");
+            }
+        };
+        function handleApproved(e) {
+
+            e.preventDefault();
+            var selectedItem = MainGrid.dataItem($(e.currentTarget).closest("tr"));
+            var model = {};
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+
+            model.ItemList = [];
+
+            var detail = {};
+            detail.LocCode = selectedItem.LocCode;
+            detail.EmployeeCode = selectedItem.EmployeeCode;
+            detail.Designation = selectedItem.Designation;
+            detail.Da = selectedItem.Da;
+            detail.TA = selectedItem.TA;
+            detail.Others = selectedItem.Others;
+            detail.TotalAmount = selectedItem.TotalAmount;
+
+
+            detail.MonthNumber = $('#MonthNumber').val();
+            detail.Year = $('#Year').val();
+            model.ItemList.push(detail);
+
+            $.ajax({
+                url: '/ExpenseBillMpoTmRsm/OperationsModeSummary',
+                data: JSON.stringify(model),
+                type: 'POST',
+                contentType: 'application/json;',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.Status == "Yes") {
+                        OperationMsg(data.Mode);
+                        toastr.success($("#MessageText").html());
+                    }
+                    else {
+                        ErrorFrmServerMsg(data.Status);
+                        toastr.warning($("#MessageText").html());
+                    }
+
+                },
+                error: function () {
+                    ErrorFrmClientMsg();
+                    toastr.warning($("#MessageText").html());
+                },
+                // complete: function () { CompletedMsg(); },
+            }); //End of ajax call
+
+        };
+
+
+
+
+
+        function MainGridView(model) {
+
+            $("#divLoading").show();
+
+
+            $.ajax({
+                type: "POST",
+                url: "/ExpenseBillMpoTmRsm/GetSummaryData",
+                data: JSON.stringify({ model: model }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                            $("#btnExcel").attr("disabled", false);
+                        $("#btnPDF").attr("disabled", false);
+                    }
+                    else {
+                        AcknowledgeMsg();
+                        toastr.info($("#MessageText").html());
+                    }
+                    $("#divLoading").hide();
+                },
+
+            });
+        }
+
+        var gridInput = 0;
+        function GridValidation() {
+            gridInput = 0;
+            var dataSource = $("#MainGrid").data("kendoGrid").dataSource;
+            data = dataSource.data(); // Get Detail Grid Data
+            if (dataSource.view().length > 0) {
+                for (var i = data.length - 1; i >= 0; i--) {
+                    if (data[i].LocCode == "" || data[i].LocCode == null) {
+                        gridInput = 1;
+                    }
+                }
+            }
+            else {
+                gridInput = 1;
+            }
+        }
+
+        $('#btnSave').click(function () {
+            GridValidation();
+
+            var model = {};
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+
+
+
+            var detailDataSource = $('#MainGrid').data("kendoGrid").dataSource;
+            var detailData = detailDataSource.data();
+            model.ItemList = [];
+            if (gridInput == 0) {
+
+                if (detailData.length > 0) {
+                    for (var i = 0; i < detailData.length; i++) {
+
+                        var detail = {};
+                        detail.LocCode = detailData[i].LocCode;
+                        detail.EmployeeCode = detailData[i].EmployeeCode;
+                        detail.EmployeeName = detailData[i].EmployeeName;
+                        detail.Designation = detailData[i].Designation;
+                        detail.Da = detailData[i].Da;
+                        detail.TA = detailData[i].TA;
+                        detail.Others = detailData[i].Others;
+                        detail.TotalAmount = detailData[i].TotalAmount;
+                        detail.MonthNumber = $('#MonthNumber').val();                      
+                        detail.Year = $('#Year').val();
+
+                        model.ItemList.push(detail);
+                    }
+                }
+                $.ajax({
+                    url: '/ExpenseBillMpoTmRsm/OperationsModeSummary',
+                    data: JSON.stringify(model),
+                    type: 'POST',
+                    contentType: 'application/json;',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.Status == "Yes") {
+                            OperationMsg(data.Mode);
+                            toastr.success($("#MessageText").html());
+                        }
+                        else {
+                            ErrorFrmServerMsg(data.Status);
+                            toastr.warning($("#MessageText").html());
+                        }
+                    },
+                    error: function () {
+                        ErrorFrmClientMsg();
+                        toastr.warning($("#MessageText").html());
+                    },
+                    // complete: function () { CompletedMsg(); },
+                }); //End of ajax call
+
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+
+
+        });
+        $('#btnReload').click(function () {
+            var model = {};
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+
+            InputValidation('Year') + InputValidation('MonthNumber');
+            if (Input == 0) {
+
+                MainGridView(model);
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+        });
+
+
+
+    });
+
+
+</script>
+
+
+
+<div class="box-header with-border">
+    <form class="form" action="/ReportExpenseBillMpoTmRsm/GetExportExpenseBillSummaryMpoTmRsm" id="R1Form" method="post" name="H1Form" target="_blank">
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+            <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                <div style="text-align:right;">
+                    <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                    <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                    <button id="btnStatus" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-check"></i> Status</button>
+                    <button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-ok"></i> All Approve</button>
+                    <button id="btnExcel" class="btn btn-primary btn-sm" name="ExportType" value="Excel" type="submit"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+
+                    <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PDF" type="submit"><i class="glyphicon glyphicon-book"></i> PDF </button>
+
+                </div>
+            </div>
+     
+</div>
+        <div class="box-body">
+            <div class="row" id="divValueParameter">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2"> Month -Year :</div>
+                    <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                        <div class="input-group">
+                            <select id="MonthNumber" name="MonthNumber" class="RequiredField form-control"></select>
+                            <span class="input-group-btn" style="width:0px;"></span>
+                            <input type="text" id="Year" name="Year" class="datepicker RequiredField form-control" />
+
+                        </div>
+                    </div>
+
+                    <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3"></div>
+                    <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">Designation  :</div>
+                    <div class="col-xs-0 col-sm-6 col-md-2 col-lg-2">
+                        <select id="Designation" name="Designation" class="RequiredField form-control">
+                            <option value="Select" disabled selected>Select</option>
+
+                        </select>
+                    </div>
+                    <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"></div>
+                    <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"> Region Name:</div>
+                    <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+                        <select id="RegionCode" name="RegionCode" class="RequiredField form-control"></select>
+                        <input type="hidden" id="RegionName" name="RegionName" class="RequiredField form-control">
+                    </div>
+
+
+
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">Location As Designation:</div>
+                    <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                        <select id="LocCode" name="LocCode" class="RequiredField form-control"></select>
+                        <input type="hidden" id="LocName" name="LocName" class="RequiredField form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+        <div class="row">
+            <div id="MainGrid" class="MainGrid"></div>
+        </div>
+
+
+
+        <div class="row">
+            <div id="TerritoryPopupWindow" class="PopupWindowLayout" style="display: none;">
+                <div id="TerritoryPopupWindowGrid" class="PopUpGrid"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="PopupWindow" class="PopupWindowLayout" style="display: none;">
+                <div id="PopupWindowGrid" class="PopUpGrid"></div>
+            </div>
+        </div>
+
+
+
+        <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+            <p style="position: absolute; top: 50%; left: 50%; color: White;">
+                <img src="~/Content/Images/loading.gif" />
+            </p>
+        </div>
+    </div>
+
+
+
+

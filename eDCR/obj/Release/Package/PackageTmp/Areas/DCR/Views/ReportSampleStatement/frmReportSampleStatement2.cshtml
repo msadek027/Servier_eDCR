@@ -1,0 +1,627 @@
+﻿@{
+
+    Layout = null;// "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sample Statement</title>
+
+    <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link href="~/Content/CSS/InputText.css" rel="stylesheet" />
+    <script src="~/Scripts/CustomJS/OperationalMessage.js"></script>
+    <script src="~/Scripts/CustomJS/InputValidator.js"></script>
+    <link href="~/Content/CustomCSS/toastr.css" rel="stylesheet" />
+    <script src="~/Scripts/CustomJS/toastr.js"></script>
+    <style>
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%; /* Could be more or less, depending on screen size */
+            margin: 7% 5% auto; /* 15% from the top and centered */
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
+
+    <style>
+        /* BASICS: */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box; /* in case block elements are used inside table cells */
+        }
+
+        html {
+            font-size: 62.5%; /* standardizes older IEs */
+        }
+
+        body {
+            font: normal 1.3em Verdana; /* = 13px */
+            padding: 1px;
+        }
+
+        table {
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        td {
+            border: 1px solid black;
+            /*padding: 4px;*/
+        }
+        /* SCROLL TABLE ESSENTIALS (+ SOME ADDITIONAL CSS): */
+        div#scrollTableContainer {
+            width: 100%;
+            table-layout: fixed;
+            /*margin: 5px;*/ /* just for presentation purposes */
+            /*border: 1px solid black;*/
+        }
+
+        .touchScreen div#scrollTableContainer {
+            width: 100%; /* touch devices do not form scrollbars (= 17 px wide) */
+        }
+
+        #tHeadContainer {
+            background: #666633;
+            color: white;
+            font-size: xx-small;
+            text-align: center;
+            width: 99%;
+            /*table-layout: fixed;*/
+        }
+
+
+        #tBodyContainer {
+            min-height: 300px;
+            max-height: 450px;
+            width: 100%;
+            overflow-y: scroll;
+            font-size: 5pt;
+            text-align: center;
+            overflow-x: hidden;
+            table-layout: fixed;
+        }
+
+
+        .touchScreen #tBodyContainer {
+            -webkit-overflow-scrolling: touch; /* smooths scrolling on touch screens */
+        }
+        /* FINER LAYOUT MATTERS: */
+        tr:first-child td {
+            border-top: 0;
+        }
+
+
+
+        #tBody tr.lastRow td {
+            border-bottom: 0;
+        }
+
+
+        /* AND SOME CSS TO INFORM TOUCH SCREEN USERS: */
+        p#touchDeviceText {
+            display: none;
+        }
+
+        .touchScreen p#touchDeviceText {
+            display: block;
+        }
+
+
+
+
+
+
+        .ProductCode {
+            width: 0%;
+            display: none;
+        }
+
+        .ProductName {
+            width: 10%;
+        }
+
+        .MPGroup {
+            width: 0%;
+            display: none;
+        }
+
+        .ItemType {
+            width: 3.5%;
+        }
+
+        .StockCal {
+            width: 2.5%;
+        }
+
+        .GivenStockCal {
+            width: 2.5%;
+        }
+
+        .Day31 {
+            width: 1.5%;
+        }
+    </style>
+
+
+    <script>
+        if ('ontouchstart' in window || (window.DocumentTouch && document instanceof DocumentTouch)) {
+            document.documentElement.className += ' touchScreen ';
+        }
+    </script>
+
+
+
+    <script>
+
+        function createPDF() {
+
+            var sTable = document.getElementById('scrollTableContainer').innerHTML;
+
+            var style = "<style>";
+            style = style + "table {width: 100%;font: 8px Calibri;}";
+            style = style + "table, th, td {border: solid .5px #DDD; border-collapse: collapse;";
+
+            style = style + "padding: 0px 0px;text-align: center;}";
+            style = style + "</style>";
+
+            // CREATE A WINDOW OBJECT.
+            var win = window.open('', '', 'height=600,width=600');
+
+            win.document.write('<html><head>');
+            win.document.write('<title>Sample Statement</title>');   // <title> FOR PDF HEADER.
+            win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+            win.document.write('</head>');
+            win.document.write('<body>');
+
+            win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+            win.document.write('</body></html>');
+
+            $(win.document.body).find('table').css({ color: 'green', }).find('.ProductCode').css('display', 'none');
+            $(win.document.body).find('table').css({ color: 'green', }).find('.ProductName').css('width', '8%');
+            $(win.document.body).find('table').css({ color: 'green', }).find('.MPGroup').css('display', 'none');
+            $(win.document.body).find('table').css({ color: 'green', }).find('.ItemType').css('display', 'none');
+            $(win.document.body).find('table').css({ color: 'green', }).find('.StockCal').css('width', '3%');
+            $(win.document.body).find('table').css({ color: 'green', }).find('.GivenStockCal').css('width', '2.5%');
+            win.document.close(); 	// CLOSE THE CURRENT WINDOW.
+
+            win.print();    // PRINT THE CONTENTS.
+        }
+    </script>
+
+    <script type="text/javascript">
+        var Year = "";
+        var MonthNumber = "";
+
+        var TerritoryManagerID = "";
+
+        var MPGroup = "";
+        var ItemType = "";
+        var ReportHeader = "";
+
+
+        $(document).ready(function () {
+            $.ajaxSetup({
+                beforeSend: function () {
+                    $("#divLoading").show();
+                },
+                complete: function () {
+                    $("#divLoading").hide();
+                }
+            });
+            Year = sessionStorage.getItem('keyYear');
+            MonthNumber = sessionStorage.getItem('keyMonthNumber');
+            TerritoryManagerID = sessionStorage.getItem('keyTerritoryManagerID');
+
+            MPGroup = sessionStorage.getItem('keyMPGroup');
+            ItemType = sessionStorage.getItem('keyItemType');
+
+            ReportHeader = sessionStorage.getItem('keyReportHeader');
+            $('#ReportHeader').html(ReportHeader);
+            MainGridView();
+
+            function MainGridView() {
+                var model = {};
+
+                model.Year = Year;
+                model.MonthNumber = MonthNumber;
+                model.TerritoryManagerID = TerritoryManagerID;
+
+                model.MPGroup = MPGroup;
+                model.ItemType = ItemType;
+                $('#tBody').html('');
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportSampleStatement/GetMainGridData",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+
+                        $.each(data, function (i, val) {
+                            var trow = $('<tr></tr>');
+                            trow.append('<td class=ProductCode>' + val.ProductCode + '</td>');
+                            trow.append('<td class=ProductName>' + val.ProductName + '</td>');
+                            trow.append('<td class=ItemType>' + val.ItemType + '</td>');
+                            trow.append('<td class=MPGroup>' + val.MPGroup + '</td>');
+
+                            trow.append('<td class=StockCal>' + val.RestQty + '</td>');
+                            trow.append('<td class=StockCal>' + val.CentralQty + '</td>');
+                            trow.append('<td class=StockCal>' + val.TotalQty + '</td>');
+
+                            trow.append('<td class=GivenStockCal><a href=# style=text-decoration:underline;>' + val.GivenQty0108 + '</a></td>');
+                            trow.append('<td class=StockCal>' + val.TotalStock0108 + '</td>');
+
+                            trow.append('<td class=Day31>' + val.d01 + '</td>');
+                            trow.append('<td class=Day31>' + val.d02 + '</td>');
+                            trow.append('<td class=Day31>' + val.d03 + '</td>');
+                            trow.append('<td class=Day31>' + val.d04 + '</td>');
+                            trow.append('<td class=Day31>' + val.d05 + '</td>');
+                            trow.append('<td class=Day31>' + val.d06 + '</td>');
+                            trow.append('<td class=Day31>' + val.d07 + '</td>');
+                            trow.append('<td class=Day31>' + val.d08 + '</td>');
+
+                            trow.append('<td class=StockCal>' + val.TotalDCR0108 + '</td>');
+                            trow.append('<td class=GivenStockCal><a href=# style=text-decoration:underline;>' + val.GivenQty0915 + '</a></td>');
+                            trow.append('<td class=StockCal>' + val.TotalStock0915 + '</td>');
+
+
+                            trow.append('<td class=Day31>' + val.d09 + '</td>');
+                            trow.append('<td class=Day31>' + val.d10 + '</td>');
+                            trow.append('<td class=Day31>' + val.d11 + '</td>');
+                            trow.append('<td class=Day31>' + val.d12 + '</td>');
+                            trow.append('<td class=Day31>' + val.d13 + '</td>');
+                            trow.append('<td class=Day31>' + val.d14 + '</td>');
+                            trow.append('<td class=Day31>' + val.d15 + '</td>');
+
+
+
+                            trow.append('<td class=StockCal>' + val.TotalDCR0915 + '</td>');
+                            trow.append('<td class=GivenStockCal><a href=# style=text-decoration:underline;>' + val.GivenQty1623 + '</a></td>');
+                            trow.append('<td class=StockCal>' + val.TotalStock1623 + '</td>');
+
+
+                            trow.append('<td class=Day31>' + val.d16 + '</td>');
+                            trow.append('<td class=Day31>' + val.d17 + '</td>');
+                            trow.append('<td class=Day31>' + val.d18 + '</td>');
+                            trow.append('<td class=Day31>' + val.d19 + '</td>');
+                            trow.append('<td class=Day31>' + val.d20 + '</td>');
+                            trow.append('<td class=Day31>' + val.d21 + '</td>');
+                            trow.append('<td class=Day31>' + val.d22 + '</td>');
+                            trow.append('<td class=Day31>' + val.d23 + '</td>');
+
+                            trow.append('<td class=StockCal>' + val.TotalDCR1623 + '</td>');
+                            trow.append('<td class=GivenStockCal><a href=# style=text-decoration:underline;>' + val.GivenQty2431 + '</a></td>');
+                            trow.append('<td class=StockCal>' + val.TotalStock2431 + '</td>');
+
+
+                            trow.append('<td class=Day31>' + val.d24 + '</td>');
+                            trow.append('<td class=Day31>' + val.d25 + '</td>');
+                            trow.append('<td class=Day31>' + val.d26 + '</td>');
+                            trow.append('<td class=Day31>' + val.d27 + '</td>');
+                            trow.append('<td class=Day31>' + val.d28 + '</td>');
+                            trow.append('<td class=Day31>' + val.d29 + '</td>');
+                            trow.append('<td class=Day31>' + val.d30 + '</td>');
+                            trow.append('<td class=Day31>' + val.d31 + '</td>');
+
+                            trow.append('<td class=StockCal>' + val.TotalDCR2431 + '</td>');
+                            trow.append('<td class=StockCal>' + val.ClosingStock + '</td>');
+
+                            $('#tBody').append(trow);
+                        });
+                    },
+
+                });
+            }
+
+
+            var modal = document.getElementById('myModal');
+            var span = document.getElementsByClassName("close")[0];
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+            $('#tBody').delegate('td.GivenStockCal', 'click', function (e) {
+                e.preventDefault();
+                var StartDay = "";
+                var EndDay = "";
+                var $this = $(this);
+                var rowIndex = $(this).closest("tr").index();
+                var colIndex = $(this).closest("td").index();
+
+                //alert(colIndex);
+                var DayNumber = $("#tHead tr:eq(1) td:eq(" + colIndex + ")").text();
+                //alert(Header1);
+                //alert(colIndex);
+                if (colIndex >= 6 && colIndex <= 8) {
+                    StartDay = "01";
+                    EndDay = "08";
+
+                }
+                else if (colIndex >= 17 && colIndex <= 19) {
+                    StartDay = "09";
+                    EndDay = "15";
+                }
+                else if (colIndex >= 27 && colIndex <= 29) {
+                    StartDay = "16";
+                    EndDay = "23";
+                }
+                else if (colIndex >= 38 && colIndex <= 40) {
+                    StartDay = "24";
+                    EndDay = "31";
+                }
+
+
+
+                modal.style.display = "block";
+                var row = $this.closest("tr");
+                var name = row.find('td:eq(1)').text();
+
+                var model = {};
+                model.Year = Year;
+                model.MonthNumber = MonthNumber;
+                model.TerritoryManagerID = TerritoryManagerID;
+                model.MPGroup = MPGroup;
+
+                model.ItemType = ItemType;
+
+                model.ProductCode = row.find('td:eq(0)').text();
+                model.ProductName = row.find('td:eq(1)').text();
+                model.MPGroup = row.find('td:eq(3)').text();
+
+                model.FromDate = StartDay + "-" + model.MonthNumber + "-" + model.Year;
+                model.ToDate = EndDay + "-" + model.MonthNumber + "-" + model.Year;
+
+                GetDetailData(model);
+            });
+
+            function GetDetailData(model) {
+                $('#tPopupBody').html('');
+
+                var Parameter = "Product: " + model.ProductCode + "," + model.ProductName + ", MPGroup:" + model.MPGroup + ", Date Between: " + model.FromDate + " To " + model.ToDate
+                $("#Parameter").html(Parameter);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportSampleStatement/GetDetail",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+                            //$('#DetailPopupWindowGrid').data('kendoGrid').dataSource.data(data);
+                            $.each(data, function (i, val) {
+                                var trow = $('<tr></tr>');
+                                trow.append('<td>' + val.MPGroup + '</td>');
+                                trow.append('<td>' + val.SetDate + '</td>');
+                                trow.append('<td>' + val.ProductCode + '</td>');
+                                trow.append('<td>' + val.ProductName + '</td>');
+                                trow.append('<td>' + val.Quantity + '</td>');
+                                $('#tPopupBody').append(trow);
+                            });
+
+                        }
+                        else {
+                            AcknowledgeMsg();
+                            toastr.info($("#MessageText").html());
+                            modal.style.display = "none";
+                        }
+
+
+                    },
+                    error: function () {
+                        alert('Error occured!');
+                    },
+                });
+
+            }
+
+
+            function fnClose() {
+                this.close();
+            }
+
+            $('#btnBack').click(function () {
+                fnClose();
+
+            });
+
+        });
+    </script>
+
+
+
+</head>
+<body>
+
+    <br />
+    <div style="text-align:center">
+        <span style="background-color: #666633;color: white;" id="ReportHeader"></span>
+        <button id="btnBack" class="btn btn-primary btn-lg" type="button"><i class="glyphicon glyphicon-backward"></i><span style="background-color: #3C8DBC; color: white; font-weight: bold">Back</span></button>
+        <input type="button" value="Export to PDF" id="btPrint" onclick="createPDF()" />
+    </div>
+
+    <br />
+    <div id="scrollTableContainer">
+        <div id="tHeadContainer">
+            <table id="tHead">
+                <tr>
+                    <td class="ProductCode"></td>
+                    <td class="ProductName"></td>
+                    <td class="ItemType"></td>
+                    <td class="MPGroup"></td>
+
+
+                    <td class="StockCal"></td>
+                    <td class="StockCal"></td>
+                    <td class="StockCal"></td>
+                    <td class="GivenStockCal"></td>
+                    <td class="StockCal"></td>
+                    <td colspan="8">First Week Used</td>
+
+                    <td class="StockCal"></td>
+                    <td class="GivenStockCal"></td>
+                    <td class="StockCal"></td>
+                    <td colspan="7">Second Week Used</td>
+
+                    <td class="StockCal"></td>
+                    <td class="GivenStockCal"></td>
+                    <td class="StockCal"></td>
+                    <td colspan="8">Third Week Used</td>
+
+                    <td class="StockCal"></td>
+                    <td class="GivenStockCal"></td>
+                    <td class="StockCal"></td>
+                    <td colspan="8">Fourth Week Used</td>
+
+
+                    <td class="StockCal"></td>
+                    <td class="StockCal"></td>
+                </tr>
+                <tr>
+
+                    <td class="ProductCode">Product<br />Code</td>
+                    <td class="ProductName">Product<br />Name</td>
+                    <td class="ItemType">Type</td>
+                    <td class="MPGroup">MPGroup</td>
+
+                    <td class="StockCal">Carry<br />In <br /> Qty</td>
+                    <td class="StockCal">Receive<br />Qty</td>
+                    <td class="StockCal">Total<br />Stock <br /> Qty</td>
+                    <td class="GivenStockCal">Add/<br />Defi <br />01-08</td>
+                    <td class="GivenStockCal">Rest<br />Qty <br />01-08</td>
+
+
+                    <td class="Day31">01</td>
+                    <td class="Day31">02</td>
+                    <td class="Day31">03</td>
+                    <td class="Day31">04</td>
+                    <td class="Day31">05</td>
+                    <td class="Day31">06</td>
+                    <td class="Day31">07</td>
+                    <td class="Day31">08</td>
+
+                    <td class="StockCal">Used<br />Qty <br /> 01-08</td>
+                    <td class="GivenStockCal">Add/<br />Defi <br /> 09-15</td>
+                    <td class="StockCal">Rest<br />Qty <br /> 01-15</td>
+
+
+                    <td class="Day31">09</td>
+                    <td class="Day31">10</td>
+                    <td class="Day31">11</td>
+                    <td class="Day31">12</td>
+                    <td class="Day31">13</td>
+                    <td class="Day31">14</td>
+                    <td class="Day31">15</td>
+
+
+                    <td class="StockCal">Used<br />Qty <br /> 09-15</td>
+                    <td class="GivenStockCal">Add/<br />Defi  <br /> 16-23</td>
+                    <td class="StockCal">Rest<br />Qty <br /> 01-23</td>
+
+                    <td class="Day31">16</td>
+                    <td class="Day31">17</td>
+                    <td class="Day31">18</td>
+                    <td class="Day31">19</td>
+                    <td class="Day31">20</td>
+                    <td class="Day31">21</td>
+                    <td class="Day31">22</td>
+                    <td class="Day31">23</td>
+
+
+                    <td class="StockCal">Used<br />Qty <br /> 16-23</td>
+                    <td class="GivenStockCal">Add/<br />Defi  <br /> 24-31</td>
+                    <td class="StockCal">Rest<br />Qty <br />01-31</td>
+
+                    <td class="Day31">24</td>
+                    <td class="Day31">25</td>
+                    <td class="Day31">26</td>
+                    <td class="Day31">27</td>
+                    <td class="Day31">28</td>
+                    <td class="Day31">29</td>
+                    <td class="Day31">30</td>
+                    <td class="Day31">31</td>
+
+
+                    <td class="StockCal">Used<br />Qty <br /> 24-31</td>
+                    <td class="StockCal">Closing <br /> Stock <br />Qty</td>
+
+                </tr>
+            </table>
+        </div><!-- tHeadContainer -->
+        <div id="tBodyContainer">
+            <table id="tBody"></table>
+
+        </div><!-- tBodyContainer -->
+    </div><!-- scrollTableContainer -->
+
+
+
+
+
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>
+                <br />
+                <div id="MessageText"></div>
+                <br />
+                <div id="Parameter"></div>
+                <br />
+                <div style="display:block">
+                    <table id="tPopupHead" style="background: #666633; color: white; border: 1px solid black; ">
+                        <tr>
+                            <td>MPGroup</td>
+                            <td>SetDate</td>
+                            <td>ProductCode</td>
+                            <td>ProductName</td>
+                            <td>Quantity</td>
+                        <tr>
+                    </table>
+                    <table id="tPopupBody"></table>
+                </div>
+            </p>
+        </div>
+    </div>
+    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+        <p style="position: absolute; top: 50%; left: 50%; color: White;">
+            <img src="~/Content/Images/loading.gif" />
+        </p>
+    </div>
+</body>
+</html>

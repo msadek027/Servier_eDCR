@@ -1,0 +1,338 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="box-header with-border">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+        <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+            <div style="text-align:right;">
+                <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="box-body">
+    <div class="row" id="divValueParameter">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">MPO Name:</div>
+            <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                <select id="MPGroup" class="MPGroup RequiredField form-control"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2"> Item Type:</div>
+            <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                <select id="ItemType" name="ItemType" class="RequiredField form-control ItemType">
+
+                    <option value="All">All</option>
+                    <option value="SlR">Selected Item and Regular</option>
+                    <option value="SmR">Sample Item and Regular</option>
+                    <option value="SmI">Sample Item and Intern</option>
+                    <option value="GtR">Gift Item and Regular</option>
+                    <option value="GtI">Gift Item and Intern</option>
+                </select>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">Product:</div>
+            <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4"><select id="ProductCode" class="ProductCode RequiredField form-control"><option> </option></select></div>
+        </div>
+
+
+    </div>
+  </div>
+  
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div id="MainGrid" class="MainGrid"></div>
+
+        </div>
+    </div>
+
+
+
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+    <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+   <link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+
+    <script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+    <script type="text/javascript">
+        //// Start  $(document).ready(function ()
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                beforeSend: function () {
+                    $("#divLoading").show();
+                },
+                complete: function () {
+                    $("#divLoading").hide();
+                }
+            });
+
+
+            EventPermission();
+           
+
+            
+            $('#btnReset').click(function () {
+                $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+                $('#MainGrid').data('kendoGrid').dataSource.data([]);
+                ResetData();
+
+                $('.ItemType').val("");
+                $("#ItemType").val('').trigger('change');
+
+
+            });
+
+
+            LoadMPO();
+            $('#MPGroup').select2();
+            //Open PopUp by pressing F9 key
+            function LoadMPO() {
+               
+
+                $.ajax({
+                    url: '/Default/GetUserWiseMPOList',
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (data) {
+                        $.each(data, function (i, item) {
+                            //if (i == 0) {
+                            //    $('#MPGroup').append('<option value="" selected="selected"></option>');
+                            //}
+                            $('#MPGroup').append($('<option>', { value: item.MPGroup, html: item.MPOName }, '<option/>'));
+                        });
+                    },
+
+                    error: function () {
+                        alert("Failed to load...");
+                    }
+                });
+            }
+
+
+           
+
+
+       
+            $('#IsActive').click(function () {
+                if ($(this).is(':checked')) {
+                    $(this).siblings('label').html('Unhide');
+                    $('#divValueParameter').hide();
+                }
+                else {
+                    $(this).siblings('label').html('Hide');
+                    $('#divValueParameter').show();
+                }
+            });
+            
+
+            $('#btnView').click(function () {
+
+                $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+                $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+                $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+                var model = {};
+
+               
+                model.ProductCode = $("#ProductCode").val();
+          
+
+                model.MPOCode = $("#MPOCode").val();
+                model.MPGroup = $("#MPGroup").val();
+                model.ItemType = $("#ItemType").val();
+
+                var Input = InputValidation('MPGroup') + InputValidation('ItemType');
+                if (Input == 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/ReportItemBalance/GetGridData",
+                        data: JSON.stringify({ model: model }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.length > 0) {
+                                $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                            }
+                            else {
+                                AcknowledgeMsg();
+                                toastr.info($("#MessageText").html());
+
+                            }
+                        },
+
+                    });
+                }
+
+                else {
+                    ValidationMsg();
+                    toastr.warning($("#MessageText").html());
+                }
+
+
+            });
+
+           
+
+            //************************************ MPO Sample Product Mapping KENDO GRID *****************************************//
+
+            //Initializing Main page details Kendo Grid Colums
+            var MainGrid = $('#MainGrid').kendoGrid({
+                dataSource: new kendo.data.DataSource({
+                    batch: true,
+                    schema: {
+                        model: {
+                            id: "ProductCode",
+                            fields: {
+                                ProductCode: { type: "string" },
+                                ProductName: { type: "string" },
+                                RestQty: { type: "string" },
+                                CentralQty: { type: "string" },
+                                TotalQty: { type: "string" },
+                                VariableQty: { type: "string" },
+                                ExecuteQty: { type: "string" },
+                                BalanceQty: { type: "string" },
+                          
+                            }
+                        }
+                    },
+                    // pageSize: 10,
+                }),
+                pageable: {
+                    pageSizes: true, buttonCount: 5
+                },
+                dataBound: function (e) {
+                    AutoFitColumn(this.element[0].id);
+                },
+                excel: {
+                    fileName: "Result.xlsx",
+                    allPages: true,
+                    filterable: true
+                },
+                pdf: {
+                    fileName: "Result.pdf",
+                    paperSize: "A4",
+                    allPages: true,
+                    avoidLinks: true,
+                    margin: { top: "3cm", right: "1cm", bottom: "1cm", left: "2.5cm" },
+                    landscape: false,
+                    repeatHeaders: true,
+                    template: $("#page-template").html(),
+                    scale: 0.6
+                },
+                scrollable: true,
+                sortable: true,
+                filterable: false,
+                editable: false,   
+                selectable: "row",
+              
+                //selectable: "multiple",
+                toolbar: ["excel", "pdf", { template: "<input type='text' id='txtInput'  style='float:right' placeholder='Search...' class='k-textbox'>" }, ],
+                navigatable: true,
+                columnMenu: false,
+                //reorderable: true,
+                resizable: false,
+                resize: function (e) {
+                    this.table.height(this.element.height() + this.table.height() - 1);
+                },
+          
+                columns: [
+                     { field: "ProductCode", title: "Product Code" },
+                     { field: "ProductName", title: "Product Name" },
+                     //{ field: "ItemType", title: "Item Type" },
+                     { field: "RestQty", title: "CarryIn<br/>Qty" },
+                     { field: "CentralQty", title: "Receive<br/>Qty" },
+                     { field: "TotalQty", title: "Total<br/>Qty" },
+                     { field: "VariableQty", title: "Add/<br/>Defi" },
+                     { field: "ExecuteQty", title: "Execute<br/>Qty"},
+                     { field: "BalanceQty", title: "Balance<br/>Qty" }
+
+
+                ]
+            }).data('kendoGrid');
+
+
+
+
+
+            $("#txtInput").keyup(function () {
+                var val = $(this).val();
+                $("#MainGrid").data("kendoGrid").dataSource.filter({
+                    logic: "or",
+                    filters: [
+                         { field: "ProductCode", operator: "contains", value: val },
+                         { field: "ProductName", operator: "contains", value: val },
+                        
+                      
+
+                    ]
+                });
+            });
+            $('#ProductCode').select2();
+            $('#ItemType').change(function () {
+                GetProduct();
+            });
+            $('#MPGroup').change(function () {
+                GetProduct();
+            });
+          function  GetProduct()
+            {
+              var model = {};
+              model.ItemType = $("#ItemType").val();
+              model.MPGroup = $("#MPGroup").val();
+              $.ajax({
+                  url: '/Default/GetProductItem',
+                  type: 'POST',
+                  dataType: 'JSON',
+                  data: JSON.stringify({ model: model }),
+                  contentType: "application/json; charset=utf-8",
+                  success: function (data) {
+                      $('#ProductCode').empty();
+                      $.each(data, function (i, item) {
+                          $('#ProductCode').append($('<option>', { value: item.ProductCode, html: item.ProductName }, '<option/>'));
+                      });
+                  },
+                  error: function () {
+                      alert("Failed to load...");
+                  }
+              });
+            }
+       
+       
+
+   
+           
+
+
+
+
+        });
+
+
+
+
+
+
+
+
+    </script>
+

@@ -1,0 +1,313 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Promostional Item</title>
+    <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+    <link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+    <script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+    <script src="~/Scripts/HtmlPDF/dist/jspdf.min.js"></script>
+    <style>
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
+
+    <style>
+        /* BASICS: */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box; /* in case block elements are used inside table cells */
+        }
+
+        html {
+            font-size: 62.5%; /* standardizes older IEs */
+        }
+
+        body {
+            font: normal 1.3em Verdana; /* = 13px */
+            padding: 1px;
+        }
+
+        table {
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        td {
+            border: 1px solid black;
+            /*padding: 4px;*/
+        }
+        /* SCROLL TABLE ESSENTIALS (+ SOME ADDITIONAL CSS): */
+        div#scrollTableContainer {
+            width: 100%;
+            table-layout: fixed;
+            /*border: 1px solid black;*/
+        }
+
+        .touchScreen div#scrollTableContainer {
+            width: 100%; /* touch devices do not form scrollbars (= 17 px wide) */
+        }
+
+        #tHeadContainer {
+            background: #666633;
+            color: white;
+            font-size: small;
+            font-family: Tahoma;
+            text-align: center;
+            width: 98.5%;
+            /*table-layout: fixed;*/
+        }
+
+
+        #tBodyContainer {
+            min-height: 300px;
+            max-height: 450px;
+            /*width: 99.6%;*/
+            width: 99.6%;
+            overflow-y: scroll;
+            font-size: 6pt;
+            font-family: Tahoma;
+            text-align: center;
+            overflow-x: hidden;
+            table-layout: fixed;
+        }
+
+
+        .touchScreen #tBodyContainer {
+            -webkit-overflow-scrolling: touch; /* smooths scrolling on touch screens */
+        }
+        /* FINER LAYOUT MATTERS: */
+        tr:first-child td {
+            border-top: 0;
+        }
+
+
+
+        #tBody tr.lastRow td {
+            border-bottom: 0;
+        }
+
+
+        /* AND SOME CSS TO INFORM TOUCH SCREEN USERS: */
+        p#touchDeviceText {
+            display: none;
+        }
+
+        .touchScreen p#touchDeviceText {
+            display: block;
+        }
+    </style>
+
+
+    <script>
+        if ('ontouchstart' in window || (window.DocumentTouch && document instanceof DocumentTouch)) {
+            document.documentElement.className += ' touchScreen ';
+        }
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+        var Year = "";
+        var MonthNumber = "";
+        var ItemType = "";
+        var ItemFor = "";
+        var MPGroup = "";
+        var ReportHeader = "";
+
+
+        $(document).ready(function () {
+
+
+
+            $.ajaxSetup({
+                beforeSend: function () {
+                    $("#divLoading").show();
+                },
+                complete: function () {
+                    $("#divLoading").hide();
+                }
+            });
+
+            Year = sessionStorage.getItem('keyYear');
+            MonthNumber = sessionStorage.getItem('keyMonthNumber');
+            ItemType = sessionStorage.getItem('keyItemType');
+            ItemFor = sessionStorage.getItem('keyItemFor');
+
+            MPGroup = sessionStorage.getItem('keyMPGroup');
+            ReportHeader = sessionStorage.getItem('keyReportHeader');
+            $('#ReportHeader').html(ReportHeader);
+            MainGridView();
+
+            function MainGridView() {
+                var model = {};
+
+                model.Year = Year;
+                model.MonthNumber = MonthNumber;
+                model.ItemType = ItemType;
+                model.FileType = ItemType;
+                model.ItemFor = ItemFor;
+
+                model.MPGroup = MPGroup;
+                $('#tBody').html('');
+
+                $.ajax({
+                    type: "POST",
+                    url: "/PromotionalItemView/MainGridDataNew",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        $.each(data, function (i, val) {
+                            var trow = $('<tr></tr>');
+                            trow.append('<td >' + val.ProductName + '</td>');
+                            trow.append('<td>' + val.RestQty + '</td>');
+                            trow.append('<td>' + val.CentralQty + '</td>');
+                            trow.append('<td>' + val.VariableQty + '</td>');
+                            trow.append('<td>' + val.TotalQty + '</td>');
+
+
+                            trow.append('<td>' + val.BalanceQty + '</td>');
+                            trow.append('<td>' + val.GainQty + '</td>');
+                            trow.append('<td>' + val.LossQty + '</td>');
+                            trow.append('<td>' + val.Remark + '</td>');
+                            $('#tBody').append(trow);
+                        });
+
+                    },
+
+                });
+
+            }
+
+            function groupTable($rows, startIndex, total) {
+                if (total === 0) {
+                    return;
+                }
+                var i, currentIndex = startIndex, count = 1, lst = [];
+                var tds = $rows.find('td:eq(' + currentIndex + ')');
+                var ctrl = $(tds[0]);
+                lst.push($rows[0]);
+                for (i = 1; i <= tds.length; i++) {
+                    if (ctrl.text() == $(tds[i]).text()) {
+                        count++;
+                        $(tds[i]).addClass('deleted');
+                        lst.push($rows[i]);
+                    }
+                    else {
+                        if (count > 1) {
+                            ctrl.attr('rowspan', count);
+                            groupTable($(lst), startIndex + 1, total - 1)
+                        }
+                        count = 1;
+                        lst = [];
+                        ctrl = $(tds[i]);
+                        lst.push($rows[i]);
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+            function fnClose() {
+                this.close();
+            }
+
+            $('#btnBack').click(function () {
+                fnClose();
+
+            });
+
+
+
+
+
+
+        });
+    </script>
+
+</head>
+<body>
+    <br />
+    <div class="row">
+        <div class="col-xs-10"><span style="background-color: #666633;color: white;" id="ReportHeader"></span></div>
+        <div class="col-xs-2">
+            <button id="btnBack" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-backward"></i><span style="background-color: #3C8DBC; color: white; font-weight: bold">Back</span></button>
+        </div>
+    </div>
+    <br />
+
+    <div id="scrollTableContainer" class="form">
+        <div id="tHeadContainer">
+            <table id="tHead">
+                <tr>
+
+                    <td>Product Name</td>
+                    <td>Carry Qty</td>
+                    <td>Receive Qty</td>
+                    <td>Add/Defi Qty</td>
+                    <td>Total Qty</td>
+
+                    <td>Balance Qty</td>
+                    <td>Add(+) Qty</td>
+                    <td>Defi(-) Qty</td>
+                    <td>Remark</td>
+                </tr>
+            </table>
+        </div><!-- tHeadContainer -->
+        <div id="tBodyContainer">
+            <table id="tBody"></table>
+
+        </div><!-- tBodyContainer -->
+    </div><!-- scrollTableContainer -->
+
+
+
+
+
+    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+        <p style="position: absolute; top: 50%; left: 50%; color: White;">
+            <img src="~/Content/Images/loading.gif" />
+        </p>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+

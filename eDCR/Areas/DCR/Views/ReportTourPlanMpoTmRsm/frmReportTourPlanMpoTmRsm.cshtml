@@ -1,0 +1,338 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+<style>
+    .red {
+        background-color: red;
+    }
+</style>
+
+
+
+<div class="box-header with-border">
+    <form class="form" action="/ReportTourPlanMpoTmRsm/Export" id="R1Form" method="post" name="H1Form" target="_blank">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+            <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                <div style="text-align:right;">
+                    <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                    <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                    <button type="submit" id="btnExcel" name="ExportType" value="Excel" class="btn btn-primary btn-sm" onclick="return InputValidationPdfExcel();" formaction="/ReportTourPlanMpoTmRsm/Export" data-toggle="tooltip" data-placement="right" title="[Mandatory: Month, Year, Region,TM,MPO]"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                    <button type="submit" id="btnPDF" name="ExportType" value="PDF" class="btn btn-primary btn-sm" onclick="return InputValidationPdfExcel();" formaction="/ReportTourPlanMpoTmRsm/Export" data-toggle="tooltip" data-placement="right" title="[Mandatory: Month, Year, Region,TM,MPO]"><i class="glyphicon glyphicon-book"></i> Pdf </button>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="row" id="divValueParameter">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Month - Year  :</div>
+                    <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                        <div class="input-group">
+                            <select id="MonthNumber" name="MonthNumber" class="RequiredField form-control"></select>
+                            <span class="input-group-btn" style="width:2px;"></span>
+                            <input type="text" id="Year" name="Year" class="datepicker RequiredField form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Designation  :</div>
+                    <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                        <select id="Designation" name="Designation" class="RequiredField form-control">
+                            <option value=""></option>
+                            <option value="DSM">DSM</option>
+                            <option value="RSM">RSM</option>
+                            <option value="TM">TM</option>
+                            <option value="MPO">MPO</option>
+
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Employee Name :</div>
+                    <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                        <select id="LocCode" name="LocCode" class="RequiredField form-control"></select>
+                        <input type="hidden" id="LocName" name="LocName" class="RequiredField form-control">
+                    </div>
+
+                    <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div id="MainGrid" class="MainGrid"></div>
+    </div>
+</div>
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+        EventPermission();
+    
+
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+        LoadMonth();
+
+      // GetEmpForSup();
+
+        function LoadMonth() {
+            $.ajax({
+                url: '/Default/GetGenMonth',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load ... !!");
+                }
+            });
+        }
+
+
+        $('#Designation').on('change', function () {
+            GetEmpForSup($(this).val());
+        }).trigger('change');
+
+        $('#LocCode').select2();
+        function GetEmpForSup(Designation) {
+            $.ajax({
+                type: "POST",
+                url: '/Default/GetEmpForOwnSupfrmDesignation',
+                data: JSON.stringify({ Designation: Designation }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#LocCode').empty();
+                    $.each(data, function (i, item) {
+
+                        if (i == 0) {
+                            if (data.length > 1) {
+                                $('#LocCode').append('<option value="" selected="selected"></option>');
+                            }
+                        }
+                        $('#LocCode').append($('<option>', { value: item.LocCode, html: item.EmployeeName }, '<option/>'));
+                        $('#LocName').val(item.EmployeeName);
+
+                    });
+
+                },
+                error: function () {
+                    alert("Failed to load ... !!");
+                }
+            });
+        }
+
+
+        $('#LocCode').on('change', function () {
+            $('#LocName').val($("#LocCode option:selected").text());
+        }).trigger('change');
+
+
+
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+        $('#btnView').click(function () {
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+            $("#ViewReview").val("View");
+            var model = {};
+
+            var Input = InputValidation('MonthNumber') + InputValidation('Year') + InputValidation('LocCode');
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+            model.LocCode = $("#LocCode").val();
+            model.Designation = $("#Designation").val();
+
+            if (Input == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportTourPlanMpoTmRsm/GetViewData",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+                            $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                          
+                        }
+                        else {
+                            AcknowledgeMsg();
+                            toastr.info($("#MessageText").html());
+
+                        }
+                        //$("#divLoading").hide();
+                    },
+                });
+            }
+            else {
+                ValidationMsg();
+                toastr.info($("#MessageText").html());
+            }
+        });
+
+
+        $("#MainGrid").kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: true,
+                schema: {
+                    model: {
+                        id: "DayNumber",
+                        fields: {
+                            DayNumber: { type: "string" },
+                            MInstName: { type: "string" },
+                            MMeetingPlace: { type: "string" },
+                            MSetTime: { type: "string" },
+                            MAccompany: { type: "string" },
+                            MAllowence: { type: "string" },
+                            EReview: { type: "string" },
+
+                            EInstName: { type: "string" },
+                            EMeetingPlace: { type: "string" },
+                            ESetTime: { type: "string" },
+                            EAccompany: { type: "string" },
+                            EAllowence: { type: "string" },
+                            EReview: { type: "string" },
+                        }
+                    }
+                },
+                //  pageSize: 10,
+            }),
+            pageable: {
+                pageSizes: true, buttonCount: 5
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+                onDataBoundColor(e)
+            },
+            toolbar: [ { template: "<input type='text' id='txtReport'  style='float:right' placeholder='Search...' class='k-textbox'>" }, ],
+
+
+            scrollable: true,
+            sortable: true,
+            filterable: false,
+            editable: false,
+            navigatable: false,
+            columnMenu: false,
+            reorderable: false,
+            resizable: true,
+            resize: function (e) {
+                this.table.height(this.element.height() + this.table.height() - 1);
+            },
+            columns: [
+                { field: "DayNumber", title: "Day", width: 150, locked: true },
+                {
+                    title: "MORNING", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" },
+                    columns: [
+
+                            { field: "MInstName", title: "Location", width: 150 },
+                            { field: "MMeetingPlace", title: "Address", width: 150 },
+                            { field: "MSetTime", title: "R.Time", width: 70 },
+                            { field: "MAccompany", title: "Accompany", width: 100 },
+                        { field: "MAllowence", title: "NDA", width: 70 },
+                        { field: "EReview", title: "Review", width: 50, hidden: true },
+                    ]
+                },
+              {
+                  title: "EVENING", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" },
+                  columns: [
+                       { field: "EInstName", title: "Location", width: 150 },
+                       { field: "EMeetingPlace", title: "Address", width: 150 },
+                       { field: "ESetTime", title: "R.Time", width: 70 },
+                       { field: "EAccompany", title: "Accompany", width: 100 },
+                       { field: "EAllowence", title: "NDA", width: 70 },
+                      { field: "EReview", title: "Review", width: 50, hidden: true },
+
+                  ]
+              },
+
+            ],
+        });
+
+
+        function onDataBoundColor(e) {
+            var grid = $("#MainGrid").data("kendoGrid");
+            var gridData = grid.dataSource.view();
+            for (var i = 0; i < gridData.length; i++) {
+                var currentUid = gridData[i].uid;
+                if (gridData[i].MReview == "Approved") {
+                    var currentRow = grid.table.find("tr[data-uid='" + currentUid + "']");
+                    currentRow.css('background-color', 'DARKCYAN');
+
+                    //var currentRow = grid.table.find("tr[data-uid='" + currentUid + "'] td:nth-child(0)");
+                    //currentRow.css('background-color', 'green');
+
+                    // $('tr[data-uid="' + row.uid + '"] td:nth-child(5)').css("background-color", "red");
+                }
+            }
+        }
+
+    });
+
+</script>
+
+<script language="javascript" type="text/javascript">
+
+    function InputValidationPdfExcel() {
+        var Input = InputValidation('MonthNumber') + InputValidation('Year') + InputValidation('LocCode');
+            if (Input == 0) {
+            return true;
+        }
+        else
+            return false;
+    }
+
+</script>
+

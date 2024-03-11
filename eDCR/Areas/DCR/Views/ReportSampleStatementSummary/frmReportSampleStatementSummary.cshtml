@@ -1,0 +1,450 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+<style>
+    .k-grid-header .k-header {
+        height: 15px;
+        padding: 0;
+    }
+
+    .k-grid-header-wrap th {
+        font-size: 14px;
+        /*font-size: small !important;*/
+    }
+
+    .k-grid tbody tr {
+        line-height: 10px;
+        font-size: 13px;
+    }
+
+    .k-grid tbody td {
+        padding: 3px;
+    }
+</style>
+<script type="text/javascript">
+    //// Start  $(document).ready(function ()
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+
+        EventPermission();
+
+
+        $('#btnReset').click(function () {
+
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+
+        
+
+        });
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+
+        $('#FromToDate').daterangepicker(
+         {
+             locale: {
+                 format: 'DD-MM-YYYY'
+             },
+             startDate: new Date()
+         });
+
+        LoadRegion();
+
+
+        function LoadRegion() {
+            $.ajax({
+                url: '/Default/GetRegion',
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
+                        if (i == 0) {
+                            LoadTM(item.RegionCode);
+                        }
+                        $('#RegionName').val(item.RegionName);
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+        $('#RegionCode').on('change', function () {
+            LoadTM($(this).val());
+            $('#RegionName').val($("#RegionCode option:selected").text());
+        }).trigger('change');;
+
+        function LoadTM(RegionCode) {
+            $.ajax({
+                url: '/Default/GetTerritoryFromRegion',
+                data: { RegionCode: RegionCode },
+                type: 'Post',
+                dataType: 'json',
+                success: function (data) {
+                    $('#TerritoryManagerID').empty();
+                    $.each(data, function (i, item) {
+
+                        if (i == 0) {
+                            if (data.length > 1) {
+                                $('#TerritoryManagerID').append('<option value="" selected="selected"></option>');
+                            }
+                            LoadMPO(item.TerritoryManagerID);
+                            $('#TerritoryManagerName').val(item.TerritoryManagerName);
+                        }
+                        $('#TerritoryManagerID').append($('<option>', { value: item.TerritoryManagerID, html: item.TerritoryManagerName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+
+
+
+        $('#TerritoryManagerID').on('change', function () {
+            LoadMPO($(this).val());
+            $('#TerritoryManagerName').val($("#TerritoryManagerID option:selected").text());
+        }).trigger('change');;
+
+
+
+
+        function LoadMPO(TerritoryManagerID) {
+
+            $.ajax({
+                url: '/Default/GetMPOPopupList',
+                data: { TerritoryManagerID: TerritoryManagerID },
+                type: 'Post',
+                dataType: 'json',
+                success: function (data) {
+                    $('#MPGroup').empty();
+                    $.each(data, function (i, item) {
+                        if (i == 0) {
+                            $('#MPGroup').append('<option value="" selected="selected"></option>');
+                            $('#MPOName').val(item.MPOName);
+
+                        }
+
+                        $('#MPGroup').append($('<option>', { value: item.MPGroup, html: item.MPOName }, '<option/>'));
+
+                    });
+                },
+
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+
+        }
+        LoadTM($("#RegionCode").val());
+        LoadMPO($("#TerritoryManagerID").val());
+
+        $('#MPGroup').on('change', function () {
+            $('#MPOName').val($("#MPGroup option:selected").text());
+        }).trigger('change');;
+
+        $("#TerritoryManagerID,#MPGroup").on('change', function (e) {
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+        });
+
+
+        var MainGrid = $("#MainGrid").kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: true,
+                schema: {
+                    model: {
+                        id: "ProductCode",
+                        fields: {
+                            ProductCode: { type: "string" },
+                            ProductName: { type: "string" },
+                            MarketName: { type: "string" },
+                            EmployeeName: { type: "string" },
+                            ReceiveQty: { type: "string" },
+                            ExecuteQty: { type: "string" },
+                            BalanceQty: { type: "string" },
+                        }
+                    }
+                },
+                //pageSize: 10,
+            }),
+            pageable: {
+                //refresh: true,
+                pageSizes: true, buttonCount: 5
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+            },
+            scrollable: true,
+            sortable: true,
+            filterable: false,
+            editable: false,
+            selectable: "row",
+            toolbar: [{ template: "<input type='text' id='txtInput'  style='float:right' placeholder='P Code or Name...' class='k-textbox'>" }, ],
+            columnMenu: false,
+            reorderable: false,
+            resizable: false,
+            resize: function (e) {
+                this.table.height(this.element.height() + this.table.height() - 1);
+            },
+
+
+            columns: [
+                 { field: "MarketName", title: "Market" },
+                 { field: "EmployeeName", title: "Employee Name" },
+                 { field: "ProductCode", title: "Product Code", },
+                 { field: "ProductName", title: "Product Name"},                         
+                 { field: "ReceiveQty", title: "Receive <br/> Qty" },
+                 { field: "ExecuteQty", title: "Execute<br/> Qty" },
+                 { field: "BalanceQty", title: "Balance<br/> Qty" },
+                 ]
+ 
+        });
+        //Produc Name twise Filter table row
+        $("#txtInput").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "ProductCode", operator: "contains", value: val },
+                    { field: "ProductName", operator: "contains", value: val },
+
+                ]
+            });
+        });
+
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+
+
+        $('#btnView').click(function () {
+    
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+            var FromDate = $("#FromDate").val();
+            var ToDate = $("#ToDate").val();
+            var fromDateParts = FromDate.split("-");
+            var fromDateObject = new Date(fromDateParts[2], fromDateParts[1] - 1, fromDateParts[0]);
+
+            var toDateParts = ToDate.split("-");
+            var toDateObject = new Date(toDateParts[2], toDateParts[1] - 1, toDateParts[0]);
+
+            if (fromDateObject > toDateObject) {
+                $('#FromDate').css("border", "1px solid red");
+                $('#ToDate').css("border", "1px solid red");
+                $('#ToDate').val("");
+                toastr.warning("To Date cannot be greater than From Date");
+                return false;
+            }
+
+            var model = {};
+
+            model.FromDate = FromDate;
+            model.ToDate = ToDate;
+            model.TerritoryManagerID = $("#TerritoryManagerID").val();
+            model.RegionCode = $("#RegionCode").val();
+            model.MPGroup = $("#MPGroup").val();
+            model.ItemType = $("#ItemType").val();
+
+
+            var Input = InputValidation('FromDate') + InputValidation('ToDate');
+
+            if (Input == 0) {
+                MainGridView(model);
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+        });
+
+        function MainGridView(model) {
+            $.ajax({
+                type: "POST",
+                url: "/ReportSampleStatementSummary/GetMainGridData",
+                data: JSON.stringify({ model: model }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                    }
+                    else {
+                        AcknowledgeMsg();
+                        toastr.info($("#MessageText").html());
+                    }
+                },
+
+            });
+
+        }
+       
+
+
+
+
+
+    });
+</script>
+
+
+<div class="box-header with-border">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <form class="form" action="/ReportSampleStatementSummary/Export" id="R1Form" method="post" name="H1Form" target="_blank">
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+                    <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                        <div style="text-align:right;">
+                            <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                            <button id="btnExcel" class="btn btn-primary btn-sm" name="ExportType" value="Excel" type="submit"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                            <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PDF" type="submit"><i class="glyphicon glyphicon-book"></i> PDF </button>
+                            <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="box-body">
+                    <div class="row" id="divValueParameter">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Date Between:</div>
+                            <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+                                <div class="input-group">
+                                    <input type="text" id="FromDate" name="FromDate" class="firstDay RequiredField form-control ">
+
+                                    <span class="input-group-btn" style="width:0px;"></span>
+                                    <input type="text" id="ToDate" name="ToDate" class="date RequiredField form-control ">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span> </span>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2">  Item Type:  </div>
+                            <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+                                <div class="input-group">
+                                    <select id="ItemType" name="ItemType" class="RequiredField form-control">
+                                        <option value="All">All</option>
+                                        <option value="SlSmRI">Sample Item All</option>
+                                        <option value="SlR">Selected Item Regular</option>
+                                        <option value="SmR">Sample Item Regular</option>
+                                        <option value="SmI">Sample Item Intern</option>
+                                        <option value="GtRI">Gift Item All</option>
+                                        <option value="GtR">Gift Item Regular</option>
+                                        <option value="GtI">Gift Item Intern</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Region Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="RegionCode" name="RegionCode" class="RequiredField form-control"></select>
+                                <input type="hidden" id="RegionName" name="RegionName" class="RequiredField form-control">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">TM Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="TerritoryManagerID" name="TerritoryManagerID" class="RequiredField form-control"></select>
+                                <input type="hidden" id="TerritoryManagerName" name="TerritoryManagerName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">MPO Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="MPGroup" name="MPGroup" class="RequiredField form-control"></select>
+                                <input type="hidden" id="MPOName" name="MPOName" class="RequiredField form-control">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div id="MainGrid" class="MainGrid"></div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div id="TerritoryPopupWindow" class="PopupWindowLayout" style="display: none;">
+        <div id="TerritoryPopupWindowGrid" class="PopUpGrid"></div>
+    </div>
+</div>
+<div class="row">
+    <div id="MarketPopupWindow" class="PopupWindowLayout" style="display: none;">
+        <div id="MarketPopupWindowGrid" class="PopUpGrid"></div>
+    </div>
+</div>
+<div class="row">
+    <div id="MPOPopupWindow" class="PopupWindowLayout" style="display: none;">
+        <div id="MPOPopupWindowGrid" class="PopUpGrid"></div>
+    </div>
+</div>
+<div class="row">
+    <div id="DetailPopupWindow" class="PopupWindowLayout" style="display: none;">
+        <div id="Parameter"></div>
+        <div id="DetailPopupWindowGrid" class="PopUpGrid"></div>
+    </div>
+</div>
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+
+
+
+
+
+

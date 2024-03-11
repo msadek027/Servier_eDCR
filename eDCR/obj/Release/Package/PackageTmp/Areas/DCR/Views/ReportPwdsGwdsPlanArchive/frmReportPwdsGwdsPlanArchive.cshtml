@@ -1,0 +1,607 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+<style>
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%; /* Could be more or less, depending on screen size */
+        margin: 7% 5% auto; /* 15% from the top and centered */
+    }
+
+    /* The Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+</style>
+
+<style>
+    /* BASICS: */
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box; /* in case block elements are used inside table cells */
+    }
+
+    html {
+        font-size: 62.5%; /* standardizes older IEs */
+    }
+
+    body {
+        font: normal 1.3em Verdana; /* = 13px */
+        padding: 1px;
+    }
+
+    table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    td {
+        border: 1px solid black;
+        /*padding: 4px;*/
+    }
+    /* SCROLL TABLE ESSENTIALS (+ SOME ADDITIONAL CSS): */
+    div#scrollTableContainer {
+        width: 100%;
+        table-layout: fixed;
+        /*margin: 5px;*/ /* just for presentation purposes */
+        /*border: 1px solid black;*/
+    }
+
+    .touchScreen div#scrollTableContainer {
+        width: 100%; /* touch devices do not form scrollbars (= 17 px wide) */
+    }
+
+    #tHeadContainer {
+        background: #666633;
+        color: white;
+        font-size: small;
+        text-align: center;
+        width: 99%;
+        /*table-layout: fixed;*/
+    }
+
+
+    #tBodyContainer {
+        min-height: 300px;
+        max-height: 450px;
+        width: 100%;
+        overflow-y: scroll;
+        font-size: small;
+        text-align: center;
+        overflow-x: hidden;
+        table-layout: fixed;
+    }
+
+
+    .touchScreen #tBodyContainer {
+        -webkit-overflow-scrolling: touch; /* smooths scrolling on touch screens */
+    }
+    /* FINER LAYOUT MATTERS: */
+    tr:first-child td {
+        border-top: 0;
+    }
+
+
+
+    #tBody tr.lastRow td {
+        border-bottom: 0;
+    }
+
+
+    /* AND SOME CSS TO INFORM TOUCH SCREEN USERS: */
+    p#touchDeviceText {
+        display: none;
+    }
+
+    .touchScreen p#touchDeviceText {
+        display: block;
+    }
+
+    .Name {
+        width: 16%;
+    }
+
+    .QtyValue {
+        width: 6%;
+    }
+
+    .DoctorName {
+        width: 22%;
+    }
+</style>
+
+
+<script>
+    if ('ontouchstart' in window || (window.DocumentTouch && document instanceof DocumentTouch)) {
+        document.documentElement.className += ' touchScreen ';
+    }
+</script>
+
+
+
+
+<script type="text/javascript">
+    //// Start  $(document).ready(function ()
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+
+        EventPermission();
+        LoadMonth();
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+
+
+        function LoadMonth() {
+            $.ajax({
+                url: '/Default/GetGenMonth',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load !!");
+                }
+            });
+        }
+
+        $('#MonthNumber').on('change', function () {
+            LoadRegion();
+        }).trigger('change');
+
+        $('#Year').on('change', function () {
+            LoadRegion();
+        }).trigger('change');
+
+        LoadRegion();
+
+
+        function LoadRegion() {
+            var model = {};
+            model.Year = $('#Year').val();
+            model.MonthNumber = $('#MonthNumber').val();
+
+            $.ajax({
+                type: "POST",
+                url: '/Default/GetRegionForArchive',
+                data: JSON.stringify({ model: model }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#RegionCode').empty();
+                    $.each(data, function (i, item) {
+
+                        if (i == 0) {
+                            if (data.length > 1) {
+                                $('#RegionCode').append('<option value="" selected="selected"></option>');
+                            }
+                            LoadTM();
+                            $('#RegionName').val(item.RegionName);
+                        }
+                        $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+        $('#RegionCode').on('change', function () {
+            LoadTM();
+            $('#RegionName').val($("#RegionCode option:selected").text());
+        }).trigger('change');;
+
+        function LoadTM() {
+            var model = {};
+            model.Year = $('#Year').val();
+            model.MonthNumber = $('#MonthNumber').val();
+            model.RegionCode = $('#RegionCode').val();
+
+            $.ajax({
+                type: "POST",
+                url: '/Default/GetTerritoryForArchive',
+                data: JSON.stringify({ model: model }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#TerritoryManagerID').empty();
+                    $.each(data, function (i, item) {
+
+                        if (i === 0) {
+                            if (data.length > 1) {
+                                $('#TerritoryManagerID').append('<option value="" selected="selected"></option>');
+                            }
+                            LoadMPO();
+                            $('#TerritoryManagerName').val(item.TerritoryManagerName);
+                        }
+                        $('#TerritoryManagerID').append($('<option>', { value: item.TerritoryManagerID, html: item.TerritoryManagerName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+
+
+
+        $('#TerritoryManagerID').on('change', function () {
+            LoadMPO();
+            $('#TerritoryManagerName').val($("#TerritoryManagerID option:selected").text());
+        }).trigger('change');;
+
+
+
+
+        function LoadMPO() {
+            var model = {};
+            model.Year = $('#Year').val();
+            model.MonthNumber = $('#MonthNumber').val();
+            model.RegionCode = $('#RegionCode').val();
+            model.TerritoryManagerID = $('#TerritoryManagerID').val();
+
+            $.ajax({
+                type: "POST",
+                url: '/Default/GetMpoForArchive',
+                data: JSON.stringify({ model: model }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#MPGroup').empty();
+                    $.each(data, function (i, item) {
+                        if (i == 0) {
+                            $('#MPGroup').append('<option value="" selected="selected"></option>');
+                            $('#MPOName').val(item.MPOName);
+                        }
+                        $('#MPGroup').append($('<option>', { value: item.MPGroup, html: item.MPOName }, '<option/>'));
+
+                    });
+                },
+
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+
+        }
+        LoadTM();
+        LoadMPO();
+
+        $('#MPGroup').on('change', function () {
+            $('#MPOName').val($("#MPGroup option:selected").text());
+        }).trigger('change');
+        $("#TerritoryManagerID,#MPGroup").on('change', function (e) {
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+        });
+        $('#btnReset').click(function () {
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+            ResetData();
+            $("#Year").val(yyyy);
+
+
+        });
+
+
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+
+
+        $('#btnView').click(function () {
+
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+
+
+
+            $('#tBody').html('');
+            var model = {};
+
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+            model.RegionCode = $("#RegionCode").val();
+            model.TerritoryManagerID = $("#TerritoryManagerID").val();
+            model.MPGroup = $("#MPGroup").val();
+            model.ItemType = $("#ItemType").val();
+            model.ProductCode = $("#ProductCode").val();
+            var Input = InputValidation('Year') + InputValidation('MonthNumber') + InputValidation('ItemType') + InputValidation('RegionCode');
+            if (Input == 0) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportPwdsGwdsPlanArchive/GetGridData",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+
+                            MainGridView(data);
+
+
+                        }
+                        else {
+                            AcknowledgeMsg();
+                            toastr.info($("#MessageText").html());
+
+                        }
+                    },
+
+                });
+            }
+
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+        });
+
+
+
+
+
+        //**************end**********************************
+
+        function MainGridView(data) {
+            var model = {};
+
+
+            $.each(data, function (i, val) {
+                var trow = $('<tr></tr>');
+
+                trow.append('<td class=Name>' + val.MarketName + '</td>');
+
+                trow.append('<td class=Name>' + val.MPOName + '</td>');
+
+
+                trow.append('<td class=Name>' + val.ProductName + '</td>');
+
+                trow.append('<td class=QtyValue>' + val.RestQty + '</td>');
+                trow.append('<td class=QtyValue>' + val.CentralQty + '</td>');
+                trow.append('<td class=QtyValue>' + val.VariableQty + '</td>');
+                trow.append('<td class=QtyValue>' + val.TotalQty + '</td>');
+                trow.append('<td class=QtyValue>' + val.BalanceQty + '</td>');
+                trow.append('<td class=QtyValue>' + val.DoctorID + '</td>');
+                trow.append('<td class=DoctorName>' + val.DoctorName + '</td>');
+
+
+
+                $('#tBody').append(trow);
+            });
+            groupTable($('#tBody tr:has(td)'), 0, 15);
+            $('#tBody .deleted').remove();
+        }
+        function groupTable($rows, startIndex, total) {
+            if (total === 0) {
+                return;
+            }
+            var i, currentIndex = startIndex, count = 1, lst = [];
+            var tds = $rows.find('td:eq(' + currentIndex + ')');
+            var ctrl = $(tds[0]);
+            lst.push($rows[0]);
+            for (i = 1; i <= tds.length; i++) {
+                if (ctrl.text() == $(tds[i]).text()) {
+                    count++;
+                    $(tds[i]).addClass('deleted');
+                    lst.push($rows[i]);
+                }
+                else {
+                    if (count > 1) {
+                        ctrl.attr('rowspan', count);
+                        groupTable($(lst), startIndex + 1, total - 1)
+                    }
+                    count = 1;
+                    lst = [];
+                    ctrl = $(tds[i]);
+                    lst.push($rows[i]);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+    });
+
+
+
+
+
+</script>
+
+
+<div class="box-header with-border">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <form class="form" action="/ReportPwdsGwdsPlanArchive/Export" id="R1Form" method="post" name="H1Form" target="_blank">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+                    <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                        <div style="text-align:right;">
+                            <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                            <button id="btnExcel" class="btn btn-primary btn-sm" name="ExportType" value="Excel" type="submit"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                            <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PDF" type="submit"><i class="glyphicon glyphicon-book"></i> PDF </button>
+                            <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-body">
+
+                    <div class="row" id="divValueParameter">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Month - Year:</div>
+                            <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                                <div class="input-group">
+                                    <select id="MonthNumber" name="MonthNumber" class="RequiredField form-control"></select>
+                                    <span class="input-group-btn" style="width:0px;"></span>
+                                    <input type="text" name="Year" id="Year" class="datepicker RequiredField form-control" />
+                                </div>
+                            </div>
+                            <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2">   </div>
+                            <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Region Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="RegionCode" name="RegionCode" class="RequiredField form-control"></select>
+                                <input type="hidden" id="RegionName" name="RegionName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">TM Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="TerritoryManagerID" name="TerritoryManagerID" class="RequiredField form-control"></select>
+                                <input type="hidden" id="TerritoryManagerName" name="TerritoryManagerName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">MPO Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="MPGroup" name="MPGroup" class="RequiredField form-control"></select>
+                                <input type="hidden" id="MPOName" name="MPOName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                                Item Type :
+                            </div>
+                            <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+
+                                <select id="ItemType" name="ItemType" class="RequiredField form-control ItemType">
+                                    <option value="SlR">Selected Item</option>
+                                    <option value="GtR">Gift Item</option>
+
+                                </select>
+
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3"></div>
+                            <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+<div class="row">
+
+
+    <div id="scrollTableContainer">
+        <div id="tHeadContainer">
+            <table id="tHead">
+                <tr>
+
+                    <td class="Name">Market<br />Name</td>
+                    <td class="Name">MPO<br />Name</td>
+                    <td class="Name">Product<br />Name</td>
+                    <td class="QtyValue">CarryIn <br />Qty</td>
+                    <td class="QtyValue">Receive<br />Qty</td>
+                    <td class="QtyValue">Add/<br />Defi</td>
+                    <td class="QtyValue">Total <br />Qty</td>
+                    <td class="QtyValue">Balance<br />Qty</td>
+                    <td class="QtyValue">Doctor<br />ID</td>
+                    <td class="DoctorName">Doctor<br />Name</td>
+
+
+
+                </tr>
+            </table>
+        </div>
+        <div id="tBodyContainer">
+            <table id="tBody"></table>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+
+
+
+
+

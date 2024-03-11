@@ -1,0 +1,422 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box-header with-border">
+    @*Form Title*@
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"> <div id="MessageText"></div></div>
+        <div class="col-xs-0 col-sm-0 col-md-8 col-lg-8">
+            <div style="text-align:right;">
+                <button id="btnTemplateDownload" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-refresh"></i> Template</button>
+                <button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-save-file"></i> Save</button>
+                <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="box-body">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">Month - Year:</div>
+        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
+            <div class="input-group">
+                <span class="input-group-addon">Month - Year:</span>
+                <span class="input-group-btn" style="width:2px;"></span>
+                <select id="MonthNumber" name="MonthNumber" class=" RequiredField form-control"></select>
+                <span class="input-group-btn" style="width:2px;"></span>
+                <input type="text" id="Year" class="datepicker RequiredField form-control" />
+            </div>
+        </div>
+      
+        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
+         
+        </div>
+
+
+    </div>
+  
+    <br />
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2"><label for="myfile">Select a file:</label></div>
+        <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+            <input type="file" id="myfile" name="myfile" class="files btn btn-primary btn-sm" accept=".xlsx"><br><br>
+        </div>
+        <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+        <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+        <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div id="MainGrid" class="MainGrid"></div>
+        </div>
+    </div>
+
+
+</div>
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<script src="~/Scripts/xlsx_0.7.12_xlsx.full.min.js"></script>
+<script type="text/javascript">
+        //// Start  $(document).ready(function ()
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                beforeSend: function () {
+                    $("#divLoading").show();
+                },
+                complete: function () {
+                    $("#divLoading").hide();
+                }
+
+            });
+            //upload change event
+            $("#myfile").change(function (evt) {
+
+                var file = evt.target.files[0] //retrieve the uploaded file
+                fnConvertExcelToJSON(file)
+            })
+            function fnConvertExcelToJSON(file) { //method to convert excel to json
+                var reader = new FileReader()
+                reader.onload = function (event) {
+                    var data = event.target.result
+                    var workbook = XLSX.read(data, {
+                        type: 'binary'
+                    });
+                    var json_object
+                    workbook.SheetNames.forEach(function (sheetName) {
+                        var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName])
+                        json_object = JSON.stringify(XL_row_object)
+                        var jsonOutput = JSON.stringify(JSON.parse(json_object), undefined, 3)
+                        // $('#jsonText').html(jsonOutput);
+                        //alert(jsonOutput.length);
+
+
+                        var obj = JSON.parse(jsonOutput);
+                        $("#MainGrid").data("kendoGrid").dataSource.data(obj);
+                    })
+                }
+                reader.onerror = function (event) {
+                    console.error("File could not be read! Code " + event.target.error.code)
+                }
+                reader.readAsBinaryString(file);
+            }
+
+            $(".k-loading-mask").hide();
+
+
+            $(".datepicker").datepicker({
+                format: " yyyy",
+                viewMode: "years",
+                minViewMode: "years",
+                autoclose: true
+            });
+            $("#Year").val(yyyy);
+            LoadMonth();
+
+            EventPermission();
+            $('#btnReset').click(function () {
+
+                $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+                $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+                $("#files").val('');
+                $(".txtBox").css("border-color", "");
+                $(".k-upload-files").remove();
+                $(".k-upload-status").remove();
+                $(".k-upload.k-header").addClass("k-upload-empty");
+                $(".k-upload-button").removeClass("k-state-focused");
+                ResetData();
+                $("#Year").val(yyyy);
+
+            });
+
+            $('#btnTemplateDownload').click(function () {
+                $.ajax({
+                    url: '/PromotionalItemUpload/TemplateDownload',
+                    method: 'POST',
+                    data: JSON.stringify({}),
+                    dataType: 'JSON',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        if (data != "") {
+                            window.location.href = "/PromotionalItemUpload/Download/?fileName=" + data.fileName;
+                        }
+                        else {
+                            AcknowledgeMsg();
+                            toastr.warning($("#MessageText").html());
+                        }
+
+                    },
+                    error: function () {
+                        alert('Error occured!');
+                    },
+                });
+            });
+            //***************view function*****************
+            $('#btnView').click(function () {
+
+                $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+                $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+
+                var MonthNumber = $("#MonthNumber").val();
+                var Year = $("#Year").val();
+             
+
+
+                var Input = InputValidation('MonthNumber') + InputValidation('Year') ;
+
+                if (Input == 0) {
+                    GetGridData(MonthNumber, Year);
+                }
+                else {
+                    ValidationMsg();
+                    toastr.info($("#MessageText").html());
+                }
+
+            });
+
+
+            function LoadMonth() {
+
+                $.ajax({
+                    url: '@Url.Action("GetGenMonth", "Default")',
+                    type: 'GET',
+                    dataType: 'JSON',
+                    data: "{}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $.each(data, function (i, item) {
+                            $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                        });
+                    },
+                    error: function () {
+                        alert("Failed to load ... !!");
+                    }
+                });
+            }
+
+
+
+
+            //**************searching function**************
+            function GetGridData(MonthNumber, Year, ItemFor) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/PromotionalItemUpload/GetGridData",
+                    data: JSON.stringify({MonthNumber: MonthNumber, Year: Year }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length>0) {
+                                $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                        }
+                        else {
+                            AcknowledgeMsg();
+                            toastr.info($("#MessageText").html());
+
+                        }
+                    },
+
+                });
+            }
+
+
+            //************************************ MPO Sample Product Mapping KENDO GRID *****************************************//
+
+            //Initializing Main page details Kendo Grid Colums
+            var MainGrid = $('#MainGrid').kendoGrid({
+                dataSource: new kendo.data.DataSource({
+                    batch: true,
+                    schema: {
+                        model: {
+                            id: "ProductCode",
+                            fields: {
+                                ProductCode: { type: "string" },
+
+                            }
+                        }
+                    },
+                     pageSize: 10,
+                }),
+                pageable: {
+                    //refresh: true,
+                    pageSizes: true, buttonCount: 5
+                },
+                dataBound: function (e) {
+                    AutoFitColumn(this.element[0].id);
+                },
+                scrollable: true,
+                sortable: true,
+                filterable: true,
+                editable: false,
+                selectable: "row",
+                //selectable: "multiple",
+                toolbar: [{ template: "<input type='text' id='txtInput'  style='float:right' placeholder='Search...' class='k-textbox'>" },],
+                navigatable: true,
+                height: 430,
+                // groupable: true,
+                groupable: { messages: { empty: "List" } },
+                columnMenu: true,
+                reorderable: true,
+                resizable: true,
+                resize: function (e) {
+                    this.table.height(this.element.height() + this.table.height() - 1);
+                },
+                columns: [
+                     { field: "ProductCode", title: "ProductCode" },
+                     { field: "ProductName", hidden: false, title: "ProductName" },
+                     { field: "MPGroup", title: "Group" },
+                     { field: "Quantity", title: "Quantity" },
+                     { field: "ItemType", title: "ItemType" },
+                     { field: "ItemFor", title: "ItemFor" },
+                     { command: [{ name: "DeletedRow", text: "Remove", imageClass: "k-icon k-i-close", click: handleDeleteSampleItemMap }], title: "Remove", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" } }
+                ]
+            }).data('kendoGrid');
+
+
+
+
+            //Produc Name twise Filter table row
+            $("#txtInput").keyup(function () {
+                var val = $(this).val();
+                $("#MainGrid").data("kendoGrid").dataSource.filter({
+                    logic: "or",
+                    filters: [
+                        { field: "ProductCode", operator: "contains", value: val },
+                        { field: "ProductName", operator: "contains", value: val },
+                        { field: "MPGroup", operator: "contains", value: val },
+              
+
+                    ]
+                });
+            });
+
+            function handleDeleteSampleItemMap(event) {
+                event.preventDefault();
+                dataitem = MainGrid.dataItem($(event.currentTarget).closest("tr"));
+                MainGrid.dataSource.remove(dataitem);
+                //RemoveConfirmationMPOInstMap.open();
+            };
+
+
+
+
+            //************************************ END *****************************************//
+            $("#FileType").change(function () {
+
+                $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+                $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+                $("#files").val('');
+                $(".txtBox").css("border-color", "");
+                $(".k-upload-files").remove();
+                $(".k-upload-status").remove();
+                $(".k-upload.k-header").addClass("k-upload-empty");
+                $(".k-upload-button").removeClass("k-state-focused");
+
+            });
+
+            var gridInput = 0;
+
+
+            function GridValidation() {
+                gridInput = 0;
+                var dataSource = $("#MainGrid").data("kendoGrid").dataSource;
+                data = dataSource.data(); // Get Detail Grid Data
+                if (data.length > 0) {
+                    for (var i = data.length - 1; i >= 0; i--) {
+                        if (data[i].ProductCode == "" || data[i].ProductCode == null || data[i].MPGroup == "" || data[i].MPGroup == null || data[i].ItemFor == "" || data[i].ItemFor == null || data[i].ItemType == "" || data[i].ItemType == null) {
+                            gridInput = 0;
+                        }
+
+                    }
+                }
+                else {
+                    gridInput = 1;
+                }
+            }
+
+
+
+            $('#btnSave').click(function () {
+
+                var model = { "FileType": "", "ItemList": [] };
+                model.FileType = $('#FileType').val();
+                GridValidation();
+                model.ItemList = [];
+                if (model.FileType != "" && gridInput == 0) {
+                        var detailDataSampleItem = $('#MainGrid').data("kendoGrid").dataSource;
+                        var detailData = detailDataSampleItem.data();
+                        if (detailData.length > 0) {
+
+                            for (var i = 0; i < detailData.length; i++) {
+                                var detail = {};
+                                detail.ProductCode = detailData[i].ProductCode;
+                                detail.MPGroup = detailData[i].MPGroup;
+                                detail.Quantity = detailData[i].Quantity;
+                                detail.ItemFor = detailData[i].ItemFor;                    
+                                detail.ItemType = detailData[i].ItemType;
+                                detail.ItemFor = detailData[i].ItemFor;
+                                detail.MonthNumber = $('#MonthNumber').val();
+                                detail.Year = $('#Year').val();
+                                model.ItemList.push(detail);
+                            }
+                        }
+
+
+
+
+                    $.ajax({
+                        url: '/PromotionalItemUploadSlSmGtWise/OperationsMode',
+                        data: JSON.stringify(model),
+                        type: 'POST',
+                        contentType: 'application/json;',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.Status == "Yes") {
+                                OperationMsg(data.Mode);
+                                toastr.success($("#MessageText").html());
+                            }
+                            else {
+                                ErrorFrmServerMsg(data.Status);
+                                toastr.warning($("#MessageText").html());
+                            }
+
+                        },
+                        error: function () {
+                            ErrorFrmClientMsg();
+                            toastr.warning($("#MessageText").html());
+                        },
+                        // complete: function () { CompletedMsg(); },
+                    }); //End of ajax call
+
+                }
+
+                else {
+                    ValidationMsg();
+                    toastr.warning($("#MessageText").html());
+                }
+
+            });
+
+        });
+
+
+
+
+
+</script>
+
+
+

@@ -1,0 +1,627 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tour Plan</title>
+    <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <link href="~/Content/CSS/InputText.css" rel="stylesheet" />
+    <script src="~/Scripts/CustomJS/OperationalMessage.js"></script>
+    <script src="~/Scripts/CustomJS/InputValidator.js"></script>
+    <link href="~/Content/CustomCSS/toastr.css" rel="stylesheet" />
+    <script src="~/Scripts/CustomJS/toastr.js"></script>
+    <link href="~/Scripts/BootstrapMultiselect/css/bootstrap-multiselect.css" rel="stylesheet" />
+    <script src="~/Scripts/BootstrapMultiselect/js/bootstrap-multiselect.js"></script>
+
+
+    <style>
+        .modal {
+            display: none; /* Hidden by default */
+            /*position: fixed;*/ /* Stay in place */
+            z-index: 1; /* Sit on top */
+            position: absolute;
+            left: 5%;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            padding: 10px;
+            border: 1px solid #888;
+            width: 70%; /* Could be more or less, depending on screen size */
+            margin: 7% 5% auto; /* 15% from the top and centered */
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
+
+    <style>
+        /* BASICS: */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box; /* in case block elements are used inside table cells */
+        }
+
+        html {
+            font-size: 62.5%; /* standardizes older IEs */
+        }
+
+        body {
+            font: normal 1.3em Verdana; /* = 13px */
+            padding: 1px;
+        }
+
+        table {
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        td {
+            border: 1px solid black;
+            /*padding: 4px;*/
+        }
+        /* SCROLL TABLE ESSENTIALS (+ SOME ADDITIONAL CSS): */
+        div#scrollTableContainer {
+            width: 100%;
+            table-layout: fixed;
+            /*margin: 5px;*/ /* just for presentation purposes */
+            /*border: 1px solid black;*/
+        }
+
+        .touchScreen div#scrollTableContainer {
+            width: 100%; /* touch devices do not form scrollbars (= 17 px wide) */
+        }
+
+        #tHeadContainer {
+            background: #666633;
+            color: white;
+            font-size: xx-small;
+            text-align: center;
+            width: 99%;
+            /*table-layout: fixed;*/
+        }
+
+
+        #tBodyContainer {
+            min-height: 300px;
+            max-height: 450px;
+            width: 100%;
+            overflow-y: scroll;
+            font-size: 5pt;
+            text-align: center;
+            overflow-x: hidden;
+            table-layout: fixed;
+        }
+
+
+        .touchScreen #tBodyContainer {
+            -webkit-overflow-scrolling: touch; /* smooths scrolling on touch screens */
+        }
+        /* FINER LAYOUT MATTERS: */
+        tr:first-child td {
+            border-top: 0;
+        }
+
+
+
+        #tBody tr.lastRow td {
+            border-bottom: 0;
+        }
+
+
+        /* AND SOME CSS TO INFORM TOUCH SCREEN USERS: */
+        p#touchDeviceText {
+            display: none;
+        }
+
+        .touchScreen p#touchDeviceText {
+            display: block;
+        }
+
+        .DayNumber {
+            font-weight: normal;
+        }
+        /*
+
+        .Location {
+            width:15%;
+        }
+
+        .Address {
+            width: 15%;
+        }
+
+        .ReportTime {
+            width: 6%;
+        }
+
+        .Allow {
+            width: 5%;
+        }*/
+    </style>
+
+
+    <script>
+        if ('ontouchstart' in window || (window.DocumentTouch && document instanceof DocumentTouch)) {
+            document.documentElement.className += ' touchScreen ';
+        }
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+        var Year = "";
+        var MonthNumber = "";
+        var EmpID = "";
+        var LocCode = "";
+
+
+
+        var ReportHeader = "";
+
+
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                beforeSend: function () {
+                    $("#divLoading").show();
+                },
+                complete: function () {
+                    $("#divLoading").hide();
+                }
+            });
+
+            Year = sessionStorage.getItem('keyYear');
+            MonthNumber = sessionStorage.getItem('keyMonthNumber');
+            EmpID = sessionStorage.getItem('keyEmpID');
+            LocCode = sessionStorage.getItem('keyLocCode');
+
+
+
+            ReportHeader = sessionStorage.getItem('keyReportHeader');
+            $('#ReportHeader').html(ReportHeader);
+
+
+
+            $('#Year').val(Year);
+            $('#MonthNumber').val(MonthNumber);
+            $('#EmpID').val(EmpID);
+            $('#LocCode').val(LocCode);
+
+
+
+            MainGridView();
+
+            function MainGridView() {
+                var model = {};
+
+                model.Year = $('#Year').val();
+                model.MonthNumber = $('#MonthNumber').val();
+                model.EmpID = $('#EmpID').val();
+                model.LocCode = $('#LocCode').val();
+                $('#tBody').html('');
+                $.ajax({
+                    type: "POST",
+                    url: "/TourPlanTmRsm/GetViewData",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        $.each(data, function (i, val) {
+                            var trow = $('<tr></tr>');
+                            trow.append('<td class=DayNumber><a href=# style=text-decoration:underline;>' + val.DayNumber + '</a></td>');
+
+                            trow.append('<td>' + val.MInstName + '</td>');
+                            trow.append('<td>' + val.MMeetingPlace + '</td>');
+                            trow.append('<td>' + val.MSetTime + '</td>');
+                            trow.append('<td>' + val.MAllowence + '</td>');
+
+                            trow.append('<td>' + val.EInstName + '</td>');
+                            trow.append('<td>' + val.EMeetingPlace + '</td>');
+                            trow.append('<td>' + val.ESetTime + '</td>');
+                            trow.append('<td>' + val.EAllowence + '</td>');
+
+                            $('#tBody').append(trow);
+                        });
+                    },
+
+                });
+            }
+
+            var modal = document.getElementById('myModal');
+            var span = document.getElementsByClassName("close")[0];
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+            $('#tBody').delegate('td.DayNumber', 'click', function (e) {
+
+                e.preventDefault();
+                var $this = $(this);
+                var rowIndex = $(this).closest("tr").index();
+                var colIndex = $(this).closest("td").index();
+                var DayNumber = $("#tBody tr:eq(" + rowIndex + ") td:eq(0)").text();
+
+
+                $("#DayNumber").val(DayNumber);
+
+                modal.style.display = "block";
+                var row = $this.closest("tr");
+                var name = row.find('td:eq(1)').text();
+
+                var model = {};
+                model.Year = $('#Year').val();
+                model.MonthNumber = $('#MonthNumber').val();
+                model.EmpID = $('#EmpID').val();
+                model.LocCode = $('#LocCode').val();
+                model.DayNumber = $("#DayNumber").val();
+
+
+
+
+
+
+
+                LoadData(model);
+            });
+            function LoadData(model) {
+                eInstEmpty();
+                mInstEmpty();
+                LoadMorningInst(model);
+                LoadEveningInst(model);
+                LoadAllowanceNature();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "/TourPlanNew/DetailValue",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        $.each(data, function (i, item) {
+                            $("#mShiftType").val(item.MShiftType);
+                            $("#eShiftType").val(item.EShiftType);
+                            $("#mAllowanceNature").val(item.MAllowence);
+                            $("#eAllowanceNature").val(item.EAllowence);
+                        });
+
+
+                    },
+                    error: function () {
+                        alert('Error occured!');
+                    },
+                });
+
+            }
+
+
+            function LoadAllowanceNature() {
+                $.ajax({
+                    url: '/TourPlanNew/GetAllowanceNature',
+                    type: 'GET',
+                    dataType: 'JSON',
+                    data: "{}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $('#mAllowanceNature').empty();
+                        $('#eAllowanceNature').empty();
+                        $.each(data, function (i, item) {
+                            $('#mAllowanceNature').append($('<option>', { value: item.Allowence, html: item.Allowence }, '<option/>'));
+                            $('#eAllowanceNature').append($('<option>', { value: item.Allowence, html: item.Allowence }, '<option/>'));
+                        });
+                    },
+
+                });
+            }
+            $("#mInstCode").multiselect({ enableFiltering: false, maxHeight: 50, minWidth: 200 }).trigger('reset');
+            function LoadMorningInst(model) {
+
+                $.ajax({
+                    url: '/TourPlanNew/MorningInst',
+                    data: JSON.stringify({ model: model }),
+                    type: 'POST',
+                    contentType: 'application/json;',
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#mInstCode').multiselect('deselectAll', false);
+                        $('#mInstCode').multiselect('updateButtonText');
+                        $('#mInstCode').empty();
+                        $('#mInstCode').multiselect('refresh');
+                        $.each(data, function (i, item) {
+                            if (item.YetAssigned == "true") {
+                                $('#mInstCode').append($('<option>', { value: item.MInstCode, html: item.MInstName }, '<option/>')).multiselect('rebuild');
+                                $('#mInstCode').multiselect('selectAll', false);
+                                $('#mInstCode').multiselect('updateButtonText');
+                            }
+                            else {
+                                $('#mInstCode').append($('<option>', { value: item.MInstCode, html: item.MInstName }, '<option/>')).multiselect('rebuild');
+                                $('#mInstCode').multiselect('selectAll', true);
+                                $('#mInstCode').multiselect('updateButtonText');
+                            }
+
+
+                        });
+                    },
+
+                });
+            }
+            $("#eInstCode").multiselect({ enableFiltering: false, maxHeight: 50, minWidth: 200 }).trigger('reset');
+            function LoadEveningInst(model) {
+
+                $.ajax({
+                    url: '/TourPlanNew/EveningInst',
+                    data: JSON.stringify({ model: model }),
+                    type: 'POST',
+                    contentType: 'application/json;',
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#eInstCode').multiselect('deselectAll', false);
+                        $('#eInstCode').multiselect('updateButtonText');
+                        $('#eInstCode').empty();
+                        $('#eInstCode').multiselect('refresh');
+                        $.each(data, function (i, item) {
+                            if (item.YetAssigned == "true") {
+                                $('#eInstCode').append($('<option>', { value: item.EInstCode, html: item.EInstName }, '<option/>')).multiselect('rebuild');
+                                $('#eInstCode').multiselect('selectAll', false);
+                                $('#eInstCode').multiselect('updateButtonText');
+                            }
+                            else {
+                                $('#eInstCode').append($('<option>', { value: item.EInstCode, html: item.EInstName }, '<option/>')).multiselect('rebuild');
+                                $('#eInstCode').multiselect('selectAll', true);
+                                $('#eInstCode').multiselect('updateButtonText');
+                            }
+                        });
+                    },
+
+                });
+            }
+            function eInstEmpty() {
+                $('#eInstCode').multiselect('deselectAll', false);
+                $('#eInstCode').multiselect('updateButtonText');
+                $('#eInstCode').empty();
+                $('#eInstCode').multiselect('refresh');
+                $('#eInstCode').append($('<option>', { value: "", html: "" }, '<option/>')).multiselect('rebuild');
+            }
+
+            function mInstEmpty() {
+                $('#mInstCode').multiselect('deselectAll', false);
+                $('#mInstCode').multiselect('updateButtonText');
+                $('#mInstCode').empty();
+                $('#mInstCode').multiselect('refresh');
+                $('#mInstCode').append($('<option>', { value: "", html: "" }, '<option/>')).multiselect('rebuild');
+            }
+
+
+
+            function fnClose() {
+                this.close();
+            }
+
+            $('#btnBack').click(function () {
+                fnClose();
+
+            });
+
+            $('#btnEdit').click(function () {
+                var model = {};
+
+                var model = {};
+                model.Year = $("#Year").val();
+
+                model.MonthNumber = $("#MonthNumber").val();
+                model.LocCode = $("#LocCode").val();
+                model.EmpID = $("#EmpID").val();
+                model.DayNumber = $("#DayNumber").val();
+
+                model.MShiftType = $("#mShiftType").val();
+                model.EShiftType = $("#eShiftType").val();
+
+                model.MAllowence = $("#mAllowanceNature").val();
+                model.EAllowence = $("#eAllowanceNature").val();
+
+                var mInst = $('#mInstCode').val();
+                model.MInstCode = JSON.stringify(mInst);
+                var eInst = $('#eInstCode').val();
+                model.EInstCode = JSON.stringify(eInst);
+
+
+                $.ajax({
+                    url: '/TourPlanNew/OperationsModeEdit',
+                    data: JSON.stringify(model),
+                    type: 'POST',
+                    contentType: 'application/json;',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.Status == "Yes") {
+                            OperationMsg(data.Mode);
+                            toastr.success($("#MessageText").html());
+                            MainGridView();
+
+                        }
+                        else if (data.Status == "No") {
+                            OperationMsg(data.Mode);
+                            toastr.info($("#MessageText").html());
+                        }
+                        else {
+                            ErrorFrmServerMsg(data.Status);
+                            toastr.warning($("#MessageText").html());
+                        }
+
+                    },
+                    error: function () {
+                        ErrorFrmClientMsg();
+                        toastr.warning($("#MessageText").html());
+                    },
+
+                });
+            });
+
+
+        });
+    </script>
+
+
+
+</head>
+<body>
+
+    <br />
+    <div style="text-align:center">
+        <span style="background-color: #666633;color: white;" id="ReportHeader"></span>
+        @*<button id="btnSave" class="btn btn-primary btn-lg" type="button"><i class="glyphicon glyphicon-save-file"></i><span style="background-color: #3C8DBC; color: white; font-weight: bold">Approved</span></button>*@
+        <button id="btnBack" class="btn btn-primary btn-lg" type="button"><i class="glyphicon glyphicon-backward"></i><span style="background-color: #3C8DBC; color: white; font-weight: bold">Back</span></button>
+
+    </div>
+    <div style="display:none">
+        <input type="text" id="Year" name="Year">
+        <input type="text" id="MonthNumber" name="MonthNumber">
+        <input type="text" id="EmpID">
+
+
+        <input type="text" id="LocCode">
+
+    </div>
+    <br />
+
+
+    <div id="scrollTableContainer">
+        <div id="tHeadContainer">
+            <table id="tHead">
+                <tr>
+                    <td class="DayNumber"> &nbsp;</td>
+                    <td colspan="4">MORNING</td>
+                    <td colspan="4">EVENING</td>
+                </tr>
+                <tr>
+                    <td class="DayNumber">Day</td>
+
+                    <td>Location</td>
+                    <td>Address</td>
+                    <
+                    <td>R.Time</td>
+                    <td>NDA</td>
+
+                    <td>Location</td>
+                    <td>Address</td>
+                    <td>R.Time</td>
+                    <td>NDA</td>
+
+
+                </tr>
+            </table>
+        </div>
+        <div id="tBodyContainer">
+            <table id="tBody"></table>
+
+        </div>
+    </div>
+
+
+
+
+
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>
+                <div class="input-group">
+                    <div id="Parameter"></div><span class="input-group-btn" style="width:20px;"></span><div style="background-color:lightskyblue" id="Parameter2"></div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon">DayNumber:</span>
+                    <span class="input-group-addon"><input type="text" id="DayNumber" name="DayNumber" class="form-control RequiredField" readonly></span>
+                    <span class="input-group-addon"><button id="btnEdit" class="btn btn-primary btn-lg" type="button"><i class="glyphicon glyphicon-save-file"></i>Save</button></span>
+                </div>
+                <div class="input-group">
+                    <table style="border: 0px solid black;">
+                        <tr>
+                            <td style="border: 0px solid black;">
+                                <select id="mShiftType" name="mShiftType" class="RequiredField input-sm" disabled>
+                                    <option value="Working">Working</option>
+                                    <option value="Leave">Leave</option>
+                                    <option value="Meeting">Meeting</option>
+                                </select>
+                            </td>
+                            <td style="border: 0px solid black;">NDA:</td>
+                            <td style="border: 0px solid black;"><select id="mAllowanceNature" name="mAllowanceNature" class="RequiredField input-sm"></select></td>
+                            <td style="border: 0px solid black;">Location :</td>
+                            <td style="border: 0px solid black;"><select id="mInstCode" name="mInstCode" class="RequiredField" multiple="multiple"></select></td>
+
+                        <tr>
+                    </table>
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <div class="input-group">
+                    <table style="border: 0px solid black;">
+                        <tr>
+                            <td style="border: 0px solid black;">
+                                <select id="eShiftType" name="eShiftType" class="RequiredField input-sm" disabled>
+                                    <option value="Working">Working</option>
+                                    <option value="Leave">Leave</option>
+                                    <option value="Meeting">Meeting</option>
+                                </select>
+                            </td>
+                            <td style="border: 0px solid black;">NDA:</td>
+                            <td style="border: 0px solid black;"><select id="eAllowanceNature" name="eAllowanceNature" class="RequiredField input-sm"></select></td>
+                            <td style="border: 0px solid black;">Location :</td>
+                            <td style="border: 0px solid black;"><select id="eInstCode" name="eInstCode" class="RequiredField" multiple="multiple"></select></td>
+
+                        <tr>
+                    </table>
+
+
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+
+                </div>
+
+
+
+            </p>
+        </div>
+    </div>
+
+    <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+        <p style="position: absolute; top: 50%; left: 50%; color: White;">
+            <img src="~/Content/Images/loading.gif" />
+        </p>
+    </div>
+</body>
+</html>

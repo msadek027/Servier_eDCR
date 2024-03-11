@@ -1,0 +1,451 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+<style>
+    /* BASICS: */
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box; /* in case block elements are used inside table cells */
+    }
+
+    html {
+        font-size: 62.5%; /* standardizes older IEs */
+    }
+
+    body {
+        font: normal 1.3em Verdana; /* = 13px */
+        padding: 1px;
+    }
+
+
+
+    table {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    td {
+        border: 1px solid black;
+        /*padding: 4px;*/
+    }
+    /* SCROLL TABLE ESSENTIALS (+ SOME ADDITIONAL CSS): */
+    div#scrollTableContainer {
+        width: 100%;
+        table-layout: fixed;
+        /*margin: 5px;*/ /* just for presentation purposes */
+        /*border: 1px solid black;*/
+    }
+
+    .touchScreen div#scrollTableContainer {
+        width: 100%; /* touch devices do not form scrollbars (= 17 px wide) */
+    }
+
+    #tHeadContainer {
+        background: #666633;
+        color: white;
+        font-size: small;
+        text-align: center;
+        width: 99%;
+        /*table-layout: fixed;*/
+    }
+
+
+    #tBodyContainer {
+        min-height: 300px;
+        max-height: 450px;
+        width: 100%;
+        overflow-y: scroll;
+        font-size: small;
+        text-align: center;
+        overflow-x: hidden;
+        table-layout: fixed;
+    }
+
+
+    .touchScreen #tBodyContainer {
+        -webkit-overflow-scrolling: touch; /* smooths scrolling on touch screens */
+    }
+    /* FINER LAYOUT MATTERS: */
+    tr:first-child td {
+        border-top: 0;
+    }
+
+
+
+    #tBody tr.lastRow td {
+        border-bottom: 0;
+    }
+
+
+    /* AND SOME CSS TO INFORM TOUCH SCREEN USERS: */
+    p#touchDeviceText {
+        display: none;
+    }
+
+    .touchScreen p#touchDeviceText {
+        display: block;
+    }
+
+
+
+    .ProductName {
+        width: 15%;
+    }
+
+    .ProductCode {
+        width: 7%;
+    }
+
+    .Total {
+        width: 4%;
+    }
+</style>
+
+
+
+
+
+
+<script type="text/javascript">
+    //// Start  $(document).ready(function ()
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+
+        EventPermission();
+        $("#btnExcel").attr("disabled", true);
+        $("#btnPDF").attr("disabled", true);
+        LoadMonth();
+
+
+
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+
+
+        function LoadMonth() {
+            $.ajax({
+                url: '/Default/GetGenMonth',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load !!");
+                }
+            });
+        }
+
+
+        LoadRegion();
+
+
+        function LoadRegion() {
+            $.ajax({
+                url: '/Default/GetRegion',
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
+                        if (i === 0) {
+                            LoadTM(item.RegionCode);
+                        }
+                        $('#RegionName').val(item.RegionName);
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+        $('#RegionCode').on('change', function () {
+            LoadTM($(this).val());
+            $('#RegionName').val($("#RegionCode option:selected").text());
+        }).trigger('change');;
+
+        function LoadTM(RegionCode) {
+            $.ajax({
+                url: '/Default/GetTerritoryFromRegion',
+                data: { RegionCode: RegionCode },
+                type: 'Post',
+                dataType: 'json',
+                success: function (data) {
+                    $('#TerritoryManagerID').empty();
+                    $.each(data, function (i, item) {
+
+                        if (i === 0) {
+                            if (data.length > 1) {
+                                $('#TerritoryManagerID').append('<option value="" selected="selected"></option>');
+                            }
+                            LoadMPO(item.TerritoryManagerID);
+                            $('#TerritoryManagerName').val(item.TerritoryManagerName);
+                        }
+                        $('#TerritoryManagerID').append($('<option>', { value: item.TerritoryManagerID, html: item.TerritoryManagerName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+
+
+
+        $('#TerritoryManagerID').on('change', function () {
+            LoadMPO($(this).val());
+            $('#TerritoryManagerName').val($("#TerritoryManagerID option:selected").text());
+        }).trigger('change');;
+
+
+
+
+        function LoadMPO(TerritoryManagerID) {
+
+            $.ajax({
+                url: '/Default/GetMPOPopupList',
+                data: { TerritoryManagerID: TerritoryManagerID },
+                type: 'Post',
+                dataType: 'json',
+                success: function (data) {
+                    $('#MPGroup').empty();
+                    $.each(data, function (i, item) {
+                        if (i == 0) {
+                            $('#MPGroup').append('<option value="" selected="selected"></option>');
+                            $('#MPOName').val(item.MPOName);
+                        }
+                        $('#MPGroup').append($('<option>', { value: item.MPGroup, html: item.MPOName }, '<option/>'));
+
+                    });
+                },
+
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+
+        }
+        LoadTM($("#RegionCode").val());
+        LoadMPO($("#TerritoryManagerID").val());
+
+        $('#MPGroup').on('change', function () {
+            $('#MPOName').val($("#MPGroup option:selected").text());
+        }).trigger('change');
+        $("#TerritoryManagerID,#MPGroup").on('change', function (e) {
+
+        });
+
+
+
+
+
+
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+        $('#btnView').click(function () {
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            $('#tBody').html('');
+
+            var model = {};
+
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+            model.TerritoryManagerID = $("#TerritoryManagerID").val();
+            model.MPGroup = $("#MPGroup").val();
+            model.RegionCode = $("#RegionCode").val();
+
+
+
+            var Input = InputValidation('MonthNumber') + InputValidation('Year') + InputValidation('RegionCode') + InputValidation('TerritoryManagerID');
+            if (Input == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportProductWiseCallVsAchievement/GetData",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+
+                            $("#btnExcel").attr("disabled", false);
+                            $("#btnPDF").attr("disabled", false);
+                            $.each(data, function (i, val) {
+
+                                var trow = $('<tr></tr>');
+                                trow.append('<td class=ProductName>' + val.MarketName + '</td>');
+                                trow.append('<td class=ProductCode>' + val.ProductCode + '</td>');
+                                trow.append('<td class=ProductName>' + val.ProductName + '</td>');
+                                trow.append('<td class=ProductCode>' + val.PackSize + '</td>');
+                                trow.append('<td class=Total>' + val.TotalProductCall + '</td>');
+                                trow.append('<td class=Total>' + val.ProductCall + '</td>');
+                                trow.append('<td class=Total>' + val.Achi + '</td>');
+
+                                $('#tBody').append(trow);
+                            });
+                        }
+                        else {
+                            AcknowledgeMsg();                            
+                            toastr.info($("#MessageText").html());
+                        }
+                    },
+
+                });
+            }
+            else {
+                ValidationMsg();
+                toastr.info($("#MessageText").html());
+            }
+
+
+
+        });
+
+
+
+
+
+
+
+    });
+
+
+
+
+
+</script>
+
+
+<div class="box-header with-border">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <form class="form" action="/ReportProductWiseCallVsAchievement/Export" id="R1Form" method="post" name="H1Form" target="_blank">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+                    <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                        <div style="text-align:right;">
+                            <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                            <button id="btnExcel" class="btn btn-primary btn-sm" name="ExportType" value="Excel" type="submit"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                            <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PDF" type="submit"><i class="glyphicon glyphicon-book"></i> PDF </button>
+                            <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-body">
+
+                    <div class="row" id="divValueParameter">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3"> Month - Year :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <div class="input-group">
+                                    <select id="MonthNumber" name="MonthNumber" class=" RequiredField form-control"></select>
+                                    <span class="input-group-btn" style="width:0px;"></span>
+                                    <input type="text" id="Year" name="Year" class="datepicker RequiredField form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Region Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="RegionCode" name="RegionCode" class="RequiredField form-control"></select>
+                                <input type="hidden" id="RegionName" name="RegionName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">TM Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="TerritoryManagerID" name="TerritoryManagerID" class="RequiredField form-control"></select>
+                                <input type="hidden" id="TerritoryManagerName" name="TerritoryManagerName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">MPO Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="MPGroup" name="MPGroup" class="RequiredField form-control"></select>
+                                <input type="hidden" id="MPOName" name="MPOName" class="RequiredField form-control">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="scrollTableContainer">
+        <div id="tHeadContainer">
+            <table id="tHead">
+                <tr>
+                    <td class="ProductName">Market Name</td>
+                    <td class="ProductCode">Product Code</td>
+                    <td class="ProductName">Product Name</td>
+                    <td class="ProductCode">Pack Size</td>
+                    <td class="Total">Total Product Call</td>
+                    <td class="Total">Product Call</td>
+                    <td class="Total">Achi (%)</td>
+
+                </tr>
+            </table>
+        </div><!-- tHeadContainer -->
+        <div id="tBodyContainer">
+            <table id="tBody"></table>
+
+        </div><!-- tBodyContainer -->
+    </div><!-- scrollTableContainer -->
+</div>
+
+
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+
+
+
+
+

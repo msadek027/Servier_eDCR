@@ -1,0 +1,294 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+<style type="text/css">
+    .user-photo {
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+        /*border-radius: 50%;*/
+        background-size: 32px 35px;
+        background-position: center center;
+        vertical-align: middle;
+        line-height: 32px;
+        box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+        margin-left: 5px;
+    }
+
+    .user-name {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 32px;
+        padding-left: 3px;
+    }
+
+
+    div#scrollTableContainer {
+        width: 100%;
+        table-layout: fixed;
+        /*border: 1px solid black;*/
+    }
+
+
+    #tHeadContainer {
+        background: #666633;
+        color: white;
+        font-size: xx-small;
+        font-family: Tahoma;
+        text-align: center;
+        width: 98.5%;
+        /*table-layout: fixed;*/
+    }
+
+
+    #tBodyContainer {
+        min-height: 200px;
+        max-height: 350px;
+        width: 99.6%;
+        overflow-y: scroll;
+        font-size: 6pt;
+        font-family: Tahoma;
+        text-align: center;
+        overflow-x: hidden;
+        table-layout: fixed;
+    }
+</style>
+
+<style>
+    .k-grid .k-state-selected {
+        background-color: white;
+        color: black;
+    }
+</style>
+<style>
+    .has-success {
+        background: white;
+    }
+
+    .has-error {
+        /*background: red;*/
+        border: 1px Solid red !important;
+    }
+</style>
+
+<script>
+
+
+
+    var TerritoryManagerID = "";
+    var MarketCode = "";
+    var MPGroup = "";
+    var ReportHeader = "";
+
+    $(document).ready(function () {
+
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+
+        MainGridView();
+        function MainGridView() {
+
+            $.ajax({
+                type: "POST",
+                url: "/TourPlanPartialAllow/TourPartialAllow",
+                data: JSON.stringify({}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data.length > 0) {
+                        $('#MainGrid').data('kendoGrid').dataSource.data(data);
+                    }
+                    else {
+
+                        AcknowledgeMsg();
+                        toastr.info($("#MessageText").html());
+                    }
+                },
+
+            });
+        }
+
+
+        //Initializing Main page details Kendo Grid Colums
+        var MainGrid = $('#MainGrid').kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: true,
+                schema: {
+                    model: {
+                        id: "MarketCode",
+                        fields: {
+                            MarketCode: { type: "string" },
+                            IsPartialAllow: { type: "string", defaultValue: "No" },
+                        }
+                    }
+                },
+                pageSize: 10,
+            }),
+            pageable: {
+                pageSizes: true, buttonCount: 5
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+            },
+            toolbar: ["excel", { template: "<input type='text' id='txtInput'  style='float:right' placeholder='Search...' class='k-textbox'>" }, ],
+            excel: {
+                fileName: "List.xlsx",
+                allPages: true,
+                filterable: true
+            },
+            scrollable: false,
+            sortable: false,
+            filterable: false,
+            editable: true,
+            edit: function (e) {
+                $('input[name = "MPOCode"]').attr("readonly", true);
+                $('input[name = "MarketName"]').attr("readonly", true);
+                $('input[name = "MPOCode"]').attr("readonly", true);
+                $('input[name = "MPOName"]').attr("readonly", true);
+                $('input[name = "MPGroup"]').attr("readonly", true);
+
+            },
+            selectable: "row",
+            navigatable: true,
+            columnMenu: false,
+            reorderable: false,
+            resizable: false,
+            resize: function (e) {
+                this.table.height(this.element.height() + this.table.height() - 1);
+            },
+            columns: [
+                 { field: "MarketCode", title: "MarketCode", hidden: false },
+                 { field: "MarketName", title: "Market Name" },
+                 { field: "MPOCode", title: "MPO Code" },
+                 { field: "MPOName", title: "MPO Name" },
+                 { field: "MPGroup", title: "MPGroup" },
+                 { field: "IsPartialAllow", title: "IsPartial<br/>Allow", width: 50, editor: ddlIsPartialAllow },
+                 { command: [{ name: "PartialAllowRow", text: "Save", imageClass: "k-icon k-i-close", click: handlePartialAllow }], title: "", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" } },
+            ]
+
+        }).data('kendoGrid');
+
+
+        $("#txtInput").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                     { field: "MarketCode", operator: "contains", value: val },
+                     { field: "MPOCode", operator: "contains", value: val },
+                     { field: "MPGroup", operator: "contains", value: val },
+                     { field: "MarketName", operator: "contains", value: val },
+                     { field: "IsPartialAllow", operator: "contains", value: val },
+                ]
+            });
+        });
+
+
+        var dtPartialAllow = [{ text: "No", value: "No" }, { text: "Yes", value: "Yes" }];
+        //Setting Kendo drop down with above mentioned data
+        function ddlIsPartialAllow(container, options) {
+            $('<input id="ReviewStatus"  data-text-field="text" data-value-field="value" data-bind="value:' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoDropDownList({
+                        autoBind: true,
+                        //suggest: true,
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: dtPartialAllow
+                    });
+        };
+
+        function handlePartialAllow(e) {
+
+            e.preventDefault();
+            var selectedItem = MainGrid.dataItem($(e.currentTarget).closest("tr"));
+
+
+            var model = {};
+            model.MPGroup = selectedItem.MPGroup;
+            model.MPOCode = selectedItem.MPOCode;
+            model.MarketCode = selectedItem.MarketCode;
+            model.IsPartialAllow = selectedItem.IsPartialAllow;
+
+
+            $.ajax({
+                url: '/TourPlanPartialAllow/OperationsModeTourPlanPartialAllow',
+                data: JSON.stringify(model),
+                type: 'POST',
+                contentType: 'application/json;',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.Status == "Yes") {
+                        OperationMsg(data.Mode);
+                        toastr.success($("#MessageText").html());
+                    }
+                    else {
+                        ErrorFrmServerMsg(data.Status);
+                        toastr.warning($("#MessageText").html());
+                    }
+
+                },
+                error: function () {
+                    ErrorFrmClientMsg();
+                    toastr.warning($("#MessageText").html());
+                },
+                // complete: function () { CompletedMsg(); },
+            }); //End of ajax call
+
+        }
+    });
+
+
+</script>
+
+
+
+<div class="box-header with-border">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+        <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+            <div style="text-align:right;">
+            </div>
+        </div>
+    </div>
+    <div class="box-body">
+
+
+
+
+
+        <div class="row">
+            <div id="MainGrid" class="MainGrid"></div>
+        </div>
+
+
+
+
+    </div>
+</div>
+        <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+            <p style="position: absolute; top: 50%; left: 50%; color: White;">
+                <img src="~/Content/Images/loading.gif" />
+            </p>
+        </div>
+
+
+
+
+
+
+

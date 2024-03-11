@@ -1,0 +1,569 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+
+
+
+
+
+<script type="text/javascript">
+    //// Start  $(document).ready(function ()
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+
+        EventPermission();
+        LoadMonth();
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+
+
+        function LoadMonth() {
+            $.ajax({
+                url: '/Default/GetGenMonth',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load !!");
+                }
+            });
+        }
+
+        $('#MonthNumber').on('change', function () {
+            LoadRegion();
+        }).trigger('change');
+
+        $('#Year').on('change', function () {
+            LoadRegion();
+        }).trigger('change');
+
+        LoadRegion();
+
+
+        function LoadRegion() {
+            var model = {};
+            model.Year = $('#Year').val();
+            model.MonthNumber = $('#MonthNumber').val();
+
+            $.ajax({
+                type: "POST",
+                url: '/Default/GetRegionForArchive',
+                data: JSON.stringify({ model: model }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#RegionCode').empty();
+                    $.each(data, function (i, item) {
+
+                        if (i == 0) {
+                            if (data.length > 1) {
+                                $('#RegionCode').append('<option value="" selected="selected"></option>');
+                            }
+                            LoadTM();
+                            $('#RegionName').val(item.RegionName);
+                        }
+                        $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+        $('#RegionCode').on('change', function () {
+            LoadTM();
+            $('#RegionName').val($("#RegionCode option:selected").text());
+        }).trigger('change');;
+
+        function LoadTM() {
+            var model = {};
+            model.Year = $('#Year').val();
+            model.MonthNumber = $('#MonthNumber').val();
+            model.RegionCode = $('#RegionCode').val();
+
+            $.ajax({
+                type: "POST",
+                url: '/Default/GetTerritoryForArchive',
+                data: JSON.stringify({ model: model }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#TerritoryManagerID').empty();
+                    $.each(data, function (i, item) {
+
+                        if (i === 0) {
+                            if (data.length > 1) {
+                                $('#TerritoryManagerID').append('<option value="" selected="selected"></option>');
+                            }
+                            LoadMPO();
+                            $('#TerritoryManagerName').val(item.TerritoryManagerName);
+                        }
+                        $('#TerritoryManagerID').append($('<option>', { value: item.TerritoryManagerID, html: item.TerritoryManagerName }, '<option/>'));
+
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+
+
+
+        $('#TerritoryManagerID').on('change', function () {
+            LoadMPO();
+            $('#TerritoryManagerName').val($("#TerritoryManagerID option:selected").text());
+        }).trigger('change');;
+
+
+
+
+        function LoadMPO() {
+            var model = {};
+            model.Year = $('#Year').val();
+            model.MonthNumber = $('#MonthNumber').val();
+            model.RegionCode = $('#RegionCode').val();
+            model.TerritoryManagerID = $('#TerritoryManagerID').val();
+
+            $.ajax({
+                type: "POST",
+                url: '/Default/GetMpoForArchive',
+                data: JSON.stringify({ model: model }),
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#MPGroup').empty();
+                    $.each(data, function (i, item) {
+                        if (i == 0) {
+                            $('#MPGroup').append('<option value="" selected="selected"></option>');
+                            $('#MPOName').val(item.MPOName);
+                        }
+                        $('#MPGroup').append($('<option>', { value: item.MPGroup, html: item.MPOName }, '<option/>'));
+
+                    });
+                },
+
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+
+        }
+        LoadTM();
+        LoadMPO();
+
+        $('#MPGroup').on('change', function () {
+            $('#MPOName').val($("#MPGroup option:selected").text());
+        }).trigger('change');
+        $("#TerritoryManagerID,#MPGroup").on('change', function (e) {
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+        });
+        $('#btnReset').click(function () {
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+            ResetData();
+            $("#Year").val(yyyy);
+
+
+        });
+
+
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+
+
+        $('#btnView').click(function () {
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+            var model = {};
+
+            model.Year = $("#Year").val();
+            model.MonthNumber = $("#MonthNumber").val();
+            model.TerritoryManagerID = $("#TerritoryManagerID").val();
+            model.MPGroup = $("#MPGroup").val();
+            model.RegionCode = $("#RegionCode").val();
+            model.ItemType = $("#ItemType").val();
+
+
+            var Input = InputValidation('MonthNumber') + InputValidation('Year') ;
+            if (Input == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportSampleStatementArchive/GetMainGridData",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.length > 0) {
+                            $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                        }
+                        else {
+                            AcknowledgeMsg();
+                            toastr.info($("#MessageText").html());
+
+                        }
+                    },
+
+                });
+            }
+
+            else {
+                ValidationMsg();
+                toastr.info($("#MessageText").html());
+            }
+
+
+        });
+
+        var MainGrid = $("#MainGrid").kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: true,
+                schema: {
+                    model: {
+                        id: "ProductCode",
+                        fields: {
+                            ProductCode: { type: "string" },
+                            ProductName: { type: "string" },                         
+                            ItemType: { type: "string" },
+                            MPGroup: { type: "string" },
+
+                            RestQty: { type: "string" },
+                            CentralQty: { type: "string" },
+                            TotalQtyAddDefi0130: { type: "string" },
+                            TotalQty: { type: "string" },
+                            GivenQty0108: { type: "string" },
+                            TotalStock0108: { type: "string" },
+
+                            d01: { type: "string" },
+                            d02: { type: "string" },
+                            d03: { type: "string" },
+                            d04: { type: "string" },
+                            d05: { type: "string" },
+                            d06: { type: "string" },
+                            d07: { type: "string" },
+                            d08: { type: "string" },
+                            TotalDCR0108: { type: "string" },
+                            GivenQty0915: { type: "string" },
+                            TotalStock0915: { type: "string" },
+                            d09: { type: "string" },
+                            d10: { type: "string" },
+                            d11: { type: "string" },
+                            d12: { type: "string" },
+                            d13: { type: "string" },
+                            d14: { type: "string" },
+                            d15: { type: "string" },
+                            TotalDCR0915: { type: "string" },
+                            GivenQty1623: { type: "string" },
+                            TotalStock1623: { type: "string" },
+
+                            d16: { type: "string" },
+                            d17: { type: "string" },
+                            d18: { type: "string" },
+                            d19: { type: "string" },
+                            d20: { type: "string" },
+                            d21: { type: "string" },
+                            d22: { type: "string" },
+                            d23: { type: "string" },
+                            TotalDCR1623: { type: "string" },
+                            GivenQty2431: { type: "string" },
+                            TotalStock2431: { type: "string" },
+                            d24: { type: "string" },
+                            d25: { type: "string" },
+                            d26: { type: "string" },
+                            d27: { type: "string" },
+                            d28: { type: "string" },
+                            d29: { type: "string" },
+                            d30: { type: "string" },
+                            d31: { type: "string" },
+                            TotalDCR2431: { type: "string" },
+                            TotalDCR0131: { type: "string" },
+                            ClosingStock: { type: "string" },
+                        }
+                    }
+                },
+                //pageSize: 10,
+            }),
+            pageable: {
+                //refresh: true,
+                pageSizes: true, buttonCount: 5
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+            },
+            scrollable: true,
+            sortable: true,
+            filterable: false,
+            editable: false,
+            selectable: "row",
+            toolbar: [{ template: "<input type='text' id='txtInput'  style='float:right' placeholder='Search...' class='k-textbox'>" },],
+            columnMenu: false,
+            reorderable: false,
+            resizable: false,
+            resize: function (e) {
+                this.table.height(this.element.height() + this.table.height() - 1);
+            },
+
+
+            columns: [
+                { field: "ProductCode", title: "Product Code", hidden: true },
+                { field: "ProductName", title: "Product Name", locked: true },
+                { field: "ItemType", title: "Type" },
+                { field: "MPGroup", title: "MPGroup", hidden: true },
+                { field: "RestQty", title: "Carry<br/>In <br/> Qty" },
+                { field: "CentralQty", title: "Receive<br/> Qty" },
+                { field: "TotalQtyAddDefi0130", title: "Add/<br/>Defi<br/> 01-30" },
+                { field: "TotalQty", title: "Total<br/>Stock<br/> Qty" },
+                { field: "GivenQty0108", title: "Add/<br/>Defi<br/> 01-08", template: "<a href='javascript:void(0)' style='text-decoration: underline;' class='a:link btnLinkGivenQty0108'> ${GivenQty0108} </a>" },
+                { field: "TotalStock0108", title: "Rest<br/>Qty <br/> 01-08" },
+                {
+                    title: "First Week Used", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" },
+                    columns: [
+
+                        { field: "d01", title: "01", width: 25 },
+                        { field: "d02", title: "02", width: 25 },
+                        { field: "d03", title: "03", width: 25 },
+                        { field: "d04", title: "04", width: 25 },
+                        { field: "d05", title: "05", width: 25 },
+                        { field: "d06", title: "06", width: 25 },
+                        { field: "d07", title: "07", width: 25 },
+                        { field: "d08", title: "08", width: 25 },
+                    ]
+                },
+                { field: "TotalDCR0108", title: "Used<br/>Qty <br/> 01-08" },
+                { field: "GivenQty0915", title: "Add/<br/>Defi<br/> 09-15", template: "<a href='javascript:void(0)' style='text-decoration: underline;' class='a:link btnLinkGivenQty0915'> ${GivenQty0915} </a>" },
+                { field: "TotalStock0915", title: "Rest<br/>Qty <br/> 01-15" },
+                {
+                    title: "Second Week DCR", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" },
+                    columns: [
+
+                        { field: "d09", title: "09", width: 25 },
+                        { field: "d10", title: "10", width: 25 },
+                        { field: "d11", title: "11", width: 25 },
+                        { field: "d12", title: "12", width: 25 },
+                        { field: "d13", title: "13", width: 25 },
+                        { field: "d14", title: "14", width: 25 },
+                        { field: "d15", title: "15", width: 25 },
+                    ]
+                },
+                { field: "TotalDCR0915", title: "Used<br/>Qty <br/> 09-15" },
+                { field: "GivenQty1623", title: "Add/<br/>Defi<br/> 16-23", template: "<a href='javascript:void(0)' style='text-decoration: underline;' class='a:link btnLinkGivenQty1623'> ${GivenQty1623} </a>" },
+                { field: "TotalStock1623", title: "Rest<br/>Qty <br/> 01-23" },
+                {
+                    title: "Third Week Used", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" },
+                    columns: [
+
+                        { field: "d16", title: "16", width: 25 },
+                        { field: "d17", title: "17", width: 25 },
+                        { field: "d18", title: "18", width: 25 },
+                        { field: "d19", title: "19", width: 25 },
+                        { field: "d20", title: "20", width: 25 },
+                        { field: "d21", title: "21", width: 25 },
+                        { field: "d22", title: "22", width: 25 },
+                        { field: "d23", title: "23", width: 25 },
+
+                    ]
+                },
+
+                { field: "TotalDCR1623", title: "Used<br/>Qty <br/> 16-23" },
+                { field: "GivenQty2431", title: "Add/<br/>Defi<br/> 24-31", template: "<a href='javascript:void(0)' style='text-decoration: underline;' class='a:link btnLinkGivenQty2431'> ${GivenQty2431} </a>" },
+                { field: "TotalStock2431", title: "Rest<br/>Qty <br/>01-31" },
+                {
+                    title: "Fourth Week Used", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" },
+                    columns: [
+
+                        { field: "d24", title: "24", width: 25 },
+                        { field: "d25", title: "25", width: 25 },
+                        { field: "d26", title: "26", width: 25 },
+                        { field: "d27", title: "27", width: 25 },
+                        { field: "d28", title: "28", width: 25 },
+                        { field: "d29", title: "29", width: 25 },
+                        { field: "d30", title: "30", width: 25 },
+                        { field: "d31", title: "31", width: 25 },
+                    ]
+                },
+
+                { field: "TotalDCR2431", title: "Used<br/>Qty <br/> 24-31" },
+                { field: "TotalDCR0131", title: "Used<br/>Qty <br/> 01-31" },
+                { field: "ClosingStock", title: "Closing <br/> Stock <br/>Qty" },
+
+            ],
+        });
+        //Produc Name twise Filter table row
+        $("#txtInput").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "ProductCode", operator: "contains", value: val },
+                    { field: "ProductName", operator: "contains", value: val },
+
+                ]
+            });
+        });
+       
+       
+
+
+
+
+
+    });
+
+
+
+
+
+</script>
+
+
+<div class="box-header with-border">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+            <form class="form" action="/ReportSampleStatementArchive/Export" id="R1Form" method="post" name="H1Form" target="_blank">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+                    <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                        <div style="text-align:right;">
+                            <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                            <button id="btnExcel" class="btn btn-primary btn-sm" name="ExportType" value="Excel" type="submit"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                            <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PDF" type="submit"><i class="glyphicon glyphicon-book"></i> PDF </button>
+                            <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-body">
+
+                    <div class="row" id="divValueParameter">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Month - Year:</div>
+                            <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
+                                <div class="input-group">
+                                    <select id="MonthNumber" name="MonthNumber" class="RequiredField form-control"></select>
+                                    <span class="input-group-btn" style="width:0px;"></span>
+                                    <input type="text" name="Year" id="Year" class="datepicker RequiredField form-control" />
+                                </div>
+                            </div>
+                            <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2">  Item Type:  </div>
+                            <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
+                                <div class="input-group">
+                                    <select id="ItemType" name="ItemType" class="RequiredField form-control">
+                                        <option value="All">All</option>
+                                        <option value="SlSmRI">Sample Item All</option>
+                                        <option value="SlR">Selected Item Regular</option>
+                                        <option value="SmR">Sample Item Regular</option>
+                                        <option value="SmI">Sample Item Intern</option>
+                                        <option value="GtRI">Gift Item All</option>
+                                        <option value="GtR">Gift Item Regular</option>
+                                        <option value="GtI">Gift Item Intern</option>
+                                    </select>
+                                    <input type="hidden" id="ItemTypeName" name="ItemTypeName" class="RequiredField form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Region Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="RegionCode" name="RegionCode" class="RequiredField form-control"></select>
+                                <input type="hidden" id="RegionName" name="RegionName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">TM Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="TerritoryManagerID" name="TerritoryManagerID" class="RequiredField form-control"></select>
+                                <input type="hidden" id="TerritoryManagerName" name="TerritoryManagerName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">MPO Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="MPGroup" name="MPGroup" class="RequiredField form-control"></select>
+                                <input type="hidden" id="MPOName" name="MPOName" class="RequiredField form-control">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div id="MainGrid" class="MainGrid"></div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div id="TerritoryPopupWindow" class="PopupWindowLayout" style="display: none;">
+        <div id="TerritoryPopupWindowGrid" class="PopUpGrid"></div>
+    </div>
+</div>
+<div class="row">
+    <div id="MarketPopupWindow" class="PopupWindowLayout" style="display: none;">
+        <div id="MarketPopupWindowGrid" class="PopUpGrid"></div>
+    </div>
+</div>
+<div class="row">
+    <div id="MPOPopupWindow" class="PopupWindowLayout" style="display: none;">
+        <div id="MPOPopupWindowGrid" class="PopUpGrid"></div>
+    </div>
+</div>
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+
+
+
+
+

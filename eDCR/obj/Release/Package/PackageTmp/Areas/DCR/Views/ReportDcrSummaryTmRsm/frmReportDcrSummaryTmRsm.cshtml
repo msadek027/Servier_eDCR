@@ -1,0 +1,398 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
+<link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
+<script src="~/Scripts/CustomJS/DefaultValue.js"></script>
+
+
+
+
+<style>
+    .red {
+        background-color: red;
+    }
+</style>
+
+
+
+<div class="box-header with-border">
+    <form class="form" action="/ReportDcrSummaryTmRsm/Export" id="R1Form" method="post" name="H1Form" target="_blank">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2"><div id="MessageText"></div></div>
+            <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10">
+                <div style="text-align:right;">
+                    <input type="checkbox" id="IsActive" class="chk" name="IsActive"> <label for="IsActive"> Hide</label>
+                    <button id="btnExcel" class="btn btn-primary btn-sm" name="ExportType" value="Excel" type="submit"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                    <button id="btnPDF" class="btn btn-primary btn-sm" name="ExportType" value="PDF" type="submit"><i class="glyphicon glyphicon-book"></i> PDF </button>
+                    <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
+                </div>
+            </div>
+                </div>
+
+
+
+
+                <div class="box-body">
+                    <div class="row" id="divValueParameter">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Date Between:</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <div class="input-group">
+                                    <input type="text" id="FromDate" name="FromDate" class="firstDay RequiredField form-control">
+                                    <span class="input-group-btn" style="width:0px;"></span>
+                                    <input type="text" id="ToDate" name="ToDate" class="date RequiredField form-control">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span> </span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Region Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="RegionCode" name="RegionCode" class="RequiredField form-control"></select>
+                                <input type="hidden" id="RegionName" name="RegionName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Designation  :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="Designation" name="Designation" class="RequiredField form-control">
+                                    <option value=""></option>
+                                    <option value="TM">TM</option>
+                                    <option value="RSM">RSM</option>
+                                    <option value="DSM">DSM</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Employee Name :</div>
+                            <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
+                                <select id="LocCode" name="LocCode" class="RequiredField form-control"></select>
+                                <input type="hidden" id="LocName" name="LocName" class="RequiredField form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div id="MainGrid" class="MainGrid"></div>
+    </div>
+</div>
+
+<div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+    <p style="position: absolute; top: 50%; left: 50%; color: White;">
+        <img src="~/Content/Images/loading.gif" />
+    </p>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            beforeSend: function () {
+                $("#divLoading").show();
+            },
+            complete: function () {
+                $("#divLoading").hide();
+            }
+        });
+
+        EventPermission();
+        $("#btnExcel").attr("disabled", true);
+        $("#btnPDF").attr("disabled", true);
+
+
+
+        $(".datepicker").datepicker({
+            format: " yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            autoclose: true
+        });
+        $("#Year").val(yyyy);
+        LoadMonth();
+
+        // GetEmpForSup();
+
+        function LoadMonth() {
+            $.ajax({
+                url: '/Default/GetGenMonth',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $('#MonthNumber').append($('<option>', { value: item.MonthNumber, html: item.MonthName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load ... !!");
+                }
+            });
+        }
+
+
+
+        LoadRegion();
+
+        function LoadRegion() {
+            $.ajax({
+                url: '/Default/GetRegion',
+                type: 'get',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $('#RegionCode').empty();
+                    $('#LocCode').empty();
+                    // $('#Designation').empty();
+                    $.each(data, function (i, item) {
+                        if (i === 0) {
+                            if (data.length > 1) {
+                                $('#RegionCode').append('<option value="" selected="selected"></option>');
+                            }
+                            $('#RegionName').val(item.RegionName);
+                        }
+                        $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load...");
+                }
+            });
+        }
+        $('#RegionCode').on('change', function () {
+
+            $('#RegionName').val($("#RegionCode option:selected").text());
+            $('#Designation').val('');
+            $('#LocCode').empty();
+        }).trigger('change');;
+
+        $('#Designation').on('change', function () {
+            GetEmpForSup($("#RegionCode").val(), $(this).val());
+        }).trigger('change');
+
+        $('#LocCode').select2();
+        function GetEmpForSup(RegionCode, Designation) {
+
+            if (Designation != "") {
+                $.ajax({
+                    type: "POST",
+                    url: '/Default/GetEmpForOwnSupfrmRegionDesignation',
+                    data: JSON.stringify({ RegionCode: RegionCode, Designation: Designation }),
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+                        $('#LocCode').empty();
+                        $.each(data, function (i, item) {
+                            if (i == 0) {
+                                if (data.length > 1) {
+                                    $('#LocCode').append('<option value="" selected="selected"></option>');
+                                }
+                            }
+                            $('#LocCode').append($('<option>', { value: item.LocCode, html: item.EmployeeName }, '<option/>'));
+                            $('#LocName').val(item.EmployeeName);
+                        });
+                    },
+                    error: function () {
+                        alert("Failed to load... !!");
+                    }
+                });
+            }
+            else {
+                $('#LocCode').append('<option value="" selected="selected"></option>');
+            }
+        }
+
+
+        $('#LocCode').on('change', function () {
+            $('#LocName').val($("#LocCode option:selected").text());
+        }).trigger('change');
+
+
+
+        $('#IsActive').click(function () {
+            if ($(this).is(':checked')) {
+                $(this).siblings('label').html('Unhide');
+                $('#divValueParameter').hide();
+            }
+            else {
+                $(this).siblings('label').html('Hide');
+                $('#divValueParameter').show();
+            }
+        });
+
+        var MainGrid = $('#MainGrid').kendoGrid({
+            dataSource: new kendo.data.DataSource({
+                batch: false,
+                schema: {
+                    model: {
+                        id: "EmployeeID",
+                        fields: {
+                            EmployeeID: { type: "string" },
+                            SL: { type: "string" },
+                            Date: { type: "string" },
+                            EmployeeName: { type: "string" },
+                            MarketName: { type: "string" },
+                            TotalDCR: { type: "string" },
+
+                            DoubleCall: { type: "string" },
+                            SingleCall: { type: "string" },
+                            MorningDCR: { type: "string" },
+                            EveningDCR: { type: "string" },
+                            NewDoctorDCR: { type: "string" },
+                            InternDoctorDCR: { type: "string" },
+
+                            NoOfInternDoctorVisited: { type: "string" },
+                            OtherDCR: { type: "string" },
+                            NoOfChemist: { type: "string" },
+                            Accompany: { type: "string" },
+                           
+                        }
+                    }
+                },
+                 pageSize:100,
+            }),
+            pageable: {
+                //refresh: true,
+                pageSizes: true, buttonCount: 10
+            },
+            dataBound: function (e) {
+                AutoFitColumn(this.element[0].id);
+            },
+            toolbar: [{ template: "<input type='text' id='txtInput'  style='float:right' placeholder='Search...' class='k-textbox'>" },],
+
+            height: 450,
+            scrollable: true,
+            sortable: true,
+            filterable: false,
+            editable: false,
+            navigatable: false,
+            columnMenu: false,
+            reorderable: false,
+            //resizable: true,
+            //resize: function (e) {
+            //    this.table.height(this.element.height() + this.table.height() - 1);
+            //},
+            columns: [
+                { field: "SL", title: "SL" },
+                { field: "Date", title: "Date" },
+                { field: "EmployeeID", title: "Employee ID" },
+                { field: "EmployeeName", title: "Employee Name" },
+                { field: "MarketName", title: "Market Name" },
+
+
+                { field: "TotalDCR", title: "Total<br/>DCR" },
+                { field: "DoubleCall", title: "Double<br/>Call" },
+                { field: "SingleCall", title: "Single<br/>Call" },
+                { field: "MorningDCR", title: "Morning<br/>DCR" },
+                { field: "EveningDCR", title: "Evening<br/>DCR" },
+                { field: "NewDoctorDCR", title: "New<br/>Doctor<br/>DCR" },
+                { field: "InternDoctorDCR", title: "Intern<br/>Doctor<br/>DCR" },
+                { field: "NoOfInternDoctorVisited", title: "No of <br/>Intern<br/>Doctor<br/>Visited" },
+                { field: "OtherDCR", title: "Other<br/>DCR" },
+                { field: "NoOfChemist", title: "No. of<br/>Chemist" },
+                { field: "Accompany", title: "Accompany<br/>List" }
+
+
+            ],
+        }).data('kendoGrid');
+
+
+
+
+        $("#txtInput").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+
+                    { field: "EmployeeID", operator: "contains", value: val },
+                    { field: "EmployeeName", operator: "contains", value: val },
+                    { field: "MarketName", operator: "contains", value: val },
+
+                ]
+            });
+        });
+        $('#btnView').click(function () {
+
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+
+            $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+            $('#MainGrid').data('kendoGrid').dataSource.data([]);
+
+
+            var FromDate = $("#FromDate").val();
+            var ToDate = $("#ToDate").val();
+
+            var fromDateParts = FromDate.split("-");
+            var fromDateObject = new Date(fromDateParts[2], fromDateParts[1] - 1, fromDateParts[0]);
+
+            var toDateParts = ToDate.split("-");
+            var toDateObject = new Date(toDateParts[2], toDateParts[1] - 1, toDateParts[0]);
+
+            if (fromDateObject > toDateObject) {
+                $('#FromDate').css("border", "1px solid red");
+                $('#ToDate').css("border", "1px solid red");
+                $('#ToDate').val("");
+                toastr.warning("To Date cannot be greater than From Date");
+                return false;
+            }
+
+
+            var Input = InputValidation('FromDate') + InputValidation('ToDate');
+
+
+
+            var model = {};
+
+            model.FromDate = FromDate;
+            model.ToDate = ToDate;
+            model.LocCode = $("#LocCode").val();
+            model.Designation = $("#Designation").val();
+            model.RegionCode = $("#RegionCode").val();
+
+            if (Input == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/ReportDcrSummaryTmRsm/GetDcrSummaryTmRsm",
+                    data: JSON.stringify({ model: model }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data != "") {
+                            $("#MainGrid").data("kendoGrid").dataSource.data(data);
+                            $("#btnExcel").attr("disabled", false);
+                            $("#btnPDF").attr("disabled", false);
+                        }
+                        else {
+                            AcknowledgeMsg();
+                            toastr.info($("#MessageText").html());
+
+                        }
+                        //$("#divLoading").hide();
+                    },
+                });
+            }
+            else {
+                ValidationMsg();
+                toastr.info($("#MessageText").html());
+            }
+        });
+
+    });
+
+</script>
+
+
+

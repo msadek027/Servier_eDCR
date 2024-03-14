@@ -1,45 +1,4 @@
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\Scripts\KendoForPDF\pako_deflate.js
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\Scripts\KendoForPDF\pako_deflate.min.2018.js
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\eDCR.dll.config
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\eDCR.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\eDCR.pdb
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\ClosedXML.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\DocumentFormat.OpenXml.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\ExcelNumberFormat.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\FastMember.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\itextsharp.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\Microsoft.Web.Infrastructure.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\Newtonsoft.Json.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Net.Http.Formatting.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Helpers.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Http.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Http.WebHost.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Mvc.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Razor.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Webpages.Deployment.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Webpages.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Webpages.Razor.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\ClosedXML.pdb
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\ClosedXML.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\DocumentFormat.OpenXml.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\ExcelNumberFormat.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\itextsharp.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Razor.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Webpages.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Webpages.Deployment.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Webpages.Razor.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Helpers.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Mvc.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\Newtonsoft.Json.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Net.Http.Formatting.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Http.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\bin\System.Web.Http.WebHost.xml
-E:\Officials Projects\Lockdown\eDCR\eDCR\obj\Debug\eDCR.csproj.CoreCompileInputs.cache
-E:\Officials Projects\Lockdown\eDCR\eDCR\obj\Debug\eDCR.csproj.CopyComplete
-E:\Officials Projects\Lockdown\eDCR\eDCR\obj\Debug\eDCR.dll
-E:\Officials Projects\Lockdown\eDCR\eDCR\obj\Debug\eDCR.pdb
-E:\Officials Projects\Lockdown\eDCR\eDCR\obj\Debug\eDCR.csproj.AssemblyReference.cache
+E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\obj\Debug\eDCR.csproj.CoreCompileInputs.cache
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\bin\Scripts\KendoForPDF\pako_deflate.js
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\bin\Scripts\KendoForPDF\pako_deflate.min.2018.js
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\bin\eDCR.dll.config
@@ -77,66 +36,7 @@ E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\bin\Newtonsoft.Json.xml
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\bin\System.Net.Http.Formatting.xml
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\bin\System.Web.Http.xml
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\bin\System.Web.Http.WebHost.xml
-E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\obj\Debug\eDCR.csproj.CoreCompileInputs.cache
+E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\obj\Debug\eDCR.csproj.AssemblyReference.cache
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\obj\Debug\eDCR.csproj.CopyComplete
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\obj\Debug\eDCR.dll
 E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\obj\Debug\eDCR.pdb
-E:\Officials Projects\Lockdown\eDCR_Servier\eDCR\eDCR\obj\Debug\eDCR.csproj.AssemblyReference.cache
-G:\Servier_eDCR\eDCR\bin\Scripts\KendoForPDF\pako_deflate.js
-G:\Servier_eDCR\eDCR\bin\Scripts\KendoForPDF\pako_deflate.min.2018.js
-G:\Servier_eDCR\eDCR\bin\eDCR.dll.config
-G:\Servier_eDCR\eDCR\bin\eDCR.dll
-G:\Servier_eDCR\eDCR\bin\eDCR.pdb
-G:\Servier_eDCR\eDCR\bin\ClosedXML.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.CrystalReports.Engine.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportSource.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.Shared.dll
-G:\Servier_eDCR\eDCR\bin\DocumentFormat.OpenXml.dll
-G:\Servier_eDCR\eDCR\bin\ExcelNumberFormat.dll
-G:\Servier_eDCR\eDCR\bin\FastMember.dll
-G:\Servier_eDCR\eDCR\bin\itextsharp.dll
-G:\Servier_eDCR\eDCR\bin\Microsoft.Web.Infrastructure.dll
-G:\Servier_eDCR\eDCR\bin\Newtonsoft.Json.dll
-G:\Servier_eDCR\eDCR\bin\System.dll
-G:\Servier_eDCR\eDCR\bin\System.Net.Http.Formatting.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Helpers.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Http.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Http.WebHost.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Mvc.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Razor.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Webpages.Deployment.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Webpages.dll
-G:\Servier_eDCR\eDCR\bin\System.Web.Webpages.Razor.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.DataDefModel.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.ClientDoc.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.ReportDefModel.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.Controllers.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.CommLayer.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.DataSetConversion.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.Prompting.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.XmlSerialize.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.CubeDefModel.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.CommonObjectModel.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.ObjectFactory.dll
-G:\Servier_eDCR\eDCR\bin\CrystalDecisions.ReportAppServer.CommonControls.dll
-G:\Servier_eDCR\eDCR\bin\stdole.dll
-G:\Servier_eDCR\eDCR\bin\ClosedXML.pdb
-G:\Servier_eDCR\eDCR\bin\ClosedXML.xml
-G:\Servier_eDCR\eDCR\bin\DocumentFormat.OpenXml.xml
-G:\Servier_eDCR\eDCR\bin\ExcelNumberFormat.xml
-G:\Servier_eDCR\eDCR\bin\itextsharp.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Razor.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Webpages.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Webpages.Deployment.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Webpages.Razor.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Helpers.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Mvc.xml
-G:\Servier_eDCR\eDCR\bin\Newtonsoft.Json.xml
-G:\Servier_eDCR\eDCR\bin\System.Net.Http.Formatting.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Http.xml
-G:\Servier_eDCR\eDCR\bin\System.Web.Http.WebHost.xml
-G:\Servier_eDCR\eDCR\obj\Debug\eDCR.csproj.AssemblyReference.cache
-G:\Servier_eDCR\eDCR\obj\Debug\eDCR.csproj.CoreCompileInputs.cache
-G:\Servier_eDCR\eDCR\obj\Debug\eDCR.csproj.Up2Date
-G:\Servier_eDCR\eDCR\obj\Debug\eDCR.dll
-G:\Servier_eDCR\eDCR\obj\Debug\eDCR.pdb

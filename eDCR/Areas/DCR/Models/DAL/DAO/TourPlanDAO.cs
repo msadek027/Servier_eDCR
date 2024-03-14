@@ -268,7 +268,7 @@ namespace eDCR.Areas.DCR.Models.DAO
 
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO : " + model.MPOName;
+                vHeader = vHeader + ", FF : " + model.MPOName;
                 Qry += " AND MP_GROUP='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)

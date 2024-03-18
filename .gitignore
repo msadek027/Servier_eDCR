@@ -1,8 +1,8 @@
-.vs
-eDCR/bin
+.vs/*/
+eDCR/bin/*
 !eDCR/bin/Systems.dll
 !eDCR/bin/Scripts
-eDCR/obj
+eDCR/obj/*/
 *.v2
 *.cache
 *.suo

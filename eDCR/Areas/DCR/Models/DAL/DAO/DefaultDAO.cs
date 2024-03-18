@@ -55,19 +55,19 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         public string GetWhereClauseDefineAsUserLocCode(string LocCode,string EmpType)
         {
             string WhereClause = "";
-            if (EmpType == "MPO" || EmpType == "SMPO")
+            if (EmpType == "MPO" || EmpType == "SMPO" || EmpType == "MIO" || EmpType == "SMIO")
             {
                 WhereClause = "  MARKET_CODE='" + LocCode + "'";
             }
-            else if (EmpType == "TM")
+            else if (EmpType == "TM" || EmpType == "RM")
             {
                 WhereClause = "  TERRITORY_CODE='" + LocCode + "'";
             }
-            else if (EmpType == "RSM")
+            else if (EmpType == "RSM" || EmpType == "ZM")
             {
                 WhereClause = "  REGION_CODE='" + LocCode + "'";
             }
-            else if (EmpType == "DSM")
+            else if (EmpType == "DSM" || EmpType == "PM")
             {
                 WhereClause = "  DIVISION_CODE='" + LocCode + "'";
             }
@@ -75,7 +75,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             {
                 WhereClause = "  DIVISION_CODE='" + LocCode + "'";
             }
-            else if (EmpType == "Manager" || EmpType == "Sr. Manager")
+            else if (EmpType == "Manager" || EmpType == "Sr. Manager" || EmpType == "CM")
             {
                 WhereClause = "  M_ID='" + LocCode + "'";
             }
@@ -88,29 +88,29 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         public string GetImmediateSubordinate_WhereClauseDefineAsUserLocCode(string LocCode, string EmpType)
         {
             string WhereClause = "";
-            if (EmpType == "MPO" || EmpType == "SMPO")
+            if (EmpType == "MPO" || EmpType == "SMPO" || EmpType == "MIO" || EmpType == "SMIO")
             {
                 WhereClause = "  MARKET_CODE='" + LocCode + "'";
             }
-            else if (EmpType == "TM")
+            else if (EmpType == "TM" || EmpType == "RM")
             {
-                WhereClause = "  TERRITORY_CODE='" + LocCode + "' AND DESIGNATION IN ('MPO','SMPO')";
+                WhereClause = "  TERRITORY_CODE='" + LocCode + "' AND DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
             }
-            else if (EmpType == "RSM")
+            else if (EmpType == "RSM" || EmpType == "ZM")
             {
-                WhereClause = "  REGION_CODE='" + LocCode + "' AND DESIGNATION='TM'";
+                WhereClause = "  REGION_CODE='" + LocCode + "' AND DESIGNATION='RM'";
             }
-            else if (EmpType == "DSM")
+            else if (EmpType == "DSM" || EmpType == "PM")
             {
-                WhereClause = "  DIVISION_CODE='" + LocCode + "' AND DESIGNATION='RSM'";
+                WhereClause = "  DIVISION_CODE='" + LocCode + "' AND DESIGNATION='ZM'";
             }
             else if (EmpType == "Executive" || EmpType == "Sr. Executive")
             {
-                WhereClause = "  DIVISION_CODE='" + LocCode + "' AND DESIGNATION='DSM'";
+                WhereClause = "  DIVISION_CODE='" + LocCode + "' AND DESIGNATION='PM'";
             }
-            else if (EmpType == "Manager" || EmpType == "Sr. Manager")
+            else if (EmpType == "Manager" || EmpType == "Sr. Manager" || EmpType == "RM")
             {
-                WhereClause = "  M_ID='" + LocCode + "' AND DESIGNATION IN ('RSM','DSM') ";
+                WhereClause = "  M_ID='" + LocCode + "' AND DESIGNATION IN ('ZM','PM') ";
             }
             else if (EmpType == "EMA")
             {
@@ -120,7 +120,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         }
         public List<DefaultBEL> GetMPOPopupList(string TerritoryManagerID)
         {
-            string Qry = "SELECT  LOC_CODE,MPO_NAME||' - '||MPO_CODE||' , '|| DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE MPO_NAME from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO') ";
+            string Qry = "SELECT  LOC_CODE,MPO_NAME||' - '||MPO_CODE||' , '|| DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE MPO_NAME from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO') ";
             if (TerritoryManagerID != "" && TerritoryManagerID != null)
             {
                 Qry = Qry + " AND TERRITORY_CODE= '" + TerritoryManagerID + "'";
@@ -152,7 +152,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
         public List<DefaultBEL> GetAccompanyWith(string TerritoryManagerID)
         {         
-            string Qry = " SELECT  MPO_CODE,MPO_NAME||' - '||MPO_CODE ||' , '||DESIGNATION||' | 'MARKET_NAME||' - '||MARKET_CODE EmpName,LOC_CODE from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO','TM','RSM','DSM','Manager')";
+            string Qry = " SELECT  MPO_CODE,MPO_NAME||' - '||MPO_CODE ||' , '||DESIGNATION||' | 'MARKET_NAME||' - '||MARKET_CODE EmpName,LOC_CODE from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO','TM','RSM','DSM','Manager','MIO','SMIO','RM','ZM','PM','CM')";
             if (TerritoryManagerID != "" && TerritoryManagerID != null)
             {
                 Qry = Qry + " AND MPO_CODE= '" + TerritoryManagerID + "'";
@@ -179,7 +179,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         }
         public List<DefaultBEL> GetUserWiseMPOList()
         {
-            string Qry = "SELECT LOC_CODE,MPO_NAME||' - '||MPO_CODE||' , '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE MPO_NAME  from VW_HR_LOC_MAPPING_ALL Where  DESIGNATION IN ('MPO','SMPO')";
+            string Qry = "SELECT LOC_CODE,MPO_NAME||' - '||MPO_CODE||' , '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE MPO_NAME  from VW_HR_LOC_MAPPING_ALL Where  DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
 
            string WhereClause= GetWhereClauseDefineAsUserLocCode(LocCodeSession, EmpTypeSession);
             if(WhereClause!="" && WhereClause!=null)
@@ -205,6 +205,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         public List<ProductInfo> GetProductItem(ProductInfo model)
         {
             string WhereClause = "";
+            string Designation = HttpContext.Current.Session["Designation"].ToString();
             if (EmpTypeSession == "EMA")
             {
                 if (model.ItemType != "All")
@@ -214,19 +215,19 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (HttpContext.Current.Session["Designation"].ToString() == "TM")
+                if (Designation == "TM" || Designation == "RM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where TSM_ID='" + HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
-                else if (HttpContext.Current.Session["Designation"].ToString() == "RSM")
+                else if (Designation == "RSM" || Designation == "ZM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where RSM_ID='" + HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
-                else if(HttpContext.Current.Session["Designation"].ToString() == "DSM")
+                else if(Designation == "DSM" || Designation == "PM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where DSM_ID='" + HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
-                else if (HttpContext.Current.Session["Designation"].ToString() == "Manager" || HttpContext.Current.Session["Designation"].ToString() == "Sr. Manager")
+                else if (Designation == "Manager" || Designation == "Sr. Manager" || Designation == "CM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where M_ID='" + HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
@@ -254,9 +255,10 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
 
         public List<ProductInfo> GetProductItemMaster(ProductInfo model)
-         {
-          
-            if(model.ItemType=="PI")
+        {
+            string Designation = HttpContext.Current.Session["Designation"].ToString();
+
+            if (model.ItemType=="PI")
             {
                 model.ItemType = "'SlR','SmR','SmI'";
             }
@@ -274,19 +276,19 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if( HttpContext.Current.Session["Designation"].ToString()=="TM" )
+                if(Designation == "TM" || Designation == "RM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where TSM_ID='"+ HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
-                else if (HttpContext.Current.Session["Designation"].ToString() == "RSM")
+                else if (Designation == "RSM" || Designation == "ZM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where RSM_ID='" + HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
-                else if(HttpContext.Current.Session["Designation"].ToString() == "DSM")
+                else if(Designation == "DSM" || Designation == "PM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where DSM_ID='" + HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
-                else if (HttpContext.Current.Session["Designation"].ToString() == "Manager" || HttpContext.Current.Session["Designation"].ToString() == "Sr. Manager")
+                else if (Designation == "Manager" || Designation == "Sr. Manager" || Designation == "CM")
                 {
                     WhereClause = " Where SBU IN (Select Distinct PRODUCT_GROUP from VW_HR_LOC_MAPPING Where DSM_ID='" + HttpContext.Current.Session["EmpID"].ToString() + "')";
                 }
@@ -314,21 +316,21 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
           public List<DefaultBEL> GetEmpForSup()
            {
             string Qry = "";
-            if (EmpTypeSession == "TM")
+            if (EmpTypeSession == "TM" || EmpTypeSession == "RM")
             {
-                Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where TERRITORY_CODE ='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO')";
+                Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where TERRITORY_CODE ='" + LocCodeSession + "' AND DESIGNATION IN ('MIO','SMIO')";
             }
-            if (EmpTypeSession == "RSM")
+            if (EmpTypeSession == "RSM" || EmpTypeSession == "ZM")
             {
-                Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where REGION_CODE ='" + LocCodeSession + "' AND DESIGNATION ='TM'";
+                Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where REGION_CODE ='" + LocCodeSession + "' AND DESIGNATION ='RM'";
             }
-            else if (EmpTypeSession == "DSM")
+            else if (EmpTypeSession == "DSM" || EmpTypeSession == "PM")
             {
-                Qry = "Select  LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE ='" + LocCodeSession + "' AND DESIGNATION ='RSM'";
+                Qry = "Select  LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE ='" + LocCodeSession + "' AND DESIGNATION ='ZM'";
             }
-            else if(EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager")
+            else if(EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager" || EmpTypeSession == "CM")
             {
-                Qry = "Select  LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName,DESIGNATION from VW_HR_LOC_MAPPING_ALL Where (DIVISION_CODE ='" + LocCodeSession + "' OR M_ID ='" + LocCodeSession + "') AND LOC_CODE !='"+LocCodeSession+"' AND DESIGNATION  IN ('RSM','DSM','Manager','Sr. Manager')";
+                Qry = "Select  LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName,DESIGNATION from VW_HR_LOC_MAPPING_ALL Where (DIVISION_CODE ='" + LocCodeSession + "' OR M_ID ='" + LocCodeSession + "') AND LOC_CODE !='"+LocCodeSession+"' AND DESIGNATION  IN ('ZM','PM','Manager','Sr. Manager','CM')";
               
                 string Qry2 = @"MINUS
                             Select  LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName,DESIGNATION 
@@ -401,74 +403,74 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         {
             string Qry = "Select  '' LOC_CODE,'' EmpName from Dual";       
        
-            if (EmpTypeSession == "TM")
+            if (EmpTypeSession == "TM" || EmpTypeSession == "RM")
             {
-                if (Designation == "TM")
+                if (Designation == "TM" || EmpTypeSession == "RM")
                 {
                     Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where TERRITORY_CODE='" + LocCodeSession + "' AND DESIGNATION='"+Designation+"' ";
                 }
-                if (Designation == "MPO")
+                if (Designation == "MPO" || Designation == "MIO")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where TERRITORY_CODE='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO') ";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where TERRITORY_CODE='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO','MIO','SMIO') ";
                 }
             }
-            if (EmpTypeSession == "RSM")
+            if (EmpTypeSession == "RSM" || EmpTypeSession == "ZM")
             {
                
-                if (Designation == "TM" || Designation == "RSM")
+                if (Designation == "TM" || Designation == "RSM" || Designation == "RM" || Designation == "ZM")
                 {
                     Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where REGION_CODE='" + LocCodeSession + "' AND DESIGNATION='" + Designation + "' ";
-                }               
-                if (Designation == "MPO")
+                }
+                if (Designation == "MPO" || Designation == "MIO")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where REGION_CODE='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO') ";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where REGION_CODE='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO','MIO','SMIO') ";
                 }
             }
-            if (EmpTypeSession == "DSM" || EmpTypeSession == "Executive" || EmpTypeSession == "Sr. Executive")
+            if (EmpTypeSession == "DSM" || EmpTypeSession == "PM" || EmpTypeSession == "Executive" || EmpTypeSession == "Sr. Executive")
             {
-                if (Designation == "TM" || Designation == "RSM")
+                if (Designation == "TM" || Designation == "RSM" || Designation == "RM" || Designation == "ZM")
                 {
                     Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE='" + LocCodeSession + "' AND DESIGNATION='" + Designation + "' ";
                 }
-                if (Designation == "DSM")
+                if (Designation == "DSM" || Designation == "PM")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE='" + LocCodeSession + "'  AND DESIGNATION IN ('DSM','Manager','Sr. Manager')";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE='" + LocCodeSession + "'  AND DESIGNATION IN ('DSM','PM','Manager','Sr. Manager')";
                 }
-                if (Designation == "MPO")
+                if (Designation == "MPO" || Designation == "MIO")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE='" + LocCodeSession + "'  AND DESIGNATION IN ('MPO','SMPO')";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE='" + LocCodeSession + "'  AND DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
                 }
             }
-            if (EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager")
+            if (EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager" || EmpTypeSession == "CM" )
             {
-                if (Designation == "TM" || Designation == "RSM")
+                if (Designation == "TM" || Designation == "RSM" || Designation == "RM" || Designation == "ZM")
                 {
                     Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID='" + LocCodeSession + "' AND DESIGNATION='" + Designation + "' ";
 
                 }
-                if (Designation == "DSM")
+                if (Designation == "DSM" || Designation == "PM")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID='" + LocCodeSession + "'  AND DESIGNATION IN ('DSM','Manager','Sr. Manager')";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID='" + LocCodeSession + "'  AND DESIGNATION IN ('DSM','PM','Manager','Sr. Manager')";
                 }
                 
-                if (Designation == "MPO")
+                if (Designation == "MPO" || Designation == "MIO")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID='" + LocCodeSession + "'  AND DESIGNATION IN ('MPO','SMPO')";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID='" + LocCodeSession + "'  AND DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
                 }
             }
             if (EmpTypeSession == "EMA")
             {
-                if (Designation == "TM" || Designation == "RSM")
+                if (Designation == "TM" || Designation == "RSM" || Designation == "RM" || Designation == "ZM")
                 {
                     Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where  DESIGNATION='" + Designation + "' ";
                 }
-                if (Designation == "DSM")
+                if (Designation == "DSM" || Designation == "PM")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('DSM','Manager','Sr. Manager')";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('DSM', 'PM','Manager','Sr. Manager')";
                 }
-                if (Designation == "MPO")
+                if (Designation == "MPO" || Designation == "MIO")
                 {
-                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO')";
+                    Qry = " Select LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
                 }
             }          
            
@@ -1034,11 +1036,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         public List<DefaultBEL> GetEmpForDesignationLocCodeSession(string RegionCode, string Designation)
         {
 
-            //string Str = RegionCode.Replace("[", "").Replace("]", "").Replace("\"", "'");
-            //if (Str != null && Str != "null")
-            //{
-            //    RegionCode = Str;
-            //}
+            
             
             string Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION EmpName from VW_HR_LOC_MAPPING_ALL";
            // string WhereClause = GetImmediateSubordinate_WhereClauseDefineAsUserLocCode(LocCodeSession, EmpTypeSession);
@@ -1050,7 +1048,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
            
             if (Designation == "MPO")
             {
-                Qry = Qry + " AND DESIGNATION IN('MPO', 'SMPO')";               
+                Qry = Qry + " AND DESIGNATION IN ('MPO', 'SMPO','MIO','SMIO') ";               
             }
             else
             {
@@ -1060,144 +1058,11 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 }
               
             }
-            if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null" && Designation != "DSM")
+            if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null" && Designation != "DSM" && Designation != "PM")
             {
                 Qry = Qry + " AND REGION_CODE ='" + RegionCode + "'";
             }
-            /*   
-           if (EmpTypeSession == "TM")
-           {
-               if (Designation == "TM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION EmpName from VW_HR_LOC_MAPPING_ALL Where TERRITORY_CODE ='" + LocCodeSession + "' AND DESIGNATION='" + Designation + "'";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-               if (Designation == "MPO")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where TERRITORY_CODE ='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-
-
-           }
-           if (EmpTypeSession == "RSM")
-           {
-
-               if (Designation == "TM" || Designation == "RSM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where REGION_CODE ='" + LocCodeSession + "' AND DESIGNATION='" + Designation + "'";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-               if (Designation == "MPO")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where REGION_CODE ='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-
-
-
-           }
-           if (EmpTypeSession == "DSM" || EmpTypeSession == "Executive" || EmpTypeSession == "Sr. Executive")
-           {
-
-               if (Designation == "TM" || Designation == "RSM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE ='" + LocCodeSession + "' AND DESIGNATION='" + Designation + "'";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-               if (Designation == "DSM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE ='" + LocCodeSession + "' AND DESIGNATION IN ('DSM','Manager','Sr. Manager')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + "  AND DIVISION_CODE IN (Select DISTINCT DIVISION_CODE from HR_LOC_MAPPING Where REGION_CODE In(" + RegionCode + "))";
-                   }
-               }
-               if (Designation == "MPO")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where DIVISION_CODE ='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-
-
-
-           }
-           if (EmpTypeSession == "EMA")
-           {
-
-               if (Designation == "TM" || Designation == "RSM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where  DESIGNATION='" + Designation + "'";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-               if (Designation == "DSM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('DSM','Manager','Sr. Manager')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + "  AND DIVISION_CODE IN (Select DISTINCT DIVISION_CODE from HR_LOC_MAPPING Where REGION_CODE In(" + RegionCode + "))";
-                   }
-               }
-               if (Designation == "MPO")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where  DESIGNATION IN ('MPO','SMPO')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-           }
-           if (EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager")
-           {
-               if (Designation == "TM" || Designation == "RSM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID ='" + LocCodeSession + "' AND DESIGNATION='" + Designation + "'";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In(" + RegionCode + ")";
-                   }
-               }
-               if (Designation == "DSM")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID ='" + LocCodeSession + "' AND DESIGNATION IN ('DSM','Manager','Sr. Manager')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + "  AND DIVISION_CODE IN (Select DISTINCT DIVISION_CODE from HR_LOC_MAPPING Where REGION_CODE In(" + RegionCode + "))";
-                   }
-               }
-               if (Designation == "MPO")
-               {
-                   Qry = " Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE ||' | '|| MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName from VW_HR_LOC_MAPPING_ALL Where M_ID ='" + LocCodeSession + "' AND DESIGNATION IN ('MPO','SMPO')";
-                   if (RegionCode != null && RegionCode != "" && RegionCode != " " && RegionCode != "null")
-                   {
-                       Qry = Qry + " and REGION_CODE In (" + RegionCode + ")";
-                   }
-               }
-
-
-           }
-            */
+          
 
 
             DataTable dt = dbHelper.GetDataTable(dbConn.SAConnStrReader(), Qry);
@@ -1217,17 +1082,17 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         {
             string Qry = "Select  LOC_CODE,MARKET_NAME||' - '||MARKET_CODE||' | '||MPO_NAME||' - '|| MPO_CODE||', '||DESIGNATION  EmpName  From VW_HR_LOC_MAPPING_ALL";             
            
-            if (Designation == "TM" || Designation == "RSM")
+            if (Designation == "TM" || Designation == "RSM" || Designation == "RM" || Designation == "ZM")
              {
                 Qry = Qry+ " Where DESIGNATION='" + Designation + "' ";
              }
-            if (Designation == "DSM")
+            if (Designation == "DSM" || Designation == "PM")
             {
-                Qry = Qry + " Where DESIGNATION IN ('DSM','Manager','Sr. Manager') ";
+                Qry = Qry + " Where DESIGNATION IN ('DSM','PM','Manager','Sr. Manager') ";
             }
             if (Designation == "MPO")
              {
-               Qry = Qry+ " Where DESIGNATION IN ('MPO','SMPO') ";
+               Qry = Qry+ " Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO') ";
              }
             string WhereClause = GetWhereClauseDefineAsUserLocCode(LocCodeSession, EmpTypeSession);
             if (WhereClause != "" && WhereClause != null)
@@ -1276,7 +1141,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
      
         public List<DefaultBEL> GetTerritoryFromRegion(string RegionCode)
         {
-            string Qry = "Select  LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName From VW_HR_LOC_MAPPING_ALL Where DESIGNATION='TM'  ";
+            string Qry = "Select  LOC_CODE,MPO_NAME||' - '||MPO_CODE||', '||DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE EmpName From VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('TM','RM')  ";
 
             if (RegionCode != "" && RegionCode != null)
             {
@@ -1421,11 +1286,11 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 if (Designation == "" || Designation == " ")
                 {
                     Qry = " Select LOC_CODE,LocName,DEPOT_CODE,PRODUCT_GROUP,SBU  from( " +
-                        " Select distinct REGION_CODE LOC_CODE,REGION_NAME LocName,DEPOT_CODE,PRODUCT_GROUP,SBU  from HR_LOC_MAPPING  Where DESIGNATION='RSM'" +
+                        " Select distinct REGION_CODE LOC_CODE,REGION_NAME LocName,DEPOT_CODE,PRODUCT_GROUP,SBU  from HR_LOC_MAPPING  Where DESIGNATION='ZM'" +
                         " UNION ALL" +
-                        " Select distinct TERRITORY_CODE LOC_CODE,TERRITORY_NAME LocName,DEPOT_CODE,PRODUCT_GROUP,SBU  from HR_LOC_MAPPING Where DESIGNATION='TM'" +
+                        " Select distinct TERRITORY_CODE LOC_CODE,TERRITORY_NAME LocName,DEPOT_CODE,PRODUCT_GROUP,SBU  from HR_LOC_MAPPING Where DESIGNATION='RM'" +
                        " UNION ALL" +
-                       " Select distinct MARKET_CODE || MARKET_GROUP || PRODUCT_GROUP LOC_CODE,MARKET_NAME LocName,DEPOT_CODE,PRODUCT_GROUP,SBU from HR_LOC_MAPPING Where DESIGNATION IN ('MPO','SMPO') ) ";
+                       " Select distinct MARKET_CODE || MARKET_GROUP || PRODUCT_GROUP LOC_CODE,MARKET_NAME LocName,DEPOT_CODE,PRODUCT_GROUP,SBU from HR_LOC_MAPPING Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO') ) ";
 
                     if (DepotCode != null && DepotCode != "" && DepotCode != " " && DepotCode != "null")
                     {
@@ -1448,17 +1313,14 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 else
                 {
 
-                    if (Designation == "RSM")
+                    if (Designation == "RSM" || Designation == "TM" || Designation == "RM" || Designation == "ZM")
                     {
-                        Qry = "Select distinct REGION_CODE LOC_CODE,REGION_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION='RSM'";
+                        Qry = "Select distinct REGION_CODE LOC_CODE,REGION_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION='"+ Designation + "'";
                     }
-                    if (Designation == "TM")
+                   
+                    if (Designation == "MPO" || Designation == "MIO")
                     {
-                        Qry = "Select distinct TERRITORY_CODE LOC_CODE,TERRITORY_NAME LocName from HR_LOC_MAPPING Where DESIGNATION='TM'";
-                    }
-                    if (Designation == "MPO")
-                    {
-                        Qry = "Select distinct MARKET_CODE || MARKET_GROUP || PRODUCT_GROUP LOC_CODE,MARKET_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION IN ('MPO','SMPO')";
+                        Qry = "Select distinct MARKET_CODE || MARKET_GROUP || PRODUCT_GROUP LOC_CODE,MARKET_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
                     }
 
 
@@ -1507,17 +1369,14 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 }
                 else
                 {
-                    if (Designation == "RSM")
+                    if (Designation == "RSM" || Designation == "TM" || Designation == "ZM" || Designation == "RM")
                     {
-                        Qry = "Select distinct REGION_CODE LOC_CODE,REGION_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION='RSM'";
+                        Qry = "Select distinct REGION_CODE LOC_CODE,REGION_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION ='"+ Designation + "'";
                     }
-                    if (Designation == "TM")
+                  
+                    if (Designation == "MPO" || Designation == "MIO")
                     {
-                        Qry = "Select distinct TERRITORY_CODE LOC_CODE,TERRITORY_NAME LocName from HR_LOC_MAPPING Where DESIGNATION='TM'";
-                    }
-                    if (Designation == "MPO")
-                    {
-                        Qry = "Select distinct MARKET_CODE || MARKET_GROUP || PRODUCT_GROUP LOC_CODE,MARKET_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION IN ('MPO','SMPO')";
+                        Qry = "Select distinct MARKET_CODE || MARKET_GROUP || PRODUCT_GROUP LOC_CODE,MARKET_NAME LocName  from HR_LOC_MAPPING Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
                     }
 
 
@@ -1588,16 +1447,16 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 Qry = Qry + " AND " + WhereClause;
             }
 
-            if (model.Designation == "MPO" || model.Designation == "SMPO")
+            if (model.Designation == "MPO" || model.Designation == "SMPO" || model.Designation == "MIO" || model.Designation == "SMIO")
             {
-                Qry = Qry + " AND DESIGNATION IN ('MPO','SMPO')";
+                Qry = Qry + " AND DESIGNATION IN ('MPO','SMPO','MIO','SMIO')";
 
                 if (model.RegionCode != null && model.RegionCode != "" && model.RegionCode != " " && model.RegionCode != "null")
                 {
                     Qry = Qry + " and REGION_CODE ='" + model.RegionCode + "'";
                 }
             }
-            if (model.Designation == "TM" || model.Designation == "RSM" )
+            if (model.Designation == "TM" || model.Designation == "RSM" || model.Designation == "RM" || model.Designation == "ZM")
             {
                 Qry = Qry + " AND DESIGNATION='"+ model.Designation + "'";
 
@@ -1607,7 +1466,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 }
             }
            
-            if (model.Designation == "DSM")
+            if (model.Designation == "DSM" || model.Designation == "PM")
             {
                 Qry = Qry + " AND DESIGNATION='" + model.Designation + "'";
             }
@@ -1643,14 +1502,14 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     Qry = Qry + "  AND REGION_CODE='" + model.RegionCode + "'";
                 }
             }
-            if (EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager")
+            if (EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager" || EmpTypeSession == "CM")
             {
                 if (model.RegionCode != "" && model.RegionCode != null)
                 {
                     Qry = Qry + "  AND REGION_CODE='" + model.RegionCode + "'";
                 }               
             }
-            if (EmpTypeSession == "DSM" || EmpTypeSession == "Executive" || EmpTypeSession == "Sr. Executive")
+            if (EmpTypeSession == "DSM" || EmpTypeSession == "Executive" || EmpTypeSession == "Sr. Executive" || EmpTypeSession == "PM")
             {
                 if (model.RegionCode != "" && model.RegionCode != null)
                 {

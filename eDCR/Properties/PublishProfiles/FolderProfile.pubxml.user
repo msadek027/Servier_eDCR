@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_PublishTargetUrl>D:\PublishWebSite\eDCR</_PublishTargetUrl>
-    <History>True|2024-03-06T05:10:30.1080452Z;</History>
+    <History>True|2024-03-14T06:00:49.4054962Z;True|2024-03-06T11:10:30.1080452+06:00;</History>
   </PropertyGroup>
   <ItemGroup>
     <File Include="AdminLTE/bootstrap/css/bootstrap.css">
@@ -3354,7 +3354,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>07/19/2023 10:12:41</publishTime>
     </File>
     <File Include="Areas/DCR/Views/DoctorVisitRegisterNew/frmDoctorVisitRegisterNew.cshtml">
-      <publishTime>01/03/2024 11:24:52</publishTime>
+      <publishTime>03/14/2024 11:59:13</publishTime>
     </File>
     <File Include="Areas/DCR/Views/DoctorVisitRegisterNew/frmDoctorVisitRegisterNew2.cshtml">
       <publishTime>03/24/2021 13:09:28</publishTime>
@@ -3378,7 +3378,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/28/2023 09:46:14</publishTime>
     </File>
     <File Include="Areas/DCR/Views/GiftWiseDoctorSelect/frmGiftWiseDoctorSelect.cshtml">
-      <publishTime>05/21/2023 16:39:55</publishTime>
+      <publishTime>03/14/2024 11:59:13</publishTime>
     </File>
     <File Include="Areas/DCR/Views/GiftWiseDoctorSelect/frmGiftWiseDoctorSelect2.cshtml">
       <publishTime>02/12/2020 15:21:48</publishTime>
@@ -3399,7 +3399,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>10/31/2019 13:08:00</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ProductWiseDoctorSelect/frmProductWiseDoctorSelect.cshtml">
-      <publishTime>05/21/2023 16:41:23</publishTime>
+      <publishTime>03/14/2024 11:59:13</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ProductWiseDoctorSelect/frmProductWiseDoctorSelect2.cshtml">
       <publishTime>02/12/2020 15:22:43</publishTime>
@@ -3588,7 +3588,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>01/17/2024 12:07:11</publishTime>
     </File>
     <File Include="Areas/DCR/Views/TourPlanMpo/frmTourPlanMpo.cshtml">
-      <publishTime>07/12/2023 11:13:34</publishTime>
+      <publishTime>03/14/2024 11:57:12</publishTime>
     </File>
     <File Include="Areas/DCR/Views/TourPlanMpo/frmTourPlanMpo2.cshtml">
       <publishTime>07/13/2021 10:27:00</publishTime>
@@ -3651,10 +3651,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>10/31/2019 12:49:54</publishTime>
     </File>
     <File Include="bin/eDCR.dll">
-      <publishTime>03/10/2024 16:46:46</publishTime>
+      <publishTime>03/14/2024 12:00:11</publishTime>
     </File>
     <File Include="bin/eDCR.pdb">
-      <publishTime>03/10/2024 16:46:46</publishTime>
+      <publishTime>03/14/2024 12:00:11</publishTime>
     </File>
     <File Include="bin/ExcelNumberFormat.dll">
       <publishTime>10/31/2019 12:49:54</publishTime>
@@ -4824,7 +4824,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>12/27/2017 10:58:24</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>03/06/2024 11:10:15</publishTime>
+      <publishTime>03/14/2024 12:00:12</publishTime>
     </File>
   </ItemGroup>
 </Project>

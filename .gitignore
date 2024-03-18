@@ -1,4 +1,4 @@
-.vs
+.vs/*
 bin/*.dll
 !bin/Systems.dll
 obj
@@ -43,3 +43,12 @@ obj
 /eDCR/bin/System.Web.Razor.dll
 /eDCR/bin/System.Web.Razor.xml
 /eDCR/bin/System.Web.Webpages.Deployment.dll
+*.cache
+eDCR/eDCR.csproj.user
+eDCR/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+eDCR/obj/Debug/eDCR.csproj.AssemblyReference.cache
+eDCR/obj/Debug/eDCR.csproj.CoreCompileInputs.cache
+eDCR/obj/Debug/eDCR.csproj.FileListAbsolute.txt
+eDCR/obj/Debug/eDCR.dll
+eDCR/obj/Debug/eDCR.pdb
+.vs/eDCR/config/applicationhost.config

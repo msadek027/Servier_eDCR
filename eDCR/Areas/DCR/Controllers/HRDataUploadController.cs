@@ -2,12 +2,7 @@
 using eDCR.Areas.DCR.Models.DAL.DAO;
 using eDCR.DAL.Gateway;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.OleDb;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eDCR.Areas.DCR.Controllers
@@ -17,7 +12,7 @@ namespace eDCR.Areas.DCR.Controllers
         HRDataUploadDAO hRDataUploadDAO = new HRDataUploadDAO();
         ExceptionHandler exceptionHandler = new ExceptionHandler();
         Object data = null;
- 
+
 
 
         public ActionResult frmHRDataUpload()
@@ -56,9 +51,6 @@ namespace eDCR.Areas.DCR.Controllers
             var data = Json(listData, JsonRequestBehavior.AllowGet);
             data.MaxJsonLength = int.MaxValue;
             return data;
-
-
-         
         }
 
 
@@ -80,11 +72,6 @@ namespace eDCR.Areas.DCR.Controllers
                 return exceptionHandler.ErrorMsg(e);
             }
         }
-       
 
-
-      
-
-  
-	}
+    }
 }

@@ -2,6 +2,7 @@
     //ViewBag.Title = "frmImportExcelToGrid";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="~/Content/CustomCSS/AutoComplete.css" rel="stylesheet" />
 
 <div class="box-header with-border">
     @*Form Title*@
@@ -23,7 +24,9 @@
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">Division Name :</div>
         <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
-            <select id="DivisionCode" name="DivisionCode" class="RequiredField form-control"></select>
+            <div class="autocomplete">
+                <input class="RequiredField form-control" id="DivisionCode" type="text" name="DivisionCode" />
+            </div>
         </div>
         <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"> </div>
         <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2">Depot Name :</div>
@@ -58,7 +61,7 @@
                 <option value="D">D</option>
                 <option value="E">E</option>
                 <option value="N">N</option>
-                <option value="HB">HB</option>       
+                <option value="HB">HB</option>
             </select>
 
         </div>
@@ -149,7 +152,7 @@
 
 <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
-
+<script src="~/Scripts/CustomJS/AutoComplete.js"></script>
 <script src="~/Scripts/xlsx_0.7.12_xlsx.full.min.js"></script>
 
 <script type="text/javascript">
@@ -206,6 +209,7 @@
         $(".k-loading-mask").hide();
 
         LoadDivision();
+        var Divisions = []
         function LoadDivision() {
             $.ajax({
                 url: '/Default/GetDivision',
@@ -213,6 +217,9 @@
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
+                    Divisions = data;
+                    autocomplete(document.getElementById("DivisionCode"), Divisions.map(e => e.DivisionName));
+
                     $('#DivisionCode').empty();
                     $.each(data, function (i, item) {
                         if (i == 0) {
@@ -370,8 +377,6 @@
             LoadMarket($('#TerritoryCode').val());
         }).trigger('change');
 
-
-
         EventPermission();
         $('#btnReset').click(function () {
 
@@ -446,8 +451,6 @@
             });
 
         });
-
-
 
 
      //Initializing Main page details Kendo Grid Colums
@@ -533,14 +536,8 @@
                  { field: "DepotName", hidden: false, title: "DepotName" },
                  { field: "DivisionCode", hidden: false, title: "DivisionCode" },
                  { field: "DivisionName", hidden: false, title: "DivisionName" },
-
-
-
             ]
         }).data('kendoGrid');
-
-
-
 
         // Filter table row
         $("#txtEmpId").keyup(function () {
@@ -588,7 +585,6 @@
         var FileType = "";
         //************************************ END *****************************************//
 
-
         function GridValidation2() {
             gridInput = 0;
             var dataSource = $("#MainGrid").data("kendoGrid").dataSource;
@@ -604,7 +600,6 @@
                 gridInput = 1;
             }
         }
-
 
         var model = { "FileType": "", "hRDataUploadMPOList": [] };
 
@@ -773,16 +768,7 @@
             $("#btnSaveSingle").attr("disabled", false);
         });
 
-
     });
-
-
-
-
-
-
-
-
 
 </script>
 

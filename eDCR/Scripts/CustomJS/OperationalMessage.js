@@ -1,5 +1,8 @@
-﻿function ValidationMsg() {
-    $("#MessageText").show(500).css("margin", "0 1px 20px 0").html("Enter your value according to the field!").delay(800).fadeOut(10000);
+﻿function ValidationMsg(msg) {
+    if (msg == undefined || msg == null || msg == "") {
+        msg == "Enter your value according to the field!"
+    }
+    $("#MessageText").show(500).css("margin", "0 1px 20px 0").html(msg).delay(800).fadeOut(10000);
     $("#MessageText").css("color", "white");
     $("#MessageText").hide();
 

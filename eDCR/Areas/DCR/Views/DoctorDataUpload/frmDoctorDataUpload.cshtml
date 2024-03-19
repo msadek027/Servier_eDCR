@@ -3,7 +3,15 @@
     //ViewBag.Title = "frmImportExcelToGrid";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .p-0 {
+        padding: 0 !important;
+    }
 
+    .pt-5 {
+        padding-top: 5px !important;
+    }
+</style>
 <div class="box-header with-border">
     @*Form Title*@
     <div class="row">
@@ -13,34 +21,212 @@
                 <button id="btnTemplateDownload" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-refresh"></i> Template</button>
 
                 <button id="btnReset" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-refresh"></i> Reset</button>
-                <button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-save-file"></i> Save</button>
+                @*<button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-save-file"></i> Save</button>*@
                 <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
             </div>
         </div>
     </div>
-    </div>
+</div>
 <div class="box-body">
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-            Month -Year:
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <div class="input-group">
-                <span class="input-group-btn" style="width:2px;"></span>
-                <select id="MonthNumber" name="MonthNumber" class=" RequiredField form-control"></select>
-                <span class="input-group-btn" style="width:2px;"></span>
-                <input type="text" id="Year" class="datepicker RequiredField form-control" />
+        <div class="col-xs-6 col-sm-6 col-md-8">
+            <div class="col-sm-6 col-md-2 p-0 pt-5">Month -Year:</div>
+            <div class="col-sm-6 col-md-6">
+                <div class="input-group">
+                    <select id="MonthNumber" name="MonthNumber" class=" RequiredField form-control"></select>
+                    <span class="input-group-btn" style="width:2px;"></span>
+                    <input type="text" id="Year" class="datepicker RequiredField form-control" />
+                </div>
             </div>
         </div>
     </div>
-    <br/>
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2"><label for="myfile">Select a file:</label></div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Doctor ID:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="DoctorID" name="DoctorID" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Doctor Name:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="DoctorName" name="DoctorName" class="RequiredField form-control" required />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Degrees:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Degrees" name="Degrees" class="RequiredField form-control" />
+            </div>
+        </div>
+
+
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Specialization:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Specialization" name="Specialization" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Potential:</div>
+            <div class="col-sm-6 col-md-8">
+                <select id="Potential" name="Potential" class="RequiredField form-control">
+                    <option value="">Select One...</option>
+                    <option value="Low to Medium">Low to Medium</option>
+                    <option value="Medium to High">Medium to High</option>
+                    <option value="High to High">High to High</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Designation:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Designation" name="Designation" class="RequiredField form-control" />
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Reg No:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="RegNo" name="RegNo" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Phone:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Phone" name="Phone" type="tel" pattern="[+]{1}[0-9]{11,14}" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Email:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Email" name="Email" type="email" class="RequiredField form-control" />
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Religion:</div>
+            <div class="col-sm-6 col-md-8">
+                <select id="Religion" name="Religion" class="form-control">
+                    <option value="">Select One...</option>
+                    <option value="Islam">Islam</option>
+                    <option value="Hinduism">Hinduism</option>
+                    <option value="Christianity">Christianity </option>
+                    <option value="Buddhism">Buddhism</option>
+                </select>
+                @*<input id="Religion" name="Religion" class="RequiredField form-control" />*@
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Gender:</div>
+            <div class="col-sm-6 col-md-8">
+                <select id="Gender" name="Gender" class="RequiredField form-control">
+                    <option value="Male">Male</option>
+                    <option value="Femal">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                @*<input id="Gender" name="Gender" class="RequiredField form-control" />*@
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Adoption:</div>
+            <div class="col-sm-6 col-md-8">
+                <select id="Adoption" name="Adoption" class="form-control">
+                    <option value="">Select One...</option>
+                    <option value="Undecided/Unaware">Undecided/Unaware</option>
+                    <option value="Trialist">Trialist</option>
+                    <option value="Conscious Non-Prescriber">Conscious Non-Prescriber</option>
+                    <option value="Medium prescriber">Medium prescriber</option>
+                    <option value="High to high Prescriber">High to high Prescriber</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Product Group:</div>
+            <div class="col-sm-6 col-md-8">
+                <select id="ProductGroup" name="ProductGroup" class="RequiredField form-control">
+                    <option value="">Select One...</option>
+                    <option value="A">A</option>
+                    <option value="G">G</option>
+                    <option value="GA">GA</option>
+                    <option value="R">R</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Team Target:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="TeamTarget" name="TeamTarget" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Market:</div>
+            <div class="col-sm-6 col-md-8">
+                <select id="MarketCode" name="MarketCode" class="RequiredField form-control">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Region:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Region" name="Region" class="RequiredField form-control" />
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Address1:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Address1" name="Address1" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Address2:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Address2" name="Address2" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Address3:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Address3" name="Address3" class="RequiredField form-control" />
+            </div>
+        </div>
+
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Address4:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="Address4" name="Address4" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Morning Location:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="MorningLocation" name="MorningLocation" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 p-0 pt-5">Evening Location:</div>
+            <div class="col-sm-6 col-md-8">
+                <input id="EveningLocation" name="EveningLocation" class="RequiredField form-control" />
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-xs-6 col-sm-6 col-md-4">
+            <button id="btnSaveSingle" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-save-file"></i> Save</button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2"><label for="myfile">Or Upload from Excel:</label></div>
         <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
             <input type="file" id="myfile" name="myfile" class="files btn btn-primary btn-sm" accept=".xlsx"><br><br>
-
         </div>
-        <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
+        <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2">
+            <button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-save-file"></i> Save All</button>
+        </div>
         <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"></div>
         <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"></div>
     </div>
@@ -83,7 +269,7 @@
                 $("#divLoading").hide();
             }
         });
-       
+
         //upload change event
         $("#myfile").change(function (evt) {
 
@@ -112,7 +298,7 @@
 
                     $("#MainGrid").data("kendoGrid").dataSource.data(obj);
 
-                
+
                     toastr.success("Data uploaded on grid");
                 })
             }
@@ -153,7 +339,26 @@
                 }
             });
         }
-
+        LoadMarket();
+        var markets = [];
+        function LoadMarket() {
+            $.ajax({
+                url: '@Url.Action("GetMarkets", "DoctorDataUpload")',
+                type: 'GET',
+                dataType: 'JSON',
+                data: "{}",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    markets = data;
+                    $.each(data, function (i, item) {
+                        $('#MarketCode').append($('<option>', { value: item.MarketCode, html: item.MarketCode + " - " + item.Market }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert("Failed to load !!");
+                }
+            });
+        }
 
         $('#btnTemplateDownload').click(function () {
             $.ajax({
@@ -180,7 +385,7 @@
         $('#btnReset').click(function () {
             $('#MainGrid').data('kendoGrid').dataSource.filter([]);
             $('#MainGrid').data('kendoGrid').dataSource.data([]);
-          
+
             $("#myfile").val('');
             $(".txtBox").css("border-color", "");
             $(".k-upload-files").remove();
@@ -190,6 +395,36 @@
             ResetData();
         });
 
+
+        function ResetData() {
+            //$("#Year").val('');
+            //$("#MonthNumber").val('');
+            $("#Region").val('');
+            $("#MarketName").val('');
+            $("#DoctorID").val('');
+            $("#DoctorName").val('');
+            $("#RegNo").val('');
+            $("#Phone").val('');
+            $("#Email").val('');
+            $("#Address").val('');
+            $("#Address1").val('');
+            $("#Address2").val('');
+            $("#Address3").val('');
+            $("#Address4").val('');
+            $("#MarketCode").val('');
+            $("#Religion").val('');
+            $("#Designation").val('');
+            $("#Specialization").val('');
+            $("#Potential").val('');
+            $("#Degrees").val('');
+            $("#Gender").val('');
+            $("#MorningLocation").val('');
+            $("#EveningLocation").val('');
+            $("#Market").val('');
+            $("#ProductGroup").val('');
+            $("#Adoption").val('');
+            $("#TeamTarget").val('');
+        }
 
         //***************view function*****************
         $('#btnView').click(function () {
@@ -221,8 +456,6 @@
             }
 
         });
-
-
 
         //**************searching function**************
         function GetGridData(model) {
@@ -260,7 +493,7 @@
                 schema: {
                     model: {
                         id: "DoctorID",
-                        fields: {                                           
+                        fields: {
                             DoctorID: { type: "string" },
                             DoctorName: { type: "string" },
                             Degrees: { type: "string" },
@@ -279,7 +512,7 @@
                             Address4: { type: "string" },
                             MorningLocation: { type: "string" },
                             EveningLocation: { type: "string" },
-                         
+
                             MarketCode: { type: "string" },
                             Market: { type: "string" },
                             Region: { type: "string" },
@@ -297,12 +530,12 @@
             },
             edit: function (e) {
                 $('input[name = "DoctorID"]').attr("readonly", true);
-             
+
             },
             scrollable: true,
             sortable: true,
             filterable: false,
-            editable: true,
+            editable: false,
             selectable: "row",
             //selectable: "multiple",
             toolbar: [{ name: "excel", text: "Download" }, { template: "<input type='text' id='txtDoctor'  style='float:right' placeholder='Doctor Id or Name...' class='k-textbox'>" }, ],
@@ -312,7 +545,7 @@
                 filterable: true
             },
             navigatable: true,
-            height: 400,        
+            height: 400,
             columnMenu: false,
             reorderable: true,
             resizable: true,
@@ -320,30 +553,37 @@
             resize: function (e) {
                 this.table.height(this.element.height() + this.table.height() - 1);
             },
-            columns: [              
-             
-                 { field: "DoctorID", title: "DoctorID"},
-                 { field: "DoctorName", title: "DoctorName" },
-                 { field: "Degrees", title: "Degrees" },
-                 { field: "Specialization", title: "Specialization" },
-                 { field: "Potential", title: "Potential" },
-                 { field: "Designation", title: "Designation" },
-                 { field: "RegNo", title: "RegNo" },
-                 { field: "Phone", title: "Phone" },
-                 { field: "Email", title: "Email" },
-                 { field: "Religion", title: "Religion" },
-                 { field: "Gender", title: "Gender" },
-                 { field: "Address1", title: "Address1" },
-                 { field: "Address2", title: "Address2" },
-                 { field: "Address3", title: "Address3" },
-                 { field: "Address4", title: "Address4" },            
-                 { field: "MorningLocation", title: "MorningLocation" },
-                { field: "EveningLocation", title: "EveningLocation" },             
-                { field: "MarketCode", title: "MarketCode" },
+            columns: [
+                { field: "DoctorID", title: "DoctorID"},
+                { field: "DoctorName", title: "Doctor Name" },
+                { field: "Degrees", title: "Degrees" },
+                { field: "Specialization", title: "Specialization" },
+                { field: "Potential", title: "Potential" },
+                { field: "Designation", title: "Designation" },
+                { field: "RegNo", title: "RegNo" },
+                { field: "Phone", title: "Phone" },
+                { field: "Email", title: "Email" },
+                { field: "Religion", title: "Religion" },
+                { field: "Gender", title: "Gender" },
+                { field: "Address1", title: "Address1" },
+                { field: "Address2", title: "Address2" },
+                { field: "Address3", title: "Address3" },
+                { field: "Address4", title: "Address4" },
+                { field: "MorningLocation", title: "Morning Location" },
+                { field: "EveningLocation", title: "Evening Location" },
+                { field: "MarketCode", title: "Market Code" },
                 { field: "Market", title: "Market" },
                 { field: "Region", title: "Region" },
-       
-                 { command: [{ name: "DeletedRow", text: "Remove", imageClass: "k-icon k-i-close", click: handleDelete }], title: "Remove",  headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" } }
+                { field: "ProductGroup", title: "Product Group" },
+                { field: "Adoption", title: "Adoption" },
+                { field: "TeamTarget", title: "Team Target" },
+
+                {
+                    command: [{ name: "DeletedRow", text: "Remove", imageClass: "k-icon k-i-close", click: handleDelete }], title: "Remove", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" }
+                },
+                {
+                    command: [{ name: "EditRow", text: "Edit", imageClass: "k-icon k-i-close", click: handleEdit }], title: "Edit", headerAttributes: { "class": "gridHeader", style: "font-weight: bold;font-size: 13px;text-align: center;" }
+                }
             ]
         }).data('kendoGrid');
 
@@ -352,8 +592,39 @@
             event.preventDefault();
             dataitem = MainGrid.dataItem($(event.currentTarget).closest("tr"));
             MainGrid.dataSource.remove(dataitem);
-       
         };
+
+        function handleEdit(event) {
+            event.preventDefault();
+            dataitem = MainGrid.dataItem($(event.currentTarget).closest("tr"));
+            $("#Year").val(dataitem.Year);
+            $("#MonthNumber").val(dataitem.MonthNumber);
+            $("#Region").val(dataitem.Region);
+            $("#MarketName").val(dataitem.MarketName);
+            $("#DoctorID").val(dataitem.DoctorID);
+            $("#DoctorName").val(dataitem.DoctorName);
+            $("#RegNo").val(dataitem.RegNo);
+            $("#Phone").val(dataitem.Phone);
+            $("#Email").val(dataitem.Email);
+            $("#Address").val(dataitem.Address);
+            $("#Address1").val(dataitem.Address1);
+            $("#Address2").val(dataitem.Address2);
+            $("#Address3").val(dataitem.Address3);
+            $("#Address4").val(dataitem.Address4);
+            $("#MarketCode").val(dataitem.MarketCode);
+            $("#Religion").val(dataitem.Religion);
+            $("#Designation").val(dataitem.Designation);
+            $("#Specialization").val(dataitem.Specialization);
+            $("#Potential").val(dataitem.Potential);
+            $("#Degrees").val(dataitem.Degrees);
+            $("#Gender").val(dataitem.Gender);
+            $("#MorningLocation").val(dataitem.MorningLocation);
+            $("#EveningLocation").val(dataitem.EveningLocation);
+            $("#Market").val(dataitem.Market);
+            $("#ProductGroup").val(dataitem.ProductGroup);
+            $("#Adoption").val(dataitem.Adoption);
+            $("#TeamTarget").val(dataitem.TeamTarget);
+        }
 
         // Filter table row
         $("#txtDoctor").keyup(function () {
@@ -363,38 +634,36 @@
                 filters: [
                 { field: "DoctorID", operator: "contains", value: val },
                 { field: "DoctorName", operator: "contains", value: val },
-              
+
                 ]
             });
         });
 
 
-       
-
-            var gridInput = 0;
-            function GridValidation() {
-                gridInput = 0;
-                var dataSource = $("#MainGrid").data("kendoGrid").dataSource;
-                data = dataSource.data(); // Get Detail Grid Data
-                if (data.length > 0) {
-                    for (var i = data.length - 1; i >= 0; i--) {
-                        if ((data[i].DoctorID == "") || (data[i].DoctorID == null)) {
-                            gridInput = 0;
-                        }
-
-                    }
+    var gridInput = 0;
+    function GridValidation() {
+        gridInput = 0;
+        var dataSource = $("#MainGrid").data("kendoGrid").dataSource;
+        data = dataSource.data(); // Get Detail Grid Data
+        if (data.length > 0) {
+            for (var i = data.length - 1; i >= 0; i--) {
+                if ((data[i].DoctorID == "") || (data[i].DoctorID == null)) {
+                    gridInput = 0;
                 }
-                else {
-                    gridInput = 1;
-                }
+
             }
+        }
+        else {
+            gridInput = 1;
+        }
+    }
 
 
-     
+
 
     $('#btnSave').click(function () {
-        var model = { };       
-        GridValidation();      
+        var model = { };
+        GridValidation();
         var Input = InputValidation('MonthNumber') + InputValidation('Year');
 
         if (Input==0 && gridInput == 0) {
@@ -417,15 +686,23 @@
                 doctorDetail.Phone = detailData[i].Phone;
                 doctorDetail.Email = detailData[i].Email;
                 doctorDetail.Address = detailData[i].Address;
+                doctorDetail.Address1 = detailData[i].Address1;
+                doctorDetail.Address2 = detailData[i].Address2;
+                doctorDetail.Address3 = detailData[i].Address3;
+                doctorDetail.Address4 = detailData[i].Address4;
                 doctorDetail.Religion = detailData[i].Religion;
                 doctorDetail.Designation = detailData[i].Designation;
                 doctorDetail.Specialization = detailData[i].Specialization;
                 doctorDetail.Potential = detailData[i].Potential;
-                doctorDetail.Degree = detailData[i].Degree;
+                doctorDetail.Degrees = detailData[i].Degrees;
                 doctorDetail.Gender = detailData[i].Gender;
                 doctorDetail.MorningLocation = detailData[i].MorningLocation;
                 doctorDetail.EveningLocation = detailData[i].EveningLocation;
                 doctorDetail.MarketCode = detailData[i].MarketCode;
+                doctorDetail.Market = detailData[i].Market;
+                doctorDetail.ProductGroup = detailData[i].ProductGroup;
+                doctorDetail.Adoption = detailData[i].Adoption;
+                doctorDetail.TeamTarget = detailData[i].TeamTarget;
                 model.doctorDataUploadInfoList.push(doctorDetail);
 
             }
@@ -460,19 +737,80 @@
             ValidationMsg();
             toastr.warning($("#MessageText").html());
         }
-
     });
 
+        $('#btnSaveSingle').click(function () {
+            var model = {};
+            //GridValidation();
+            var Input = InputValidation('MonthNumber') + InputValidation('Year');
 
+            if (Input == 0) {
+                model.doctorDataUploadInfoList = [];
+
+                var doctorDetail = {};
+                doctorDetail.Year = $("#Year").val();
+                doctorDetail.MonthNumber = $("#MonthNumber").val();
+
+                doctorDetail.Region = $("#Region").val();
+                doctorDetail.MarketName = $("#MarketName").val();
+                doctorDetail.DoctorID = $("#DoctorID").val();
+                doctorDetail.DoctorName = $("#DoctorName").val();
+                doctorDetail.RegNo = $("#RegNo").val();
+                doctorDetail.Phone = $("#Phone").val();
+                doctorDetail.Email = $("#Email").val();
+                doctorDetail.Address = $("#Address").val();
+                doctorDetail.Address1 = $("#Address1").val();
+                doctorDetail.Address2 = $("#Address2").val();
+                doctorDetail.Address3 = $("#Address3").val();
+                doctorDetail.Address4 = $("#Address4").val();
+                doctorDetail.MarketCode = $("#MarketCode").val();
+
+                doctorDetail.Market = markets.find(e => e.MarketCode == doctorDetail.MarketCode)?.Market;
+
+                doctorDetail.Religion = $("#Religion").val();
+                doctorDetail.Designation = $("#Designation").val();
+                doctorDetail.Specialization = $("#Specialization").val();
+                doctorDetail.Potential = $("#Potential").val();
+                doctorDetail.Degrees = $("#Degrees").val();
+                doctorDetail.Gender = $("#Gender").val();
+                doctorDetail.MorningLocation = $("#MorningLocation").val();
+                doctorDetail.EveningLocation = $("#EveningLocation").val();
+                doctorDetail.Market = $("#Market").val();
+                doctorDetail.ProductGroup = $("#ProductGroup").val();
+                doctorDetail.Adoption = $("#Adoption").val();
+                doctorDetail.TeamTarget = $("#TeamTarget").val();
+                model.doctorDataUploadInfoList.push(doctorDetail);
+
+                $.ajax({
+                    url: '/DoctorDataUpload/OperationsMode',
+                    data: JSON.stringify(model),
+                    type: 'POST',
+                    contentType: 'application/json;',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.Status == "Yes") {
+                            //$("#FormID").val(data.ID);
+                            OperationMsg(data.Mode);
+                            toastr.success($("#MessageText").html());
+                        }
+                        else {
+                            ErrorFrmServerMsg(data.Status);
+                            toastr.warning($("#MessageText").html());
+                        }
+
+                    },
+                    error: function () {
+                        ErrorFrmClientMsg();
+                        toastr.warning($("#MessageText").html());
+                    },
+                    // complete: function () { CompletedMsg(); },
+                }); //End of ajax call
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+        });
     });
-
-
-
 
 </script>
-
-
-
-
-
-

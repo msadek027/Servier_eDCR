@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace eDCR.Areas.DCR.Models.BEL
 {
     public class DoctorDataUploadBEL
-    {        
+    {
         public virtual ICollection<DoctorDataUploadInfo> doctorDataUploadInfoList { get; set; }
     }
 
@@ -23,7 +20,7 @@ namespace eDCR.Areas.DCR.Models.BEL
         public string Address2 { get; set; }
         public string Address3 { get; set; }
         public string Address4 { get; set; }
-        public string Religion { get; set; }    
+        public string Religion { get; set; }
         public string Specialization { get; set; }
         public string Potential { get; set; }
         public string Degrees { get; set; }
@@ -34,6 +31,9 @@ namespace eDCR.Areas.DCR.Models.BEL
         public string EveningLocation { get; set; }
         public string Market { get; set; }
         public string Region { get; set; }
+        public string ProductGroup { get; set; }
+        public string Adoption { get; set; }
+        public string TeamTarget { get; set; }
     }
 
 

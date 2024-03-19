@@ -1,13 +1,9 @@
-﻿using eDCR.Areas.DCR.Models.BEL;
+﻿using DocumentFormat.OpenXml.EMMA;
+using eDCR.Areas.DCR.Models.BEL;
 using eDCR.Areas.DCR.Models.DAL.DAO;
 using eDCR.DAL.Gateway;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.OleDb;
 using System.IO;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace eDCR.Areas.DCR.Controllers
@@ -86,7 +82,14 @@ namespace eDCR.Areas.DCR.Controllers
             }
         }
 
-
+        [HttpGet]
+        public ActionResult GetMarkets()
+        {
+            var listData = doctorDataUploadDAO.GetMarkets();
+            var data = Json(listData, JsonRequestBehavior.AllowGet);
+            data.MaxJsonLength = int.MaxValue;
+            return data;
+        }
 
 
         //public ActionResult UploadFile(IEnumerable<HttpPostedFileBase> files, DoctorDataUploadBEL model)
@@ -184,10 +187,5 @@ namespace eDCR.Areas.DCR.Controllers
 
         //    return Json(data, JsonRequestBehavior.AllowGet);
         //}
-
-
-
-       
-
-	}
+    }
 }

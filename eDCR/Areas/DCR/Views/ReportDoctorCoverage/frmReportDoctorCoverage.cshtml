@@ -1,17 +1,10 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
- 
+} 
 <script src="~/AdminLTE/plugins/jQuery/jquery-2.2.3.min.js"></script>
 <link href="~/Content/CustomCSS/InputText.css" rel="stylesheet" />
 <link href="~/Content/CustomCSS/exportPDF.css" rel="stylesheet" />
 <script src="~/Scripts/CustomJS/DefaultValue.js"></script>
-
-
-
-
-
 
 <script type="text/javascript">
     //// Start  $(document).ready(function ()
@@ -25,20 +18,15 @@
                 $("#divLoading").hide();
             }
         });
-
-
         EventPermission();
         LoadMonth(); 
-
         $(".datepicker").datepicker({
             format: " yyyy",
             viewMode: "years",
             minViewMode: "years",
             autoclose: true
         });
-        $("#Year").val(yyyy);
-    
-
+        $("#Year").val(yyyy);   
         function LoadMonth() {
             $.ajax({
                 url: '/Default/GetGenMonth',
@@ -56,11 +44,7 @@
                 }
             });
         }
-
-
         LoadRegion();
-
-
         function LoadRegion() {
             $.ajax({
                 url: '/Default/GetRegion',
@@ -68,8 +52,7 @@
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
-                    $.each(data, function (i, item) {
-                       
+                    $.each(data, function (i, item) {                       
                         if (i == 0) {
                             if (data.length > 1) {
                                 $('#RegionCode').append('<option value="" selected="selected"></option>');
@@ -100,7 +83,6 @@
                 success: function (data) {
                     $('#TerritoryManagerID').empty();
                     $.each(data, function (i, item) {
-
                         if (i === 0) {
                             if (data.length > 1) {
                                 $('#TerritoryManagerID').append('<option value="" selected="selected"></option>');
@@ -109,7 +91,6 @@
                             $('#TerritoryManagerName').val(item.TerritoryManagerName);
                         }
                         $('#TerritoryManagerID').append($('<option>', { value: item.TerritoryManagerID, html: item.TerritoryManagerName }, '<option/>'));
-
                     });
                 },
                 error: function () {
@@ -302,8 +283,8 @@
             //},
             columns: [
                  { field: "MarketName", title: "Market Name", locked: true },
-                 { field: "MPOID", title: "MPO <br/> ID", locked: true },
-                 { field: "MPOName", title: "MPO Name", locked: true },
+                 { field: "MPOID", title: "FF <br/> ID", locked: true },
+                 { field: "MPOName", title: "FF Name", locked: true },
                  { field: "TotalNoOfDoctor", title: "Total<br/>No. of<br/> Doctor" },
                  { field: "TotalNoOfDOTPlanDoctor", title: "Total <br/>No. of <br/>DOT Plan<br/> Doctor" },
                  { field: "DoctorPlannedPer", title: "Doctor<br/>Planned <br/>(%)" },
@@ -393,14 +374,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">TM Name :</div>
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">Supervisor :</div>
                             <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
                                 <select id="TerritoryManagerID" name="TerritoryManagerID" class="RequiredField form-control"></select>
                                 <input type="hidden" id="TerritoryManagerName" name="TerritoryManagerName" class="RequiredField form-control">
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">MPO Name :</div>
+                            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">FF Name :</div>
                             <div class="col-xs-0 col-sm-0 col-md-6 col-lg-6">
                                 <select id="MPGroup" name="MPGroup" class="RequiredField form-control"></select>
                                 <input type="hidden" id="MPOName" name="MPOName" class="RequiredField form-control">

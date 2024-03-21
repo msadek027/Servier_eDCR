@@ -106,5 +106,43 @@ namespace eDCR.Areas.DCR.Controllers
             return Json(new { dt1 = data }, JsonRequestBehavior.AllowGet);
         }
 
+
+
+        [HttpPost]
+        public ActionResult GetJobListViewDataAsInput(DeleteTpDvrPwdsGwdsBillMpoTmRsmBEO model)
+        {
+            model.OperationMode = "Job";
+            switch (model.OperationMode)
+            {
+                case "Job":
+                    data = primaryDAO.GetScheduleJobList(model);
+                    break;       
+
+
+                default:
+                    data = primaryDAO.GetScheduleJobList(model);
+                    break;
+
+            }
+
+            return Json(new { dt1 = data }, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult JobTrigger(ScheduleJobListBEO model)
+        {
+            try
+            {
+                if (primaryDAO.JobTrigger(model))
+                {
+                    return Json(new { ID = primaryDAO.MaxID, Mode = primaryDAO.IUMode, Status = "Yes" });
+                }
+                else
+                    return View("frmDeleteTpDvrPwdsGwdsBillMpoTmRsm");
+            }
+            catch (Exception e)
+            {
+                return exceptionHandler.ErrorMsg(e);
+            }
+        }
     }
 }

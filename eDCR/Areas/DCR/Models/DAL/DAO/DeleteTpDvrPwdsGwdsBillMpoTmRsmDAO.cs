@@ -229,12 +229,43 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                         EReview = row["E_REVIEW"].ToString(),
                         Status = row["MST_STATUS"].ToString(),
                     }).ToList();
-            return item;
-
-
-           
-            return item;
+            return item;          
+          
         }
+        public List<ScheduleJobListBEO> GetScheduleJobList(DeleteTpDvrPwdsGwdsBillMpoTmRsmBEO model)
+        {
 
+            string Qry = @"SELECT A.job_name,B.log_date, B.status
+                            FROM user_scheduler_jobs A,
+                            (SELECT job_name, MAX(log_date) log_date, status
+                            FROM user_scheduler_job_log Group By job_name,status) B Where A.job_name=B.job_name";
+
+            DataTable dt2 = dbHelper.GetDataTable(dbConn.SAConnStrReader(), Qry);
+            DataTable dt = dbHelper.dtIncremented(dt2);
+            List<ScheduleJobListBEO> item;
+
+            item = (from DataRow row in dt.Rows
+                    select new ScheduleJobListBEO
+                    {
+                        SL = row["Col1"].ToString(),
+                        JobName = row["job_name"].ToString(),
+                        LogDate = row["log_date"].ToString(),
+                        Status = row["status"].ToString(),
+                       
+                    }).ToList();
+            return item;
+
+        }
+        public bool JobTrigger(ScheduleJobListBEO model)
+        {
+            bool isTrue = false;          
+            string Qry = "BEGIN  DBMS_SCHEDULER.RUN_JOB('JOB_DAILY_DCR_SHIFT_WISE');END;";
+                if (dbHelper.CmdExecute(dbConn.SAConnStrReader(), Qry))
+                {
+                    IUMode = "U";
+                    isTrue = true;
+                }         
+            return isTrue;
+        }
     }
 }

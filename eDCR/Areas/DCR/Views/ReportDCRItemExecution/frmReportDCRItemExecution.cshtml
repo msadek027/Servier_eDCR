@@ -45,14 +45,14 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">TM Name :</div>
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">Supervisor :</div>
                     <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
                         <select id="TerritoryManagerID" name="TerritoryManagerID" class="RequiredField form-control"></select>
                         <input type="hidden" id="TerritoryManagerName" name="TerritoryManagerName" class="RequiredField form-control">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">MPO Name :</div>
+                    <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">FF Name :</div>
                     <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
                         <select id="MPGroup" name="MPGroup" class="RequiredField form-control"></select>
                         <input type="hidden" id="MPOName" name="MPOName" class="RequiredField form-control">
@@ -72,8 +72,8 @@
                             <option value="SlR">Selected Item and Regular</option>
                             <option value="SmR">Sample Item and Regular</option>
                             <option value="SmI">Sample Item and Intern</option>
-                            <option value="GtR">Gift Item and Regular</option>
-                            <option value="GtI">Gift Item and Intern</option>
+                            <option value="GtR">Material Item and Regular</option>
+                            <option value="GtI">Material Item and Intern</option>
                         </select>
 
                     </div>
@@ -423,8 +423,8 @@
                  { field: "TerritoryManagerID", hidden: true, title: "TerritoryManagerID" },
                  { field: "TerritoryManagerName", title: "TM" },
                  { field: "MPGroup", hidden: true, title: "MPGroup" },
-                 { field: "MPOCode", hidden: true, title: "MPO Code" },
-                 { field: "MPOName", title: "MPO Name", template: "<a href='javascript:void(0)' style='text-decoration: underline;'   class='a:link btnLink'> ${MPOName} </a>" },
+                 { field: "MPOCode", hidden: true, title: "MIO Code" },
+                 { field: "MPOName", title: "MIO Name", template: "<a href='javascript:void(0)' style='text-decoration: underline;'   class='a:link btnLink'> ${MPOName} </a>" },
                  { field: "RestQty", title: "CarryIn<br/>Qty" },
                  { field: "CentralQty", title: "Receive<br/>Qty" },
                  { field: "TotalQty", title: "Total<br/>Qty" },

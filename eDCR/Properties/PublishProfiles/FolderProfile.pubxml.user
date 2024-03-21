@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <_PublishTargetUrl>D:\PublishWebSite\eDCR</_PublishTargetUrl>
-    <History>True|2024-03-14T06:00:49.4054962Z;True|2024-03-06T11:10:30.1080452+06:00;</History>
+    <History>True|2024-03-21T08:25:41.5937297Z;True|2024-03-14T12:00:49.4054962+06:00;True|2024-03-06T11:10:30.1080452+06:00;</History>
   </PropertyGroup>
   <ItemGroup>
     <File Include="AdminLTE/bootstrap/css/bootstrap.css">
@@ -3348,13 +3348,13 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/28/2023 09:46:14</publishTime>
     </File>
     <File Include="Areas/DCR/Views/DeleteTpDvrPwdsGwdsBillMpoTmRsm/frmDeleteTpDvrPwdsGwdsBillMpoTmRsm.cshtml">
-      <publishTime>11/30/2023 14:54:05</publishTime>
+      <publishTime>03/20/2024 14:28:20</publishTime>
     </File>
     <File Include="Areas/DCR/Views/DoctorDataUpload/frmDoctorDataUpload.cshtml">
-      <publishTime>07/19/2023 10:12:41</publishTime>
+      <publishTime>03/19/2024 14:38:39</publishTime>
     </File>
     <File Include="Areas/DCR/Views/DoctorVisitRegisterNew/frmDoctorVisitRegisterNew.cshtml">
-      <publishTime>03/14/2024 11:59:13</publishTime>
+      <publishTime>03/20/2024 14:35:30</publishTime>
     </File>
     <File Include="Areas/DCR/Views/DoctorVisitRegisterNew/frmDoctorVisitRegisterNew2.cshtml">
       <publishTime>03/24/2021 13:09:28</publishTime>
@@ -3378,13 +3378,13 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/28/2023 09:46:14</publishTime>
     </File>
     <File Include="Areas/DCR/Views/GiftWiseDoctorSelect/frmGiftWiseDoctorSelect.cshtml">
-      <publishTime>03/14/2024 11:59:13</publishTime>
+      <publishTime>03/14/2024 15:12:27</publishTime>
     </File>
     <File Include="Areas/DCR/Views/GiftWiseDoctorSelect/frmGiftWiseDoctorSelect2.cshtml">
       <publishTime>02/12/2020 15:21:48</publishTime>
     </File>
     <File Include="Areas/DCR/Views/HRDataUpload/frmHRDataUpload.cshtml">
-      <publishTime>07/19/2023 10:17:35</publishTime>
+      <publishTime>03/21/2024 09:38:27</publishTime>
     </File>
     <File Include="Areas/DCR/Views/InvGiftDataUpload/frmInvGiftDataUpload.cshtml">
       <publishTime>07/19/2023 10:21:24</publishTime>
@@ -3399,7 +3399,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>10/31/2019 13:08:00</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ProductWiseDoctorSelect/frmProductWiseDoctorSelect.cshtml">
-      <publishTime>03/14/2024 11:59:13</publishTime>
+      <publishTime>03/14/2024 15:12:44</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ProductWiseDoctorSelect/frmProductWiseDoctorSelect2.cshtml">
       <publishTime>02/12/2020 15:22:43</publishTime>
@@ -3417,10 +3417,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>07/19/2023 10:24:04</publishTime>
     </File>
     <File Include="Areas/DCR/Views/PromotionalItemUploadSlSmGtWise/frmPromotionalItemUploadSlSmGtWise.cshtml">
-      <publishTime>05/28/2023 09:46:14</publishTime>
+      <publishTime>03/21/2024 09:32:04</publishTime>
     </File>
     <File Include="Areas/DCR/Views/PromotionalItemViewEdit/frmPromotionalItemViewEdit.cshtml">
-      <publishTime>05/28/2023 09:46:14</publishTime>
+      <publishTime>03/20/2024 14:32:05</publishTime>
     </File>
     <File Include="Areas/DCR/Views/PromotionalItemViewEdit/frmPromotionalItemViewEdit2.cshtml">
       <publishTime>01/09/2022 11:20:59</publishTime>
@@ -3432,16 +3432,16 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/28/2023 09:46:14</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDcrAccompanyMpoTmRsm/frmReportDcrAccompanyMpoTmRsm.cshtml">
-      <publishTime>07/13/2023 09:08:40</publishTime>
+      <publishTime>03/19/2024 09:02:54</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDCRDoctorAbsent/frmReportDCRDoctorAbsent.cshtml">
       <publishTime>07/13/2023 09:09:12</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDCRItemExecution/frmReportDCRItemExecution.cshtml">
-      <publishTime>07/13/2023 09:09:52</publishTime>
+      <publishTime>03/21/2024 13:37:32</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDCRPlanVsExecution/frmReportDCRPlanVsExecution.cshtml">
-      <publishTime>07/13/2023 08:59:57</publishTime>
+      <publishTime>03/19/2024 09:13:39</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDCRPlanVsExecution/frmReportDCRPlanVsExecution2.cshtml">
       <publishTime>03/04/2021 14:06:27</publishTime>
@@ -3450,7 +3450,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>07/13/2023 09:10:22</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDcrSummaryMpo/frmReportDcrSummaryMpo.cshtml">
-      <publishTime>07/13/2023 09:01:39</publishTime>
+      <publishTime>03/20/2024 14:40:31</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDcrSummaryTmRsm/frmReportDcrSummaryTmRsm.cshtml">
       <publishTime>07/13/2023 09:11:11</publishTime>
@@ -3459,22 +3459,22 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>07/13/2023 09:11:34</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDoctorCoverage/frmReportDoctorCoverage.cshtml">
-      <publishTime>07/13/2023 09:12:07</publishTime>
+      <publishTime>03/19/2024 14:13:43</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDoctorCoverageArchive/frmReportDoctorCoverageArchive.cshtml">
       <publishTime>07/13/2023 09:12:36</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDoctorWiseNoOfCall/frmReportDoctorWiseNoOfCall.cshtml">
-      <publishTime>07/13/2023 09:13:08</publishTime>
+      <publishTime>03/19/2024 09:54:19</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDvrMonthly/frmReportDvrMonthly.cshtml">
-      <publishTime>07/13/2023 09:13:37</publishTime>
+      <publishTime>03/20/2024 14:42:18</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDvrMonthly/frmReportDvrMonthly2.cshtml">
       <publishTime>06/22/2021 16:41:47</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDvrSummary/frmReportDvrSummary.cshtml">
-      <publishTime>07/13/2023 09:14:47</publishTime>
+      <publishTime>03/20/2024 14:42:49</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportDvrWpDcrMpo/frmReportDvrWpDcrMpo.cshtml">
       <publishTime>07/12/2023 17:02:35</publishTime>
@@ -3510,13 +3510,13 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/17/2023 13:30:54</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportMarketWiseDoctor/frmReportMarketWiseDoctor.cshtml">
-      <publishTime>01/17/2024 13:08:13</publishTime>
+      <publishTime>03/14/2024 15:18:50</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportMPOLeaveStatement/frmReportMPOLeaveStatement.cshtml">
-      <publishTime>05/17/2023 13:30:54</publishTime>
+      <publishTime>03/19/2024 09:53:38</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportMPOWiseMonthlyDCR/frmReportMPOWiseMonthlyDCR.cshtml">
-      <publishTime>05/17/2023 13:30:54</publishTime>
+      <publishTime>03/19/2024 09:53:38</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportProductGiftItem/frmReportProductGiftItem.cshtml">
       <publishTime>05/17/2023 13:30:54</publishTime>
@@ -3525,7 +3525,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/17/2023 13:28:54</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportProductWiseDoctorSampleSummary/frmReportProductWiseDoctorSampleSummary.cshtml">
-      <publishTime>05/18/2023 09:59:15</publishTime>
+      <publishTime>03/20/2024 14:45:28</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportProductWseCallSummary/frmReportProductWiseCallSummary.cshtml">
       <publishTime>05/18/2023 09:57:10</publishTime>
@@ -3534,19 +3534,19 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/17/2023 13:28:54</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportPromotionalItemExecution/frmReportPromotionalItemExecution.cshtml">
-      <publishTime>05/17/2023 13:28:54</publishTime>
+      <publishTime>03/21/2024 13:42:06</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportPwdsGwdsPlan/frmReportPwdsGwdsPlan.cshtml">
-      <publishTime>05/17/2023 13:28:54</publishTime>
+      <publishTime>03/19/2024 09:51:52</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportPwdsGwdsPlanArchive/frmReportPwdsGwdsPlanArchive.cshtml">
       <publishTime>05/17/2023 13:28:54</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportRemarks/frmReportRemarks.cshtml">
-      <publishTime>05/18/2023 09:39:36</publishTime>
+      <publishTime>03/19/2024 09:47:30</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportSampleStatement/frmReportSampleStatement.cshtml">
-      <publishTime>05/17/2023 13:27:04</publishTime>
+      <publishTime>03/21/2024 09:33:01</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportSampleStatement/frmReportSampleStatement2.cshtml">
       <publishTime>06/04/2020 09:48:39</publishTime>
@@ -3555,40 +3555,40 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/17/2023 13:27:04</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportSampleStatementSummary/frmReportSampleStatementSummary.cshtml">
-      <publishTime>05/17/2023 13:27:04</publishTime>
+      <publishTime>03/21/2024 09:33:19</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportTourPlanChangeFortnightStatus/frmReportTourPlanChangeFortnightStatus.cshtml">
       <publishTime>05/17/2023 13:25:44</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportTourPlanDvrPwdsGwdsStatus/frmReportTourPlanDvrPwdsGwdsStatus.cshtml">
-      <publishTime>05/17/2023 13:25:29</publishTime>
+      <publishTime>03/20/2024 15:00:36</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportTourPlanMpoTmRsm/frmReportTourPlanMpoTmRsm.cshtml">
-      <publishTime>07/12/2023 11:21:24</publishTime>
+      <publishTime>03/20/2024 15:02:18</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportTourPlanMpoTmRsmArchive/frmReportTourPlanMpoTmRsmArchive.cshtml">
       <publishTime>05/17/2023 13:23:44</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportTourPlanMpoTmRsmDayWise/frmReportTourPlanMpoTmRsmDayWise.cshtml">
-      <publishTime>05/17/2023 13:23:27</publishTime>
+      <publishTime>03/20/2024 15:03:30</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportTpLeaveMpoTmRsm/frmReportTpLeaveMpoTmRsm.cshtml">
-      <publishTime>05/17/2023 13:22:43</publishTime>
+      <publishTime>03/19/2024 09:00:51</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportUserInfo/frmReportUserInfo.cshtml">
-      <publishTime>05/18/2023 09:54:55</publishTime>
+      <publishTime>03/19/2024 09:00:02</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportUserInfoExceptPassword/frmReportUserInfoExceptPassword.cshtml">
-      <publishTime>05/28/2023 09:28:28</publishTime>
+      <publishTime>03/19/2024 09:00:02</publishTime>
     </File>
     <File Include="Areas/DCR/Views/ReportUserInLoginLog/frmReportUserInLoginLog.cshtml">
-      <publishTime>06/14/2023 15:20:04</publishTime>
+      <publishTime>03/14/2024 15:18:05</publishTime>
     </File>
     <File Include="Areas/DCR/Views/TourPlanCreationMpo/frmTourPlanCreationMpo.cshtml">
-      <publishTime>01/17/2024 12:07:11</publishTime>
+      <publishTime>03/14/2024 15:17:29</publishTime>
     </File>
     <File Include="Areas/DCR/Views/TourPlanMpo/frmTourPlanMpo.cshtml">
-      <publishTime>03/14/2024 11:57:12</publishTime>
+      <publishTime>03/14/2024 15:08:09</publishTime>
     </File>
     <File Include="Areas/DCR/Views/TourPlanMpo/frmTourPlanMpo2.cshtml">
       <publishTime>07/13/2021 10:27:00</publishTime>
@@ -3651,10 +3651,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>10/31/2019 12:49:54</publishTime>
     </File>
     <File Include="bin/eDCR.dll">
-      <publishTime>03/14/2024 12:00:11</publishTime>
+      <publishTime>03/21/2024 14:25:31</publishTime>
     </File>
     <File Include="bin/eDCR.pdb">
-      <publishTime>03/14/2024 12:00:11</publishTime>
+      <publishTime>03/21/2024 14:25:31</publishTime>
     </File>
     <File Include="bin/ExcelNumberFormat.dll">
       <publishTime>10/31/2019 12:49:54</publishTime>
@@ -3712,6 +3712,9 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     </File>
     <File Include="Content/CustomCSS/animate.css">
       <publishTime>06/06/2016 15:08:55</publishTime>
+    </File>
+    <File Include="Content/CustomCSS/AutoComplete.css">
+      <publishTime>03/19/2024 14:38:39</publishTime>
     </File>
     <File Include="Content/CustomCSS/exportPDF.css">
       <publishTime>06/21/2018 10:36:06</publishTime>
@@ -4706,6 +4709,9 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <File Include="Scripts/CustomJS/AccessPermission.js">
       <publishTime>12/04/2019 12:38:18</publishTime>
     </File>
+    <File Include="Scripts/CustomJS/AutoComplete.js">
+      <publishTime>03/19/2024 14:38:39</publishTime>
+    </File>
     <File Include="Scripts/CustomJS/DataBind.js">
       <publishTime>01/19/2017 23:01:29</publishTime>
     </File>
@@ -4722,7 +4728,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>10/09/2017 11:02:21</publishTime>
     </File>
     <File Include="Scripts/CustomJS/OperationalMessage.js">
-      <publishTime>06/07/2018 11:03:09</publishTime>
+      <publishTime>03/19/2024 14:38:39</publishTime>
     </File>
     <File Include="Scripts/CustomJS/PopupWindow.js">
       <publishTime>04/29/2018 09:21:11</publishTime>
@@ -4779,7 +4785,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/04/2021 13:39:58</publishTime>
     </File>
     <File Include="TempleteFiles/DoctorDB.xlsx">
-      <publishTime>07/19/2023 09:55:04</publishTime>
+      <publishTime>03/19/2024 14:34:20</publishTime>
     </File>
     <File Include="TempleteFiles/HR.xlsx">
       <publishTime>02/04/2021 13:54:25</publishTime>
@@ -4824,7 +4830,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>12/27/2017 10:58:24</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>03/14/2024 12:00:12</publishTime>
+      <publishTime>03/20/2024 14:47:00</publishTime>
     </File>
   </ItemGroup>
 </Project>

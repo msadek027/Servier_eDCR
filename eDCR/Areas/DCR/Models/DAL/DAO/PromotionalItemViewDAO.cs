@@ -423,7 +423,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             vHeader = vHeader + "Month-Year: " + month + " - " + model.Year;
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO : " + model.MPOName;
+                vHeader = vHeader + ", MIO : " + model.MPOName;
                 Qry += " AND MP_GROUP='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)

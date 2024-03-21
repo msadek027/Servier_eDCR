@@ -18,7 +18,16 @@ namespace eDCR.Areas.DCR.Models.BEL
 
         public string Status { get; set; }
     }
-    public class ViewTpBEO
+    public class ScheduleJobListBEO
+    {
+        public string SL { get; set; }
+        public string JobName { get; set; }
+
+        public string LogDate { get; set; }
+
+        public string Status { get; set; }
+    }
+        public class ViewTpBEO
     {
         public string SL { get; set; }
         public string DayNumber { get; set; }

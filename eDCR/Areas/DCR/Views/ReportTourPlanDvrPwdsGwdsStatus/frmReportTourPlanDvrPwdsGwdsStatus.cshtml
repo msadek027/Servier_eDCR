@@ -26,34 +26,34 @@
             }
         });
         var dataMPO_ImmediateSubordinate = [{ "Value": "", "Name": "" }];
-        var dataTM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }];
-        var dataRSM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }, { "Value": "TM", "Name": "TM" }];
-        var dataDSM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }, { "Value": "TM", "Name": "TM" }, { "Value": "RSM", "Name": "RSM" }];
-        var dataAll = [{ "Value": "", "Name": "" }, { "Value": "MPO", "Name": "MPO" }, { "Value": "TM", "Name": "TM" }, { "Value": "RSM", "Name": "RSM" }, { "Value": "DSM", "Name": "DSM" }];
+        var dataTM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MIO", "Name": "MIO" }];
+        var dataRSM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MIO", "Name": "MIO" }, { "Value": "RM", "Name": "RM" }];
+        var dataDSM_ImmediateSubordinate = [{ "Value": "", "Name": "" }, { "Value": "MIO", "Name": "MIO" }, { "Value": "RM", "Name": "TM" }, { "Value": "ZM", "Name": "ZM" }];
+        var dataAll = [{ "Value": "", "Name": "" }, { "Value": "MIO", "Name": "MIO" }, { "Value": "RM", "Name": "RM" }, { "Value": "ZM", "Name": "ZM" }, { "Value": "PM", "Name": "PM" }];
 
         function Designation() {
             var ownDesignation = $("#txtDesignation").val()
-            if (ownDesignation == "MPO") {
+            if (ownDesignation == "MIO") {
                 $.each(dataMPO_ImmediateSubordinate, function (i, option) {
                     $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
                 });
             }
-            if (ownDesignation == "TM") {
+            if (ownDesignation == "RM") {
                 $.each(dataTM_ImmediateSubordinate, function (i, option) {
                     $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
                 });
             }
-            if (ownDesignation == "RSM") {
+            if (ownDesignation == "ZM") {
                 $.each(dataRSM_ImmediateSubordinate, function (i, option) {
                     $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
                 });
             }
-            if (ownDesignation == "DSM") {
+            if (ownDesignation == "PM") {
                 $.each(dataDSM_ImmediateSubordinate, function (i, option) {
                     $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
                 });
             }
-            if (ownDesignation == "Manager") {
+            if (ownDesignation == "CM") {
                 $.each(dataAll, function (i, option) {
                     $('#Designation').append($('<option/>').attr("value", option.Value).text(option.Name));
                 });
@@ -306,7 +306,7 @@
                  { field: "TPStatus", title: "TP Status" },
                  { field: "DVRStatus", title: "DVR Status" },
                  { field: "PWDSStatus", title: "PWDS Status" },
-                 { field: "GWDSStatus", title: "GWDS Status" },
+                 { field: "GWDSStatus", title: "Material Status" },
             ]
         }).data('kendoGrid');
 

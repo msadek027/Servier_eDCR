@@ -240,7 +240,9 @@
             if (dataSource.view().length <= 0) {
                 gridInput = 1;
             }
-        }
+        } 
+      
+     
         $('#btnSave').click(function () {
 
             GridValidation();
@@ -424,7 +426,7 @@
                 { field: "DoctorName", title: "Doctor Name", locked: true },
                 { field: "Potential", title: "Ca." },
                 { field: "ShiftName", title: "Shift" },
-                { field: "MPOCode", title: "MPO", hidden: false },
+                { field: "MPOCode", title: "MIO", hidden: false },
                 { field: "MPGroup", title: "Group", hidden: true },
                 { field: "MED", title: "MED" },
                 { field: "MEP", title: "MEP" },
@@ -1838,10 +1840,11 @@
                     <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
                     <button id="btnStatus" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-check"></i> Status</button>
                     <button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-ok"></i> Approve</button>
+      
                     @*<button id="btnZoomingView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-zoom-in"></i> Zoom</button>*@
 
-                    <button type="submit" id="btnExcel" name="ExportType" value="Excel" class="btn btn-primary btn-sm" onclick="return InputValidationPdfExcel();" formaction="/DoctorVisitRegisterNew/Export"  data-toggle="tooltip" data-placement="right" title="[Mandatory: Month, Year, Region,TM,MPO]"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
-                    <button type="submit" id="btnPDF" name="ExportType" value="PDF" class="btn btn-primary btn-sm" onclick="return InputValidationPdfExcel();" formaction="/DoctorVisitRegisterNew/Export"  data-toggle="tooltip" data-placement="right" title="[Mandatory: Month, Year, Region,TM,MPO]"><i class="glyphicon glyphicon-book"></i> Pdf </button>
+                    <button type="submit" id="btnExcel" name="ExportType" value="Excel" class="btn btn-primary btn-sm" onclick="return InputValidationPdfExcel();" formaction="/DoctorVisitRegisterNew/Export" data-toggle="tooltip" data-placement="right" title="[Mandatory: Month, Year, Region,TM,MPO]"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
+                    <button type="submit" id="btnPDF" name="ExportType" value="PDF" class="btn btn-primary btn-sm" onclick="return InputValidationPdfExcel();" formaction="/DoctorVisitRegisterNew/Export" data-toggle="tooltip" data-placement="right" title="[Mandatory: Month, Year, Region,TM,MPO]"><i class="glyphicon glyphicon-book"></i> Pdf </button>
 
 
                 </div>

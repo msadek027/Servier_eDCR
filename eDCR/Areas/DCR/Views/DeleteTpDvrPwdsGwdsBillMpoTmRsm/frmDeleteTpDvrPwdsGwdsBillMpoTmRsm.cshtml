@@ -28,8 +28,9 @@
      //   EventPermission();
         $("#btnWaiting").attr("disabled", true);
         $("#btnApprove").attr("disabled", true);
-      //  $("#btnDelete").attr("disabled", true);
-
+        //  $("#btnDelete").attr("disabled", true);
+        $("#divJob").hide();
+        
         $(".datepicker").datepicker({
             format: " yyyy",
             viewMode: "years",
@@ -388,6 +389,101 @@
             $("table").append(allRecordsHTML);
         }
         //--------------------------------------
+        $('#btnJobListView').click(function () {
+            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+
+            $("#table-containerJobList").html('');
+            $("#divJob").show();
+            var model = {};
+            $.ajax({
+                url: '/DeleteTpDvrPwdsGwdsBillMpoTmRsm/GetJobListViewDataAsInput',
+                data: JSON.stringify({ model }),
+                type: 'POST',
+                contentType: 'application/json;',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.dt1.length > 0) {             
+                        $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+                        GetViewTableJobListView(data.dt1);                      
+                    }
+                    else {
+                        AcknowledgeMsg();
+                        toastr.warning($("#MessageText").html());
+                    }
+                    $.each(data.dt1, function (i, item) {
+                        $('#JobSchedule').append($('<option>', { value: item.JobName, html: item.JobName }, '<option/>'));
+                    });
+                },
+                error: function () {
+                    alert('Error occured!');
+                },
+            });
+        });
+
+        //this function will be called when button is clicked
+        function GetViewTableJobListView(jsonDataList) {
+
+            debugger;
+            //Get the headers from JSON data
+            var headers = Object.keys(jsonDataList[0]);
+
+            //Prepare html header
+            var headerRowHTML = '<tr>';
+            $.each(headers, function (i, header) {
+                headerRowHTML += '<th>' + header + '</th>';
+            });
+            headerRowHTML += '</tr>';
+
+            //Creating table with headers
+            var tableHTML = '<table class="table table-bordered table-striped">' + headerRowHTML + '</table>';
+            $("#table-containerJobList").html(tableHTML);
+
+            //Prepare all the employee records as HTML
+            var allRecordsHTML = '';
+            $.each(jsonDataList, function (i, row) {
+
+                //Prepare html row
+                allRecordsHTML += '<tr>';
+                $.each(headers, function (j, header) {
+                    allRecordsHTML += '<td>' + row[header] + '</td>';
+                });
+                allRecordsHTML += '</tr>';
+
+            });
+
+            //Appending the all records to table
+            $("table").append(allRecordsHTML);
+        }
+
+        $('#btnJobTrigger').click(function () {
+            var model = {};
+            model.JobName = $("#JobSchedule").val();
+
+            $.ajax({
+                url: '/DeleteTpDvrPwdsGwdsBillMpoTmRsm/JobTrigger',
+                data: JSON.stringify(model),
+                type: 'POST',
+                contentType: 'application/json;',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.Status == "Yes") {
+                        toastr.success("Job Executed,Successfully!");
+                    }
+                    else {
+                        ErrorFrmServerMsg("Job Failed!");
+                        toastr.warning($("#MessageText").html());
+                    }
+
+                },
+                error: function () {
+                    ErrorFrmClientMsg();
+                    toastr.warning($("#MessageText").html());
+                },
+                // complete: function () { CompletedMsg(); },
+            }); //End of ajax call
+
+
+        });
 
     });
 
@@ -406,6 +502,8 @@
                 <button id="btnWaiting" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-retweet"></i> Waiting</button>
                 <button id="btnDelete" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-remove"></i> Delete</button>
                 <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-search"></i> View</button>
+
+                <button id="btnJobListView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-search"></i> Job List View</button>
             </div>
         </div>
 
@@ -505,25 +603,37 @@
             <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3"></div>
         </div>
     </div>
-        <br />
-        <br />
-        <div class="row">
-            <div id="table-container"></div>
-        </div>
+    <br />
+    <br />
+    <div class="row">
+        <div id="table-container"></div>
+    </div>
 
-
-
-
-
-
-        <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
-    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
-    opacity: .8; filter: alpha(opacity=70);display:none">
-            <p style="position: absolute; top: 50%; left: 50%; color: White;">
-                <img src="~/Content/Images/loading.gif" />
-            </p>
+    <br />
+    <br />
+    <div class="row">
+        <div id="table-containerJobList"></div>
+    </div>
+    <div class="row" id="divJob">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="input-group">
+                <label>Job Schedule:</label>            
+                <span class="input-group-btn" style="width:0px;"> </span>
+                <select id="JobSchedule" name="JobSchedule" class=" RequiredField form-control"></select>
+                <span class="input-group-btn" style="width:0px;"></span>
+                <button id="btnJobTrigger" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon glyphicon-ok"></i> Job Trigger</button>
+            </div>
         </div>
     </div>
+
+   <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px;
+    top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+    opacity: .8; filter: alpha(opacity=70);display:none">
+                <p style="position: absolute; top: 50%; left: 50%; color: White;">
+                    <img src="~/Content/Images/loading.gif" />
+                </p>
+            </div>
+        </div>
 
 
 

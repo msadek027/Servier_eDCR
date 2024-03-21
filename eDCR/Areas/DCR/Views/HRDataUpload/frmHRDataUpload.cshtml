@@ -24,9 +24,10 @@
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2">Division Name :</div>
         <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
-            <div class="autocomplete">
-                <input class="RequiredField form-control" id="DivisionCode" type="text" name="DivisionCode" />
-            </div>
+            <select id="DivisionCode" name="DivisionCode" class="RequiredField form-control"></select>
+            @*<div class="autocomplete">
+            <input class="RequiredField form-control" id="DivisionCode" type="text" name="DivisionCode" />
+        </div>*@
         </div>
         <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"> </div>
         <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2">Depot Name :</div>
@@ -55,25 +56,15 @@
         <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2">
             <select id="ProductGroup" name="ProductGroup" class="RequiredField form-control">
                 <option value=""></option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-                <option value="N">N</option>
-                <option value="HB">HB</option>
+                <option value="A">R</option>
+                <option value="B">G</option>
             </select>
-
         </div>
         <div class="col-xs-0 col-sm-0 col-md-1 col-lg-1">
             <select id="MarketGroup" name="MarketGroup" class="RequiredField form-control">
                 <option value="R1">R1</option>
                 <option value="T">T</option>
                 <option value="R">R</option>
-                <option value="Buffer">Buffer</option>
-                <option value="R2">R2</option>
-                <option value="R3">R3</option>
-                <option value="R4">R4</option>             
                 <option value=""></option>
             </select>
         </div>
@@ -94,11 +85,11 @@
         <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
             <select id="Designation" name="Designation" class="RequiredField form-control">
                 <option value=""></option>
-                <option value="MPO">MPO</option>
-                <option value="SMPO">SMPO</option>
-                <option value="TM">TM</option>
-                <option value="RSM">RSM</option>
-                <option value="DSM">DSM</option>
+                <option value="MIO">MIO</option>
+                <option value="SMIO">SMIO</option>
+                <option value="RM">RM</option>
+                <option value="ZM">ZM</option>
+                <option value="PM">PM</option>
             </select>
         </div>
         <div class="col-xs-0 col-sm-0 col-md-2 col-lg-2"> </div>
@@ -106,7 +97,6 @@
         <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
             <input type="text" id="Phone" name="Phone" class="RequiredField form-control">
         </div>
-
     </div>
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2"></div>
@@ -122,7 +112,6 @@
  
     <br />
 
-   
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-2 col-lg-2"><label for="myfile">Select a file:</label></div>
         <div class="col-xs-0 col-sm-0 col-md-3 col-lg-3">
@@ -218,19 +207,20 @@
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
                     Divisions = data;
-                    autocomplete(document.getElementById("DivisionCode"), Divisions.map(e => e.DivisionName));
+                    //autocomplete(document.getElementById("DivisionCode"), Divisions.map(e => e.DivisionName));
 
                     $('#DivisionCode').empty();
                     $.each(data, function (i, item) {
                         if (i == 0) {
                             if (data.length > 1) {
-                                LoadDepot();
                                 $('#DivisionCode').append('<option value="" selected="selected"></option>');
                             }
                         }
                         $('#DivisionCode').append($('<option>', { value: item.DivisionCode, html: item.DivisionName }, '<option/>'));
-
                     });
+                    if (data.length > 0) {
+                        LoadDepot();
+                    }
                 },
                 error: function () {
                     alert("Failed to load...");
@@ -239,7 +229,6 @@
         }
 
         function LoadDepot() {
-
             var model = {};
             model.DivisionCode = $('#DivisionCode').val();
             $.ajax({
@@ -253,14 +242,15 @@
                     $.each(data, function (i, item) {
                         if (i == 0) {
                             if (data.length > 1) {
-                                LoadRegion($('#DepotCode').val());
                                 //$('#DepotCode').append('<option value="" selected="selected"></option>');
                                 $('#DepotCode').append($('<option>', { value: item.DepotCode, html: item.DepotName }, '<option/>'));
                             }
                         }
                         $('#DepotCode').append($('<option>', { value: item.DepotCode, html: item.DepotName }, '<option/>'));
-
                     });
+                    if (data.length > 0) {
+                        LoadRegion($('#DepotCode').val());
+                    }
                 },
                 error: function () {
                     alert("Failed to load...");
@@ -288,6 +278,9 @@
                         $('#RegionCode').append($('<option>', { value: item.RegionCode, html: item.RegionName }, '<option/>'));
 
                     });
+                    if (data.length > 0) {
+                        LoadTerritory($('#RegionCode').val());
+                    }
                 },
                 error: function () {
                     alert("Failed to load...");
@@ -313,8 +306,10 @@
                             }
                         }
                         $('#TerritoryCode').append($('<option>', { value: item.TerritoryCode, html: item.TerritoryName }, '<option/>'));
-
                     });
+                    if (data.length > 0) {
+                        LoadMarket($('#TerritoryCode').val());
+                    }
                 },
                 error: function () {
                     alert("Failed to load...");
@@ -347,13 +342,13 @@
             });
         }
         $('#DivisionCode').on('change', function () {
-
             $('#DepotCode').empty();
             $('#RegionCode').empty();
             $('#TerritoryCode').empty();
             $('#MarketCode').empty();
             LoadDepot();
-        }).trigger('change');
+        })
+        //.trigger('change');
 
         $('#DepotCode').on('change', function () {
 
@@ -361,7 +356,8 @@
             $('#TerritoryCode').empty();
             $('#MarketCode').empty();
             LoadRegion($('#DepotCode').val());
-        }).trigger('change');
+        })
+        //.trigger('change');
 
         $('#RegionCode').on('change', function () {
 
@@ -369,13 +365,15 @@
             $('#MarketCode').empty();
 
             LoadTerritory($('#RegionCode').val());
-        }).trigger('change');
+        })
+        //.trigger('change');
 
         $('#TerritoryCode').on('change', function () {
 
             $('#MarketCode').empty();
             LoadMarket($('#TerritoryCode').val());
-        }).trigger('change');
+        })
+        //.trigger('change');
 
         EventPermission();
         $('#btnReset').click(function () {
@@ -671,15 +669,15 @@
         $('#btnSaveSingle').click(function () {
          
             var Input = InputValidation('EmployeeID') + InputValidation('EmployeeName')+ InputValidation('Designation')+ InputValidation('ProductGroup') + InputValidation('MarketGroup')    + InputValidation('DivisionCode');
-            if ($("#Designation").val() == "MPO" || $("#Designation").val() == "SMPO")
+            if ($("#Designation").val() == "MIO" || $("#Designation").val() == "SMIO")
             {
                 Input = Input + InputValidation('MarketCode') + InputValidation('TerritoryCode') + InputValidation('RegionCode');
             }
-            if ($("#Designation").val() == "TM" ) {
+            if ($("#Designation").val() == "RM" ) {
                 Input = Input + InputValidation('TerritoryCode') + InputValidation('RegionCode');
             }
-            if ($("#Designation").val() == "RSM") {
-                Input = Input + InputValidation('RegionCode');              
+            if ($("#Designation").val() == "ZM") {
+                Input = Input + InputValidation('RegionCode');
             }
             
             if (Input == 0) {
@@ -771,7 +769,3 @@
     });
 
 </script>
-
-
-
-

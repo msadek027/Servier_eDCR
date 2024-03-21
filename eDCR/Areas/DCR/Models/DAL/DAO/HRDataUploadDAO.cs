@@ -99,22 +99,22 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                                   " '" + detail.MarketCode + "','" + detail.MarketName + "','" + detail.TerritoryCode + "','" + detail.TerritoryName + "','" + detail.RegionCode + "','" + detail.RegionName + "'," +
                                   " '" + detail.DepotCode + "','" + detail.DepotName + "','" + detail.DivisionCode + "','" + detail.DivisionName + "','" + detail.CompanyCode + "')";
 
-                            if (detail.Designation.Trim() == "MPO" || detail.Designation.Trim() == "SMPO")
+                            if (detail.Designation.Trim() == "MIO" || detail.Designation.Trim() == "SMIO")
                             {
-                                string QryDel = @"Delete From HR_LOC_MAPPING Where DESIGNATION IN ('MPO','SMPO') AND MARKET_CODE='" + detail.MarketCode + "'";
+                                string QryDel = @"Delete From HR_LOC_MAPPING Where DESIGNATION IN ('MIO','SMIO') AND MARKET_CODE='" + detail.MarketCode + "'";
 
                                 command.CommandText = QryDel;
                                 command.ExecuteNonQuery();
                             }
-                            if (detail.Designation.Trim() == "TM")
+                            if (detail.Designation.Trim() == "RM")
                             {
-                                string QryDel = @" Delete From HR_LOC_MAPPING Where DESIGNATION = 'TM' AND TERRITORY_CODE='" + detail.TerritoryCode + "'";
+                                string QryDel = @" Delete From HR_LOC_MAPPING Where DESIGNATION = 'RM' AND TERRITORY_CODE='" + detail.TerritoryCode + "'";
                                 command.CommandText = QryDel;
                                 command.ExecuteNonQuery();
                             }
-                            if (detail.Designation.Trim() == "RSM")
+                            if (detail.Designation.Trim() == "ZM")
                             {
-                                string QryDel = @" Delete From HR_LOC_MAPPING Where DESIGNATION = 'RSM' AND REGION_CODE='" + detail.RegionCode + "'";
+                                string QryDel = @" Delete From HR_LOC_MAPPING Where DESIGNATION = 'ZM' AND REGION_CODE='" + detail.RegionCode + "'";
                                 command.CommandText = QryDel;
                                 command.ExecuteNonQuery();
 

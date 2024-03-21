@@ -1091,6 +1091,7 @@
     <Content Include="AdminLTE\plugins\timepicker\bootstrap-timepicker.min.js" />
     <Content Include="AdminLTE\starter.html" />
     <Content Include="Content\CustomCSS\animate.css" />
+    <Content Include="Content\CustomCSS\AutoComplete.css" />
     <Content Include="Content\CustomCSS\exportPDF.css" />
     <Content Include="Content\CustomCSS\InputText.css" />
     <Content Include="Content\CustomCSS\toastr.css" />
@@ -1269,6 +1270,7 @@
     <Content Include="Login_v15\vendor\select2\select2.js" />
     <Content Include="Login_v15\vendor\select2\select2.min.css" />
     <Content Include="Login_v15\vendor\select2\select2.min.js" />
+    <Content Include="Scripts\CustomJS\AutoComplete.js" />
     <Content Include="Scripts\HtmlPDF\dist\jspdf.debug.js" />
     <Content Include="Scripts\HtmlPDF\dist\jspdf.min.js" />
     <Content Include="Scripts\HtmlPDF\dist\octocat.jpg" />

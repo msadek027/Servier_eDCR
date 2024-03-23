@@ -42,7 +42,7 @@ namespace eDCR.Areas.DCR.Controllers
         {
 
             string FileName = "DCR_Summary_" + DateTime.Now.ToString("yyyyMMdd");
-            string vHeader = "MPO DCR Summary";
+            string vHeader = "MIO DCR Summary";
 
             var tuple = primaryDAO.Export(model);
             string vParameter = tuple.Item1;

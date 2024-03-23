@@ -36,20 +36,20 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (HttpContext.Current.Session["Designation"].ToString() == "TM")
+                if (HttpContext.Current.Session["Designation"].ToString() == "RM")
                 {
                     qry = qry + " and TERRITORY_CODE='" + HttpContext.Current.Session["LocCode"].ToString() + "'";
                 }
-                if (HttpContext.Current.Session["Designation"].ToString() == "RSM")
+                if (HttpContext.Current.Session["Designation"].ToString() == "ZM")
                 {
                     qry = qry + " and REGION_CODE='" + HttpContext.Current.Session["LocCode"].ToString() + "'";
                 }
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    qry += " AND DESIGNATION IN ('MPO','SMPO')";
+                    qry += " AND DESIGNATION IN ('MIO','SMIO')";
 
                 }
-                else if (model.Designation == "RSM" || model.Designation == "TM")
+                else if (model.Designation == "ZM" || model.Designation == "RM")
                 {
 
                     qry += " AND DESIGNATION='" + model.Designation + "'";
@@ -132,26 +132,26 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             vHeader = vHeader + "Month: " + month + ", " + model.Year;
             if (model.LocCode != "" && model.LocCode != " " && model.LocCode != "null" && model.LocCode != null)
             {
-                vHeader = vHeader + ", MPO : " + model.MPOName;
+                vHeader = vHeader + ", FF : " + model.MPOName;
                 qry += " AND LOC_CODE='" + model.LocCode + "'";
             }
             else
             {
-                if (HttpContext.Current.Session["Designation"].ToString() == "TM")
+                if (HttpContext.Current.Session["Designation"].ToString() == "RM")
                 {
                     qry = qry + " and TERRITORY_CODE='" + HttpContext.Current.Session["LocCode"].ToString() + "'";
                 }
-                if (HttpContext.Current.Session["Designation"].ToString() == "RSM")
+                if (HttpContext.Current.Session["Designation"].ToString() == "ZM")
                 {
                     qry = qry + " and REGION_CODE='" + HttpContext.Current.Session["LocCode"].ToString() + "'";
                 }
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    qry += " AND DESIGNATION IN ('MPO','SMPO')";
+                    qry += " AND DESIGNATION IN ('MIO','SMIO')";
                     vHeader = vHeader + ", Designation : " + model.Designation;
 
                 }
-                else if (model.Designation == "RSM" || model.Designation == "TM")
+                else if (model.Designation == "ZM" || model.Designation == "RM")
                 {
                     vHeader = vHeader + ", Designation : " + model.Designation;
                     qry += " AND DESIGNATION='" + model.Designation + "'";

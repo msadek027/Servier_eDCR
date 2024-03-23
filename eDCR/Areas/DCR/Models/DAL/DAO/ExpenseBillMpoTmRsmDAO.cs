@@ -84,9 +84,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             if (model.LocCode != "" && model.LocCode != null && model.LocCode != " ")
             {
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {
@@ -95,17 +95,17 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')  ";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')  ";
                     if(model.RegionCode!=null && model.RegionCode!="")
                     {
                         Qry = Qry + " and  REGION_CODE = '" + model.RegionCode + "' ";
                     }
                 }
-               else if (model.Designation == "DSM")
+               else if (model.Designation == "PM")
                 {
-                    Qry = Qry + " and DESIGNATION ='DSM' ";                   
+                    Qry = Qry + " and DESIGNATION ='PM' ";                   
                 }
                else
                 {
@@ -220,7 +220,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
             foreach (ExpenseBillMpoTmRsmInsertSummaryDetailList detailModel in model.ItemList)
             {
-                    if (detailModel.Designation == "MPO" || detailModel.Designation == "SMPO")
+                    if (detailModel.Designation == "MIO" || detailModel.Designation == "SMIO")
                     {
                         string QryIsExists = "Select MST_SL From ACC_DA_BILL Where  Month_Number='" + detailModel.MonthNumber + "' and Year=" + detailModel.Year + " and MP_GROUP='" + detailModel.LocCode + "' ";
                         var tuple1 = dbHelper.IsExistsWithGetSL(dbConn.SAConnStrReader(), QryIsExists);
@@ -232,7 +232,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                         isTrue = true;
                     }
                     }
-                if (detailModel.Designation == "TM" || detailModel.Designation == "RSM" || detailModel.Designation == "DSM" || detailModel.Designation == "Manager" || detailModel.Designation == "Sr. Manager")
+                if (detailModel.Designation == "RM" || detailModel.Designation == "ZM" || detailModel.Designation == "PM" || detailModel.Designation == "CM" || detailModel.Designation == "Sr. Manager")
                 {
                     string QryIsExists = "Select MST_SL From SUP_ACC_DA_BILL Where  Month_Number='" + detailModel.MonthNumber + "' and Year=" + detailModel.Year + " and LOC_CODE='" + detailModel.LocCode + "' ";
                     var tuple1 = dbHelper.IsExistsWithGetSL(dbConn.SAConnStrReader(), QryIsExists);
@@ -262,7 +262,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
             foreach (ExpenseBillMpoTmRsmInsertSummaryDetailList detailModel in model.ItemList)
             {
-                 if (detailModel.Designation == "MPO" || detailModel.Designation == "SMPO")
+                 if (detailModel.Designation == "MIO" || detailModel.Designation == "SMIO")
                 {
                     string QryIsExists = "Select MST_SL From ACC_DA_BILL Where Day_Number='" + detailModel.DayNumber + "' and Month_Number='" + detailModel.MonthNumber + "' and Year=" + detailModel.Year + " and MP_GROUP='" + detailModel.LocCode + "' ";
                     var tuple1 = dbHelper.IsExistsWithGetSL(dbConn.SAConnStrReader(), QryIsExists);
@@ -275,7 +275,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                         isTrue = true;
                     }
                     }
-                    if (detailModel.Designation == "TM" || detailModel.Designation == "RSM" || detailModel.Designation == "DSM" || detailModel.Designation == "Manager" || detailModel.Designation == "Sr. Manager")
+                    if (detailModel.Designation == "RM" || detailModel.Designation == "ZM" || detailModel.Designation == "PM" || detailModel.Designation == "CM" || detailModel.Designation == "Sr. Manager")
                    {
                     string QryIsExists = "Select MST_SL From SUP_ACC_DA_BILL Where Day_Number='" + detailModel.DayNumber + "' and Month_Number='" + detailModel.MonthNumber + "' and Year=" + detailModel.Year + " and LOC_CODE='" + detailModel.LocCode + "' ";
                     var tuple1 = dbHelper.IsExistsWithGetSL(dbConn.SAConnStrReader(), QryIsExists);
@@ -304,7 +304,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             //string LocCode = HttpContext.Current.Session["LocCode"].ToString();
             bool isTrue = false;
             IUMode = "";
-            if (model.Designation == "MPO" || model.Designation == "SMPO")
+            if (model.Designation == "MIO" || model.Designation == "SMIO")
             {
                 string NDA = model.MAllowence + "," + model.EAllowence;
                 string QryDA = "Update ACC_DA_BILL set REVIEW_STATUS='No', IS_HOLIDAY='" + model.IsHoliday + "' , ALLOWANCE_NATURE='" + NDA + "', AMOUNT=" + model.DA + ", Recommend='" + model.Remarks + "',TSM_ID='" + EmpID + "' Where MST_SL='" + model.MasterSL + "'  ";
@@ -317,7 +317,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 IUMode = "U";
                 isTrue = true;
             }
-            if (model.Designation == "TM" || model.Designation == "RSM" || model.Designation == "DSM" ||  model.Designation == "Manager" || model.Designation == "Sr. Manager")
+            if (model.Designation == "RM" || model.Designation == "ZM" || model.Designation == "PM" ||  model.Designation == "CM" || model.Designation == "Sr. Manager")
             {
                 string NDA = model.MAllowence + "," + model.EAllowence;
                 string QryDA = "Update SUP_ACC_DA_BILL set REVIEW_STATUS='No', IS_HOLIDAY='" + model.IsHoliday + "' , ALLOWANCE_NATURE='" + NDA + "', AMOUNT=" + model.DA + ", Recommend= '" + model.Remarks + "' ,SUP_EMP_ID='" + EmpID + "' Where MST_SL='" + model.MasterSL + "'  ";

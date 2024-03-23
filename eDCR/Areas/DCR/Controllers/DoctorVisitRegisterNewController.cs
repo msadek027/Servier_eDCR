@@ -387,7 +387,7 @@ namespace eDCR.Areas.DCR.Controllers
             AddCellToHeader(tableLayout, "Doctor Name", 0);
             AddCellToHeader(tableLayout, "Ca", 0);
             AddCellToHeader(tableLayout, "Shift", 0);
-            AddCellToHeader(tableLayout, "MPO", 0);
+            AddCellToHeader(tableLayout, "MIO", 0);
             AddCellToHeader(tableLayout, "MED", 0);
             AddCellToHeader(tableLayout, "MEP", 0);
             AddCellToHeader(tableLayout, "MEE", 0);

@@ -160,9 +160,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             if (model.LocCode != "" && model.LocCode != null && model.LocCode != " ")
             {
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {
@@ -171,17 +171,17 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')  ";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')  ";
                     if (model.RegionCode != null && model.RegionCode != "")
                     {
                         Qry = Qry + " and  REGION_CODE = '" + model.RegionCode + "' ";
                     }
                 }
-                else if (model.Designation == "DSM")
+                else if (model.Designation == "PM")
                 {
-                    Qry = Qry + " and DESIGNATION ='DSM' ";
+                    Qry = Qry + " and DESIGNATION ='PM' ";
                 }
                 else
                 {
@@ -231,9 +231,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             if (model.LocCode != "" && model.LocCode != null && model.LocCode != " ")
             {
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {
@@ -242,17 +242,17 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')  ";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')  ";
                     if (model.RegionCode != null && model.RegionCode != "")
                     {
                         Qry = Qry + " and  REGION_CODE = '" + model.RegionCode + "' ";
                     }
                 }
-                else if (model.Designation == "DSM")
+                else if (model.Designation == "PM")
                 {
-                    Qry = Qry + " and DESIGNATION ='DSM' ";
+                    Qry = Qry + " and DESIGNATION ='PM' ";
                 }
                 else
                 {
@@ -307,9 +307,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             if (model.LocCode != "" && model.LocCode != null && model.LocCode != " ")
             {
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {
@@ -318,17 +318,17 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')  ";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')  ";
                     if (model.RegionCode != null && model.RegionCode != "")
                     {
                         Qry = Qry + " and  REGION_CODE = '" + model.RegionCode + "' ";
                     }
                 }
-                else if (model.Designation == "DSM")
+                else if (model.Designation == "PM")
                 {
-                    Qry = Qry + " and DESIGNATION ='DSM' ";
+                    Qry = Qry + " and DESIGNATION ='PM' ";
                 }
                 else
                 {

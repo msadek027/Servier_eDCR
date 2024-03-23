@@ -21,6 +21,7 @@
                 <button id="btnTemplateDownload" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-refresh"></i> Template</button>
 
                 <button id="btnReset" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-refresh"></i> Reset</button>
+                <button id="btnExcel" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-envelope"></i> Excel </button>
                 @*<button id="btnSave" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-save-file"></i> Save</button>*@
                 <button id="btnView" class="btn btn-primary btn-sm" type="button"><i class="glyphicon glyphicon-file"></i> View</button>
             </div>
@@ -429,7 +430,9 @@
             $("#Adoption").val('');
             $("#TeamTarget").val('');
         }
-
+        $('#btnExcel').click(function () {
+            $("#MainGrid").getKendoGrid().saveAsExcel();
+        });
         //***************view function*****************
         $('#btnView').click(function () {
 
@@ -542,7 +545,7 @@
             editable: false,
             selectable: "row",
             //selectable: "multiple",
-            toolbar: [{ name: "excel", text: "Download" }, { template: "<input type='text' id='txtDoctor'  style='float:right' placeholder='Doctor Id or Name...' class='k-textbox'>" }, ],
+            toolbar: [{ template: "<input type='text' id='txtMorningLocation'  style='float:right' placeholder='M/E Location ...' class='k-textbox'>" }, { template: "<input type='text' id='txtMarketCode'  style='float:right' placeholder='Market Code ...' class='k-textbox'>" }, { template: "<input type='text' id='txtMarketName'  style='float:right' placeholder='Market Name ...' class='k-textbox'>" }, { template: "<input type='text' id='txtDoctorName'  style='float:right' placeholder='Doctor Name ...' class='k-textbox'>" }, { template: "<input type='text' id='txtDoctorId'  style='float:right' placeholder='Doctor Id ...' class='k-textbox'>" }, ],
             excel: {
                 fileName: "DoctorData.xlsx",
                 allPages: true,
@@ -631,18 +634,61 @@
         }
 
         // Filter table row
-        $("#txtDoctor").keyup(function () {
+        $("#txtDoctorId").keyup(function () {
             var val = $(this).val();
             $("#MainGrid").data("kendoGrid").dataSource.filter({
                 logic: "or",
                 filters: [
                 { field: "DoctorID", operator: "contains", value: val },
-                { field: "DoctorName", operator: "contains", value: val },
+        
 
                 ]
             });
         });
 
+        $("#txtDoctorName").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                  
+                    { field: "DoctorName", operator: "contains", value: val },
+
+                ]
+            });
+        });
+        $("#txtMarketCode").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "MarketCode", operator: "contains", value: val },
+                
+
+                ]
+            });
+        });
+        $("#txtMarketName").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "Market", operator: "contains", value: val },
+                  
+
+                ]
+            });
+        });
+        $("#txtMorningLocation").keyup(function () {
+            var val = $(this).val();
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: [
+                    { field: "MorningLocation", operator: "contains", value: val },
+                    { field: "EveningLocation", operator: "contains", value: val },
+                ]
+            });
+        });
 
     var gridInput = 0;
     function GridValidation() {

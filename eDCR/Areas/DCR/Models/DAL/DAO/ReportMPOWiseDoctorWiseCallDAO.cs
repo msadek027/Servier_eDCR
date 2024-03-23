@@ -97,9 +97,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             if (model.Designation != "" && model.Designation != null)
             {
 
-                if(model.Designation=="MPO")
+                if(model.Designation=="MIO")
                 {
-                    qry += " AND DESIGNATION IN ('MPO','SMPO')";
+                    qry += " AND DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {

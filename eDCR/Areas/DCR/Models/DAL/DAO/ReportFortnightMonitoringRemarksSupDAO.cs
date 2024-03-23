@@ -136,7 +136,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             DataTable dt = dbHelper.GetDataTable(dbConn.SAConnStrReader(), Qry);
             List<ReportFortnightHistory> item = new List<ReportFortnightHistory>();
 
-            if (model.Designation == "TM")
+            if (model.Designation == "RM")
             {
                 item = (from DataRow row in dt.Rows
                         select new ReportFortnightHistory
@@ -153,7 +153,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
                         }).ToList();
             }
-            if (model.Designation == "RSM" || model.Designation == "DSM")
+            if (model.Designation == "ZM" || model.Designation == "PM")
             {
                 if (dt.Rows.Count > 0)
                 {
@@ -198,7 +198,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             dt = dtAll;
             if (dtAll.Rows.Count > 0)
             {
-                if (Designation == "TM")
+                if (Designation == "RM")
                 {
                     DataTable viewSubDTL = new DataView(dtAll).ToTable(true, "MPO_CODE", "MPO_NAME", "DESIGNATION", "LOC_CODE", "MARKET_NAME", "SET_DATE", "PARA_TYPE", "REMARKS");
                     DataRow[] drArraySubDTL = viewSubDTL.Select("PARA_TYPE = '" + ParaType + "'");
@@ -225,7 +225,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
                             }).ToList();
                 }
-                if (Designation == "RSM" || Designation == "DSM")
+                if (Designation == "ZM" || Designation == "PM")
                 {
                     DataTable viewSubDTL = new DataView(dtAll).ToTable(true, "PARA_TYPE", "REMARKS");
                     DataRow[] drArraySubDTL = viewSubDTL.Select("PARA_TYPE = '" + ParaType + "'");
@@ -361,13 +361,13 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             var tuple1 = dbHelper.IsExistsWithGetSL(dbConn.SAConnStrReader(), QryIsExists);
             if (tuple1.Item1)
             {
-               if(DesignationSession == "RSM")
+               if(DesignationSession == "ZM")
                 {
                     Qry = " Update SUP_FORTNIGHT_RSM_COMMENTS Set REMARKS='" + model.Remarks.Replace("'", "''") + "'" +
                           " Where YEAR=" + model.Year + " and MONTH_NUMBER='" + model.MonthNumber + "'  and LOC_CODE='" + model.LocCode + "' and FORTNIGHT_TYPE='" + model.FortNightType + "' ";
 
                 }
-                if (DesignationSession == "Manager" || DesignationSession == "DSM")
+                if (DesignationSession == "CM" || DesignationSession == "PM")
                 {
                     Qry = " Update SUP_FORTNIGHT_RSM_COMMENTS Set MANAGER_REMARKS='" + model.Remarks.Replace("'", "''") + "'" +
                           " Where YEAR=" + model.Year + " and MONTH_NUMBER='" + model.MonthNumber + "'  and LOC_CODE='" + model.LocCode + "' and FORTNIGHT_TYPE='" + model.FortNightType + "' ";
@@ -377,13 +377,13 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (DesignationSession == "RSM")
+                if (DesignationSession == "ZM")
                 {
 
                     Qry = " INSERT INTO SUP_FORTNIGHT_RSM_COMMENTS(YEAR, MONTH_NUMBER, LOC_CODE,SET_LOC_CODE, FORTNIGHT_TYPE,SET_DATE, REMARKS) " +
                           " Values(" + model.Year + ",'" + model.MonthNumber + "','" + model.LocCode + "','" + UserID + "','" + model.FortNightType + "',TO_Date('" + CntDate + "','dd-mm-yyyy'),'" + model.Remarks.Replace("'", "''") + "')";
                 }
-                if (DesignationSession == "Manager" || DesignationSession == "DSM")
+                if (DesignationSession == "CM" || DesignationSession == "PM")
                 {
 
                     Qry = " INSERT INTO SUP_FORTNIGHT_RSM_COMMENTS(YEAR, MONTH_NUMBER, LOC_CODE,SET_LOC_CODE, FORTNIGHT_TYPE,SET_DATE, MANAGER_REMARKS) " +

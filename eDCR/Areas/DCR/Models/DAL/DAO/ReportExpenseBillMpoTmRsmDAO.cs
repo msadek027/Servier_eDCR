@@ -99,7 +99,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         public List<ReportExpenseBillMpoTmRsmDaTaOthersBEO> GetTA(DefaultParameterBEO model)
         {
             string MPGroup = model.LocCode;
-            if (model.Designation=="MPO" || model.Designation == "SMPO")
+            if (model.Designation=="MIO" || model.Designation == "SMIO")
             {
                 string Qry2 = "Select MPO_CODE,MARKET_CODE from VW_HR_LOC_MAPPING Where MP_GROUP='" + model.LocCode + "' ";
                 var tuple2 = GetTwoValues(Qry2);

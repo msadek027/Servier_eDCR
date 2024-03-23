@@ -98,10 +98,10 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                " Where SET_DATE Between '" + model.FromDate + "' AND '" + model.ToDate + "' ";
 
             vHeader = vHeader + "Date Between: " + model.FromDate + " To " + model.ToDate;
-           /*
+           
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO : " + model.MPOName;
+                vHeader = vHeader + ", FF : " + model.MPOName;
                 qry += " AND MP_GROUP='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)
@@ -124,7 +124,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 }
                 qry += " AND REGION_CODE = '" + model.RegionCode + "'";
             }            
-            */
+            
             qry += " GROUP BY SET_DATE,MARKET_NAME,MP_GROUP,MPO_CODE, MPO_NAME, TSM_ID,  REGION_CODE ";
 
      
@@ -194,7 +194,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "TM")
+                if (model.Designation == "RM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
 
@@ -211,7 +211,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                 }
 
-                if (model.Designation == "RSM")
+                if (model.Designation == "ZM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
                     if (model.LocCode != "" && model.LocCode != null)
@@ -291,7 +291,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "TM")
+                if (model.Designation == "RM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
 
@@ -320,7 +320,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                 }
 
-                if (model.Designation == "RSM")
+                if (model.Designation == "ZM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
                     if (model.LocCode != "" && model.LocCode != null)

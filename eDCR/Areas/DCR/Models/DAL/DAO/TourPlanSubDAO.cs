@@ -35,7 +35,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 Qry = Qry + " AND " + WhereClause;
             }
 
-            if (EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager")
+            if (EmpTypeSession == "CM" || EmpTypeSession == "Sr. Manager")
             {
                 string Qry2 = @"MINUS SELECT distinct  MST_SL,LOC_CODE,EMPID,EMPNAME,DESIGNATION,MONTH_NUMBER,MONTH_NAME,YEAR,MST_STATUS,VW From VW_SUP_TOUR  Where VW='View'
                          AND YEAR=" + model.Year + " AND MONTH_NUMBER='" + model.MonthNumber + "' AND DESIGNATION = 'RSM' AND DIVISION_CODE IN(Select DIVISION_CODE from HR_DSM Where M_ID_MAPPING = '"+ LocCodeSession + "' AND DSM_ID IS NOT NULL)";
@@ -76,7 +76,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             {
                 Qry = Qry + " AND " + WhereClause;
             }
-            if (EmpTypeSession == "Manager" || EmpTypeSession == "Sr. Manager")
+            if (EmpTypeSession == "CM" || EmpTypeSession == "Sr. Manager")
             {
                 string Qry2 = @" MINUS SELECT distinct  MST_SL,LOC_CODE,EMPID,EMPNAME,DESIGNATION,MONTH_NUMBER,MONTH_NAME,YEAR,MST_STATUS,VW From VW_SUP_TOUR Where Review='Yes' and MST_STATUS='Approved'
                          AND YEAR=" + model.Year + " AND MONTH_NUMBER='" + model.MonthNumber + "' AND DESIGNATION = 'RSM' AND DIVISION_CODE IN(Select DIVISION_CODE from HR_DSM Where M_ID_MAPPING = '"+ LocCodeSession + "' AND DSM_ID IS NOT NULL)";

@@ -36,15 +36,15 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 else
                 {
 
-                    if (model.Designation == "MPO")
+                    if (model.Designation == "MIO")
                     {
                         Qry = Qry + " AND SET_LOC_CODE IN (SELECT MP_GROUP from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "' )";
                     }
-                    else if (model.Designation == "TM")
+                    else if (model.Designation == "RM")
                     {
                         Qry = Qry + " AND SET_LOC_CODE IN (SELECT TERRITORY_CODE from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
                     }
-                    else if (model.Designation == "RSM" || model.Designation == "DSM")
+                    else if (model.Designation == "ZM" || model.Designation == "PM")
                     {
                         Qry = Qry + " AND  SET_LOC_CODE='" + model.RegionCode + "'";
                     }
@@ -60,15 +60,15 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 else
                 {
 
-                    if (model.Designation == "MPO")
+                    if (model.Designation == "MIO")
                     {
                         Qry = Qry + " AND MP_GROUP IN (SELECT MP_GROUP from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "' )";
                     }
-                    else if (model.Designation == "TM")
+                    else if (model.Designation == "RM")
                     {
                         Qry = Qry + " AND MP_GROUP IN (SELECT TERRITORY_CODE from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
                     }
-                    else if (model.Designation == "RSM")
+                    else if (model.Designation == "PM")
                     {
                         Qry = Qry + " AND  MP_GROUP='" + model.RegionCode + "'";
                     }
@@ -155,16 +155,16 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 }
                 else
                 {
-                    if (model.Designation == "MPO")
+                    if (model.Designation == "MIO")
                     {
                         Qry = Qry + "  AND SET_LOC_CODE IN ( SELECT MP_GROUP from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
                     }
-                    else if (model.Designation == "TM")
+                    else if (model.Designation == "RM")
                     {
                         Qry = Qry + " AND SET_LOC_CODE IN ( SELECT TERRITORY_CODE from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
 
                     }
-                    else if (model.Designation == "RSM")
+                    else if (model.Designation == "ZM")
                     {
                         Qry = Qry + " AND SET_LOC_CODE='" + model.RegionCode + "'";
                     }
@@ -197,16 +197,16 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 }
                 else
                 {
-                    if (model.Designation == "MPO")
+                    if (model.Designation == "MIO")
                     {
                         Qry = Qry + "  AND MP_GROUP IN ( SELECT MP_GROUP from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
                     }
-                    else if (model.Designation == "TM")
+                    else if (model.Designation == "RM")
                     {
                         Qry = Qry + " AND MP_GROUP IN ( SELECT TERRITORY_CODE from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
 
                     }
-                    else if (model.Designation == "RSM")
+                    else if (model.Designation == "ZM")
                     {
                         Qry = Qry + " AND MP_GROUP='" + model.RegionCode + "'";
                     }

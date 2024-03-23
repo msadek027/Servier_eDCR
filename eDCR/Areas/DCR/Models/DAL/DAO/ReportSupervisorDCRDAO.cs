@@ -31,7 +31,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "TM")
+                if (model.Designation == "RM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
 
@@ -48,7 +48,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                 }
 
-                if (model.Designation == "RSM")
+                if (model.Designation == "ZM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
                     if (model.LocCode != "" && model.LocCode != null)
@@ -63,7 +63,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                         }
                     }
                 }
-                if (model.Designation == "DSM")
+                if (model.Designation == "PM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
                     if (model.LocCode != "" && model.LocCode != null)
@@ -126,7 +126,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "TM")
+                if (model.Designation == "RM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
 
@@ -155,7 +155,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                 }
 
-                if (model.Designation == "RSM")
+                if (model.Designation == "ZM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
                     if (model.LocCode != "" && model.LocCode != null)
@@ -181,7 +181,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                         }
                     }
                 }
-                if (model.Designation == "DSM")
+                if (model.Designation == "PM")
                 {
                     Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
                     if (model.LocCode != "" && model.LocCode != null)

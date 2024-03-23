@@ -34,11 +34,6 @@ namespace eDCR.Areas.DCR.Controllers
             var data = primaryDAO.GetMainGridData(model);
             return Json(data, JsonRequestBehavior.AllowGet);
         }
-
-       
-
-
-
         public ActionResult Export(DefaultParameterBEO model)
         {
 
@@ -85,8 +80,6 @@ namespace eDCR.Areas.DCR.Controllers
                 byte[] byteInfo = workStream.ToArray();
                 workStream.Write(byteInfo, 0, byteInfo.Length);
                 workStream.Position = 0;
-
-
 
                 return File(workStream, "application/pdf", strPDFFileName);
             }

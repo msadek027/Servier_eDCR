@@ -105,7 +105,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             vHeader = vHeader + "Date Between: " + model.FromDate.Trim() + " to " + model.ToDate.Trim();       
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO: " + model.MPOName.Trim();
+                vHeader = vHeader + ", FF: " + model.MPOName.Trim();
                 qry += " AND MP_GROUP='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)
@@ -241,7 +241,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO: " + model.MPOName.Trim();
+                vHeader = vHeader + ", FF: " + model.MPOName.Trim();
                 qry += " AND MP_GROUP='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)

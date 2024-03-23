@@ -80,9 +80,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             if (model.LocCode != "" && model.LocCode != null && model.LocCode != " ")
             {
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {
@@ -91,17 +91,17 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')  ";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')  ";
                     if (model.RegionCode != null && model.RegionCode != "")
                     {
                         Qry = Qry + " and  REGION_CODE = '" + model.RegionCode + "' ";
                     }
                 }
-                else if (model.Designation == "DSM")
+                else if (model.Designation == "PM")
                 {
-                    Qry = Qry + " and DESIGNATION ='DSM' ";
+                    Qry = Qry + " and DESIGNATION ='PM' ";
                 }
                 else
                 {
@@ -115,42 +115,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                 }
             }
-                /*
-                if (model.LocCode != "" && model.LocCode != null && model.LocCode != " ")
-                {
-                    Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
-
-                    if (model.Designation == "MPO")
-                    {
-                        Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
-                    }
-                    else
-                    {
-                        Qry = Qry + " and DESIGNATION='" + model.Designation + "'";
-                    }
-                }
-                else
-                {
-
-                    if (model.Designation == "MPO")
-                    {
-                        Qry = Qry + " and DESIGNATION IN ('MPO','SMPO') and LOC_CODE IN (SELECT MP_GROUP from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "' )";
-
-                    }
-                    if (model.Designation == "TM")
-                    {
-                        Qry = Qry + " AND DESIGNATION ='" + model.Designation + "' and TERRITORY_CODE IN (SELECT TERRITORY_CODE from VW_HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
-                    }
-                    if (model.Designation == "RSM")
-                    {
-                        Qry = Qry + " AND DESIGNATION ='" + model.Designation + "' and REGION_CODE='" + model.RegionCode + "'";
-                    }
-                    if ((model.Designation == "" || model.Designation == "null" || model.Designation == null) && model.RegionCode != "" && model.RegionCode != null)
-                    {
-                        Qry = Qry + " and REGION_CODE='" + model.RegionCode + "'";
-                    }
-                }
-                */
+              
                 Qry = Qry + " Group BY EMP_CODE,EMP_NAME, DESIGNATION,LOC_CODE,MARKET_NAME,TERRITORY_NAME ";
             Qry = Qry + " ORDER BY MARKET_NAME";
 
@@ -215,9 +180,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     vHeader = vHeader + ", Region : " + lastItem;
                 }
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {
@@ -226,17 +191,17 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')  ";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')  ";
                     if (model.RegionCode != null && model.RegionCode != "")
                     {
                         Qry = Qry + " and  REGION_CODE = '" + model.RegionCode + "' ";
                     }
                 }
-                else if (model.Designation == "DSM")
+                else if (model.Designation == "PM")
                 {
-                    Qry = Qry + " and DESIGNATION ='DSM' ";
+                    Qry = Qry + " and DESIGNATION ='PM' ";
                 }
                 else
                 {
@@ -472,12 +437,12 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 string QryIsExists = "";
              
 
-                    if (detailModel.Designation.Trim() == "MPO" || detailModel.Designation.Trim() == "SMPO")
+                    if (detailModel.Designation.Trim() == "MIO" || detailModel.Designation.Trim() == "SMIO")
                    {
                     QryIsExists = "Select NVL(MAX(MST_SL),0)  From ACC_DA_BILL Where MPO_CODE='" + detailModel.EmployeeCode.Trim() + "' AND Month_Number='" + detailModel.MonthNumber + "' and Year=" + detailModel.Year + "  ";
                      
                     }
-                    if (detailModel.Designation.Trim() == "TM" || detailModel.Designation.Trim() == "RSM" || detailModel.Designation.Trim() == "DSM" || detailModel.Designation.Trim() == "Manager" || detailModel.Designation.Trim() == "Sr. Manager")
+                    if (detailModel.Designation.Trim() == "RM" || detailModel.Designation.Trim() == "ZM" || detailModel.Designation.Trim() == "PM" || detailModel.Designation.Trim() == "CM" || detailModel.Designation.Trim() == "Sr. Manager")
                    {
                     QryIsExists = "Select NVL(MAX(MST_SL),0) MST_SL From SUP_ACC_DA_BILL Where EMP_CODE='" + detailModel.EmployeeCode.Trim() + "' AND Month_Number='" + detailModel.MonthNumber + "' and Year=" + detailModel.Year + "  ";
 
@@ -501,7 +466,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
                         if (tuple1.Item1 && Convert.ToInt64(tuple1.Item2) > 0)
                         {
-                            if (detailModel.Designation.Trim() == "MPO" || detailModel.Designation.Trim() == "SMPO")
+                            if (detailModel.Designation.Trim() == "MIO" || detailModel.Designation.Trim() == "SMIO")
                             {
                                 Qry = "Update ACC_DA_BILL set MISCELLANEOUS=" + detailModel.MiscManualTADABill + " Where  MST_SL=" + tuple1.Item2 + " ";
 
@@ -509,7 +474,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                                 IUMode = "U";
                                 isTrue = true;
                             }
-                            if (detailModel.Designation.Trim() == "TM" || detailModel.Designation.Trim() == "RSM" || detailModel.Designation.Trim() == "DSM" || detailModel.Designation.Trim() == "Manager" || detailModel.Designation.Trim() == "Sr. Manager")
+                            if (detailModel.Designation.Trim() == "RM" || detailModel.Designation.Trim() == "ZM" || detailModel.Designation.Trim() == "DSM" || detailModel.Designation.Trim() == "CM" || detailModel.Designation.Trim() == "Sr. Manager")
                             {
                                 Qry = "Update SUP_ACC_DA_BILL set MISCELLANEOUS=" + detailModel.MiscManualTADABill + " Where  MST_SL=" + tuple1.Item2 + " ";
 
@@ -551,7 +516,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO" && (model.DepotCode != "" && model.DepotCode != null))
+                if (model.Designation == "MIO" && (model.DepotCode != "" && model.DepotCode != null))
                 {
 
                     string dtCurrentMpoStr = "";
@@ -577,7 +542,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                     else
                     {
-                        QryCurrentMpo = "Select MPO_CODE  FROM VW_HR_LOC_MAPPING_ALL Where DEPOT_CODE='" + model.DepotCode + "' and DESIGNATION IN ('MPO','SMPO')";
+                        QryCurrentMpo = "Select MPO_CODE  FROM VW_HR_LOC_MAPPING_ALL Where DEPOT_CODE='" + model.DepotCode + "' and DESIGNATION IN ('MIO','SMIO')";
                         if (model.SBU != "" && model.SBU != null)
                         {
                             QryCurrentMpo = QryCurrentMpo + " and PRODUCT_GROUP='" + model.SBU + "'";
@@ -590,7 +555,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
 
                 }
-                if ((model.Designation == "TM" || model.Designation == "RSM"|| model.Designation == "DSM" || model.Designation == "Manager" || model.Designation == "Sr. Manager") && (model.DepotCode != "" && model.DepotCode != null))
+                if ((model.Designation == "RM" || model.Designation == "ZM"|| model.Designation == "PM" || model.Designation == "CM" || model.Designation == "Sr. Manager") && (model.DepotCode != "" && model.DepotCode != null))
                 {
 
                     string dtCurrentMpoStr = "";
@@ -720,7 +685,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO" && (model.DepotCode != "" && model.DepotCode != null))
+                if (model.Designation == "MIO" && (model.DepotCode != "" && model.DepotCode != null))
                 {
 
                     string dtCurrentMpoStr = "";
@@ -756,7 +721,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
 
 
                 }
-                if ((model.Designation == "TM" || model.Designation == "RSM" || model.Designation == "DSM" || model.Designation == "Manager" || model.Designation == "Sr. Manager") && (model.DepotCode != "" && model.DepotCode != null))
+                if ((model.Designation == "RM" || model.Designation == "ZM" || model.Designation == "PM" || model.Designation == "CM" || model.Designation == "Sr. Manager") && (model.DepotCode != "" && model.DepotCode != null))
                 {
 
                     string dtCurrentMpoStr = "";
@@ -937,9 +902,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             {
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
 
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
                 else
                 {
@@ -949,22 +914,22 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             else
             {
 
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
                     Qry = Qry + " and DESIGNATION IN ('MPO','SMPO') and LOC_CODE IN (SELECT MP_GROUP from VW_ARC_HR_LOC_MAPPING Where Year=" + model.Year + " and Month_Number='" + model.MonthNumber + "' AND REGION_CODE = '" + model.RegionCode + "' )";
 
                 }
-                if (model.Designation == "TM")
+                if (model.Designation == "RM")
                 {
                     Qry = Qry + " AND DESIGNATION ='" + model.Designation + "' and TERRITORY_CODE IN (SELECT TERRITORY_CODE from VW_ARC_HR_LOC_MAPPING Where Year=" + model.Year + " and Month_Number='" + model.MonthNumber + "' AND REGION_CODE = '" + model.RegionCode + "')";
                 }
-                if (model.Designation == "RSM")
+                if (model.Designation == "ZM")
                 {
                     Qry = Qry + " AND DESIGNATION ='" + model.Designation + "' and REGION_CODE='" + model.RegionCode + "'";
                 }
-                if (model.Designation == "DSM")
+                if (model.Designation == "PM")
                 {
-                    Qry = Qry + " AND DESIGNATION IN ('DSM','Manager' ,'Sr. Manager')  AND DIVISION_CODE IN (Select DISTINCT DIVISION_CODE from HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
+                    Qry = Qry + " AND DESIGNATION IN ('PM','CM' ,'Sr. Manager')  AND DIVISION_CODE IN (Select DISTINCT DIVISION_CODE from HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
                 }
                 if ((model.Designation == "" || model.Designation == "null" || model.Designation == null) && model.RegionCode != "" && model.RegionCode != null)
                 {
@@ -1081,9 +1046,9 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 Qry = Qry + " and LOC_CODE='" + model.LocCode + "' ";
 
 
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
-                    Qry = Qry + " and DESIGNATION IN ('MPO','SMPO')";
+                    Qry = Qry + " and DESIGNATION IN ('MIO','SMIO')";
                 }
 
                 else
@@ -1093,22 +1058,22 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             }
             else
             {
-                if (model.Designation == "MPO")
+                if (model.Designation == "MIO")
                 {
                     Qry = Qry + "  and DESIGNATION IN ('MPO','SMPO')  and LOC_CODE IN ( SELECT MP_GROUP from VW_ARC_HR_LOC_MAPPING Where Year=" + model.Year + " and Month_Number='" + model.MonthNumber + "' AND REGION_CODE = '" + model.RegionCode + "')";
                 }
-                if (model.Designation == "TM")
+                if (model.Designation == "RM")
                 {
                     Qry = Qry + " AND DESIGNATION ='" + model.Designation + "' and TERRITORY_CODE IN ( SELECT TERRITORY_CODE from VW_ARC_HR_LOC_MAPPING Where Year=" + model.Year + " and Month_Number='" + model.MonthNumber + "' AND REGION_CODE = '" + model.RegionCode + "')";
 
                 }
-                if (model.Designation == "RSM")
+                if (model.Designation == "ZM")
                 {
                     Qry = Qry + "AND DESIGNATION ='" + model.Designation + "' and REGION_CODE='" + model.RegionCode + "'";
                 }
-                if (model.Designation == "DSM")
+                if (model.Designation == "PM")
                 {
-                    Qry = Qry + " AND DESIGNATION IN ('DSM','Manager' ,'Sr. Manager')  AND DIVISION_CODE IN (Select DISTINCT DIVISION_CODE from HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
+                    Qry = Qry + " AND DESIGNATION IN ('PM','CM' ,'Sr. Manager')  AND DIVISION_CODE IN (Select DISTINCT DIVISION_CODE from HR_LOC_MAPPING Where REGION_CODE = '" + model.RegionCode + "')";
                 }
                 if ((model.Designation == "" || model.Designation == "null" || model.Designation == null) && model.RegionCode != "" && model.RegionCode != null)
                 {

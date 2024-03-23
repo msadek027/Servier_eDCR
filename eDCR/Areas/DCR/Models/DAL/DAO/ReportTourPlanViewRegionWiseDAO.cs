@@ -26,7 +26,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         model.RegionCode = Str;
 
 
-        if (model.Designation == "MPO")
+        if (model.Designation == "MIO")
         {
             Qry = "SELECT MP_GROUP LOC_CODE,MARKET_NAME LOC_NAME,MPO_CODE EMPID,MPO_NAME EMPNAME,DAY_NUMBER,' ('||TO_CHAR(TO_DATE(DAY_NUMBER||MONTH_NUMBER || YEAR, 'DD/MM/YYYY') , 'fmDay')||')' DAY_NAME,M_SET_TIME,M_INSTI_NAME,M_MEETING_PLACE ,E_SET_TIME,E_INSTI_NAME,E_MEETING_PLACE,'' M_EMP_ID_WK_TYPE,'' E_EMP_ID_WK_TYPE,ALLOWANCE_NATURE,M_ALLOWANCE_NATURE,E_ALLOWANCE_NATURE,M_REVIEW,E_REVIEW  " +
            "  FROM VW_TP_RPT Where YEAR=" + model.Year + " And MONTH_NUMBER='" + model.MonthNumber + "' ";
@@ -40,7 +40,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     Qry += " And MP_GROUP IN (Select MP_GROUP from VW_HR_LOC_MAPPING Where REGION_CODE IN(" + model.RegionCode + "))";
             }
             }
-        if ( model.Designation == "TM")
+        if ( model.Designation == "RM")
         {
             Qry = "SELECT LOC_CODE,LOC_NAME,EMPID,EMPNAME,DAY_NUMBER,' ('||TO_CHAR(TO_DATE(DAY_NUMBER||MONTH_NUMBER || YEAR, 'DD/MM/YYYY') , 'fmDay')||')' DAY_NAME,M_SET_TIME,M_INSTI_NAME,M_MEETING_PLACE ,E_SET_TIME,E_INSTI_NAME,E_MEETING_PLACE,M_EMP_ID_WK_TYPE,E_EMP_ID_WK_TYPE,ALLOWANCE_NATURE,M_ALLOWANCE_NATURE,E_ALLOWANCE_NATURE,M_REVIEW,E_REVIEW  " +
                "  FROM VW_SUP_TP_RPT Where YEAR=" + model.Year + " And MONTH_NUMBER='" + model.MonthNumber + "' ";
@@ -57,7 +57,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                 }
             }
-            if (model.Designation == "RSM")
+            if (model.Designation == "ZM")
             {
                 Qry = "SELECT LOC_CODE,LOC_NAME,EMPID,EMPNAME,DAY_NUMBER,' ('|| TO_CHAR(TO_DATE(DAY_NUMBER||MONTH_NUMBER || YEAR, 'DD/MM/YYYY') , 'fmDay')||')' DAY_NAME,M_SET_TIME,M_INSTI_NAME,M_MEETING_PLACE ,E_SET_TIME,E_INSTI_NAME,E_MEETING_PLACE,M_EMP_ID_WK_TYPE,E_EMP_ID_WK_TYPE,ALLOWANCE_NATURE,M_ALLOWANCE_NATURE,E_ALLOWANCE_NATURE,M_REVIEW,E_REVIEW  " +
                    "  FROM VW_SUP_TP_RPT Where YEAR=" + model.Year + " And MONTH_NUMBER='" + model.MonthNumber + "' ";
@@ -136,7 +136,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     model.RegionName = "All";
                 }
             }
-        if (model.Designation == "MPO")
+        if (model.Designation == "MIO")
         {
             Qry = "SELECT MP_GROUP LOC_CODE,MARKET_NAME LOC_NAME,MPO_CODE EMPID,MPO_NAME EMPNAME,DAY_NUMBER,' ('|| TO_CHAR(TO_DATE(DAY_NUMBER||MONTH_NUMBER || YEAR, 'DD/MM/YYYY') , 'fmDay')||')' DAY_NAME,M_SET_TIME,M_INSTI_NAME,M_MEETING_PLACE ,E_SET_TIME,E_INSTI_NAME,E_MEETING_PLACE,'' M_EMP_ID_WK_TYPE,'' E_EMP_ID_WK_TYPE,ALLOWANCE_NATURE,M_ALLOWANCE_NATURE,E_ALLOWANCE_NATURE  " +
            "  FROM VW_TP_RPT Where YEAR=" + model.Year + " And MONTH_NUMBER='" + model.MonthNumber + "' ";
@@ -155,7 +155,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 Qry += " And MP_GROUP IN (Select MP_GROUP from VW_HR_LOC_MAPPING Where REGION_CODE IN(" + model.RegionCode + "))";
             }
         }
-        if (model.Designation == "TM")
+        if (model.Designation == "RM")
         {
             Qry = " SELECT LOC_CODE,LOC_NAME,EMPID,EMPNAME,Designation,DAY_NUMBER,' ('|| TO_CHAR(TO_DATE(DAY_NUMBER||MONTH_NUMBER || YEAR, 'DD/MM/YYYY') , 'fmDay')||')' DAY_NAME,M_SET_TIME,M_INSTI_NAME,M_MEETING_PLACE ,E_SET_TIME,E_INSTI_NAME,E_MEETING_PLACE,M_EMP_ID_WK_TYPE,E_EMP_ID_WK_TYPE,ALLOWANCE_NATURE,M_ALLOWANCE_NATURE,E_ALLOWANCE_NATURE  " +
                   " FROM VW_SUP_TP_RPT Where YEAR=" + model.Year + " And MONTH_NUMBER='" + model.MonthNumber + "' ";
@@ -178,7 +178,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                 Qry += " And LOC_CODE IN (Select TERRITORY_CODE from VW_HR_LOC_MAPPING Where REGION_CODE IN(" + model.RegionCode + "))";
             }
             }
-            if (model.Designation == "RSM")
+            if (model.Designation == "ZM")
             {
                 Qry = "SELECT LOC_CODE,LOC_NAME,EMPID,EMPNAME,Designation,DAY_NUMBER,' ('|| TO_CHAR(TO_DATE(DAY_NUMBER||MONTH_NUMBER || YEAR, 'DD/MM/YYYY') , 'fmDay')||')' DAY_NAME,M_SET_TIME,M_INSTI_NAME,M_MEETING_PLACE ,E_SET_TIME,E_INSTI_NAME,E_MEETING_PLACE,M_EMP_ID_WK_TYPE,E_EMP_ID_WK_TYPE,ALLOWANCE_NATURE,M_ALLOWANCE_NATURE,E_ALLOWANCE_NATURE  " +
                       "  FROM VW_SUP_TP_RPT Where YEAR=" + model.Year + " And MONTH_NUMBER='" + model.MonthNumber + "' ";

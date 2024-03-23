@@ -99,7 +99,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             vHeader = vHeader + "Month: " + month + ", " + model.Year;
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO : " + model.MPOName;
+                vHeader = vHeader + ", FF : " + model.MPOName;
                 Qry += " AND MP_GROUP='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)
@@ -252,7 +252,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             vHeader = vHeader + "Month: " + month + ", " + model.Year;
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO : " + model.MPOName;
+                vHeader = vHeader + ", FF : " + model.MPOName;
                 Qry += " AND MP_GROUP='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)

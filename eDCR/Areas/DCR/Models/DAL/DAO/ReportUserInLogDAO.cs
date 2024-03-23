@@ -43,7 +43,7 @@ namespace eDCR.Areas.DCR.Models.DAL
 
                
 
-                if (HttpContext.Current.Session["EmpType"].ToString() == "RSM")
+                if (HttpContext.Current.Session["EmpType"].ToString() == "ZM")
                 {
                     Qry = Qry + " UNION ALL " + " Select a.EMPID, a.EMPNAME, a.DESIGNATION, a.MP_GROUP,a.LOC_CODE,a.LOC_NAME, b.USERID, c.NEWPASSWORD " +
                                  " from SA_EMPLOYEE_VW a,SA_USERINROLE b,SA_USERCREDENTIAL c,Sa_Role d" +
@@ -191,7 +191,7 @@ namespace eDCR.Areas.DCR.Models.DAL
 
             if (model.MPGroup != null && model.MPGroup != "")
             {
-                vHeader = vHeader + ", MPO : " + model.MPOName;
+                vHeader = vHeader + ", FF : " + model.MPOName;
                 Qry += " AND LOC_CODE='" + model.MPGroup + "'";
             }
             if (model.TerritoryManagerID != "" && model.TerritoryManagerID != null)

@@ -105,11 +105,11 @@
 
         $('#Designation').on('change', function () {
             var opVal = $('#OperationMode').val();
-            if ((opVal == "TP" || opVal == "DVR" || opVal == "PWDS" || opVal == "GWDS" || opVal == "BILL") && $(this).val()=="MPO")
+            if ((opVal == "TP" || opVal == "DVR" || opVal == "PWDS" || opVal == "GWDS" || opVal == "BILL") && $(this).val()=="MIO")
             {
                 GetEmpForSup($(this).val(), $('#OperationMode').val());
             }
-            else if ((opVal == "TmRsmTP" || opVal == "TmRsmBILL") && $(this).val() != "MPO") {
+            else if ((opVal == "TmRsmTP" || opVal == "TmRsmBILL") && $(this).val() != "MIO") {
                 GetEmpForSup($(this).val(), $('#OperationMode').val());
             }
             else {
@@ -197,7 +197,7 @@
             if (Input == 0) {
 
 
-                if ((model.Designation == "TM" || model.Designation == "RSM") && (model.OperationMode == "DVR" || model.OperationMode == "PWDS" || model.OperationMode == "GWDS")) {
+                if ((model.Designation == "RM" || model.Designation == "ZM") && (model.OperationMode == "DVR" || model.OperationMode == "PWDS" || model.OperationMode == "GWDS")) {
 
                     ValidationMsg();
                     toastr.warning($("#MessageText").html());
@@ -258,7 +258,7 @@
             var Input = InputValidation('MonthNumber') + InputValidation('Year') + InputValidation('Designation') + InputValidation('OperationMode') + InputValidation('LocCode');
             if (Input == 0) {
 
-                if ((model.Designation == "TM" || model.Designation == "RSM") && (model.OperationMode == "DVR" || model.OperationMode == "PWDS" || model.OperationMode == "GWDS")) {
+                if ((model.Designation == "RM" || model.Designation == "ZM") && (model.OperationMode == "DVR" || model.OperationMode == "PWDS" || model.OperationMode == "GWDS")) {
 
                     ValidationMsg();
                     toastr.warning($("#MessageText").html());
@@ -308,7 +308,7 @@
             var Input = InputValidation('MonthNumber') + InputValidation('Year') + InputValidation('Designation') + InputValidation('OperationMode') + InputValidation('LocCode');
             if (Input == 0) {
 
-                if ((model.Designation == "TM" || model.Designation == "RSM") && (model.OperationMode == "DVR" || model.OperationMode == "PWDS" || model.OperationMode == "GWDS")) {
+                if ((model.Designation == "RM" || model.Designation == "ZM") && (model.OperationMode == "DVR" || model.OperationMode == "PWDS" || model.OperationMode == "GWDS")) {
 
                     ValidationMsg();
                     toastr.warning($("#MessageText").html());
@@ -587,10 +587,10 @@
             <div class="col-xs-0 col-sm-0 col-md-4 col-lg-4">
                 <select id="Designation" name="Designation" class="RequiredField form-control">
                     <option value=""></option>
-                    <option value="DSM">DSM</option>
-                    <option value="RSM">RSM</option>
-                    <option value="TM">TM</option>
-                    <option value="MPO">MPO</option>
+                    <option value="PM">PM</option>
+                    <option value="ZM">ZM</option>
+                    <option value="RM">RM</option>
+                    <option value="MIO">MIO</option>
                 </select>
             </div>
         </div>

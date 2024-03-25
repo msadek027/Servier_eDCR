@@ -88,6 +88,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
             {
                 foreach (DoctorDataUploadInfo detail in model.doctorDataUploadInfoList)
                 {
+
                     if (DoctorIDIsExist(detail))
                     {
                         MaxID = ""; IUMode = "U";
@@ -104,6 +105,11 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
                     }
                     else
                     {
+                        if (string.IsNullOrEmpty(detail.DoctorID))
+                        {
+                            var idQuery = @"SELECT NVL (MAX (DOCTOR_ID), 0) + 1 DOCTOR_ID FROM DOC_DETAIL";
+                            detail.DoctorID = dbHelper.GetValue(idQuery);
+                        }
                         MaxID = ""; IUMode = "I";
                         query = @"Insert into DOC_DETAIL(DOCTOR_ID,DOCTOR_NAME,REG_NO,PHONE,EMAIL,ADDRESS1,ADDRESS2,ADDRESS3,ADDRESS4,RELIGION,DESIGNATION,SPECIALIZATION,POTENTIAL,DEGREES,GENDER,Morning_Location,Evening_Location,Market_Code,MARKET,REGION,YEAR,MONTH_NUMBER,PRODUCT_GROUP, ADOPTION, TEAM_TARGET) Values('" + detail.DoctorID + "','" + detail.DoctorName + "','" + detail.RegNo + "','" + detail.Phone + "','" + detail.Email + "','" + detail.Address1 + "','" + detail.Address2 + "','" + detail.Address3 + "','" + detail.Address4 + "','" + detail.Religion + "','" + detail.Designation + "','" + detail.Specialization + "','" + detail.Potential + "','" + detail.Degrees + "','" + detail.Gender + "','" + detail.MorningLocation + "','" + detail.EveningLocation + "','" + detail.MarketCode + "','" + detail.Market + "','" + detail.Region + "'," + detail.Year + ",'" + detail.MonthNumber + "','" + detail.ProductGroup + "','" + detail.Adoption + "','" + detail.TeamTarget + "')";
 

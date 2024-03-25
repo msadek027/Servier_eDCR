@@ -45,7 +45,7 @@
         <div class="col-xs-6 col-sm-6 col-md-4">
             <div class="col-sm-6 col-md-4 p-0 pt-5">Doctor ID:</div>
             <div class="col-sm-6 col-md-8">
-                <input id="DoctorID" name="DoctorID" class="RequiredField form-control" />
+                <input id="DoctorID" name="DoctorID" class="RequiredField form-control" readonly />
             </div>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-4">
@@ -295,7 +295,6 @@
                     var jsonOutput = JSON.stringify(JSON.parse(json_object), undefined, 4)
                     // $('#jsonText').html(jsonOutput);
                     //alert(jsonOutput.length);
-                    debugger;
 
                     var obj = JSON.parse(jsonOutput);
 
@@ -464,6 +463,7 @@
 
         });
 
+
         //**************searching function**************
         function GetGridData(model) {
 
@@ -545,7 +545,7 @@
             editable: false,
             selectable: "row",
             //selectable: "multiple",
-            toolbar: [{ template: "<input type='text' id='txtMorningLocation'  style='float:right' placeholder='M/E Location ...' class='k-textbox'>" }, { template: "<input type='text' id='txtMarketCode'  style='float:right' placeholder='Market Code ...' class='k-textbox'>" }, { template: "<input type='text' id='txtMarketName'  style='float:right' placeholder='Market Name ...' class='k-textbox'>" }, { template: "<input type='text' id='txtDoctorName'  style='float:right' placeholder='Doctor Name ...' class='k-textbox'>" }, { template: "<input type='text' id='txtDoctorId'  style='float:right' placeholder='Doctor Id ...' class='k-textbox'>" }, ],
+            toolbar: [{ template: "<input type='button' id='filterGridBtn' style='float:right; margin-left: 10px' class='btn btn-primary btn-sm' value='View' />" }, { template: "<input type='text' id='txtMorningLocation'  style='float:right' placeholder='M/E Location ...' class='k-textbox'>" }, { template: "<input type='text' id='txtMarketCode'  style='float:right' placeholder='Market Code ...' class='k-textbox'>" }, { template: "<input type='text' id='txtMarketName'  style='float:right' placeholder='Market Name ...' class='k-textbox'>" }, { template: "<input type='text' id='txtDoctorName'  style='float:right' placeholder='Doctor Name ...' class='k-textbox'>" }, { template: "<input type='text' id='txtDoctorId'  style='float:right' placeholder='Doctor Id ...' class='k-textbox'>" }, ],
             excel: {
                 fileName: "DoctorData.xlsx",
                 allPages: true,
@@ -639,9 +639,7 @@
             $("#MainGrid").data("kendoGrid").dataSource.filter({
                 logic: "or",
                 filters: [
-                { field: "DoctorID", operator: "contains", value: val },
-        
-
+                    { field: "DoctorID", operator: "contains", value: val },
                 ]
             });
         });
@@ -651,9 +649,7 @@
             $("#MainGrid").data("kendoGrid").dataSource.filter({
                 logic: "or",
                 filters: [
-                  
                     { field: "DoctorName", operator: "contains", value: val },
-
                 ]
             });
         });
@@ -663,8 +659,6 @@
                 logic: "or",
                 filters: [
                     { field: "MarketCode", operator: "contains", value: val },
-                
-
                 ]
             });
         });
@@ -674,8 +668,6 @@
                 logic: "or",
                 filters: [
                     { field: "Market", operator: "contains", value: val },
-                  
-
                 ]
             });
         });
@@ -690,6 +682,71 @@
             });
         });
 
+
+        $('#filterGridBtn').click(function () {
+            var model = {};
+            model.MonthNumber = $('#MonthNumber').val();
+            model.Year = $('#Year').val();
+
+            var loader = $(".k-loading-mask").show();
+            if (loader) {
+                $('#MainGrid').data('kendoGrid').dataSource.filter([]);
+                $('#MainGrid').data('kendoGrid').dataSource.data([]);
+                $('#btnReset').attr('disabled', true);
+                $('#btnSave').attr('disabled', true);
+                $('#btnView').attr('disabled', true);
+                var Input = InputValidation('MonthNumber') + InputValidation('Year');
+                if (Input == 0) {
+                    GetGridData(model);
+                }
+                else {
+                    ValidationMsg();
+                    toastr.warning($("#MessageText").html());
+                }
+            }
+            else {
+                ValidationMsg();
+                toastr.warning($("#MessageText").html());
+            }
+
+            var doctorId = $('#txtDoctorId').val();
+            var doctorName = $('#txtDoctorName').val();
+            var marketCode = $('#txtMarketCode').val();
+            var marketName = $('#txtMarketName').val();
+            var location = $('#txtMorningLocation').val();
+            var filters = [];
+            if ($('#txtDoctorId').val().length > 0) {
+                filters.push({ field: "DoctorID", operator: "contains", value: doctorId })
+            }
+            if ($('#txtDoctorName').val().length > 0) {
+                filters.push({ field: "DoctorName", operator: "contains", value: doctorName })
+            }
+            if ($('#txtMarketCode').val().length > 0) {
+                filters.push({ field: "MarketCode", operator: "contains", value: marketCode })
+            }
+            if ($('#txtMarketName').val().length > 0) {
+                filters.push({ field: "Market", operator: "contains", value: marketName })
+            }
+            if ($('#txtMorningLocation').val().length > 0) {
+                filters.push({ field: "MorningLocation", operator: "contains", value: location })
+                filters.push({ field: "EveningLocation", operator: "contains", value: location })
+            }
+
+
+            $("#MainGrid").data("kendoGrid").dataSource.filter({
+                logic: "or",
+                filters: filters
+               //[
+               //     { field: "DoctorID", operator: "contains", value: doctorId },
+               //     { field: "DoctorName", operator: "contains", value: doctorName },
+               //     { field: "MarketCode", operator: "contains", value: marketCode },
+               //     { field: "Market", operator: "contains", value: marketName },
+               //     { field: "MorningLocation", operator: "contains", value: location },
+               //     { field: "EveningLocation", operator: "contains", value: location },
+               // ]
+            });
+        })
+
     var gridInput = 0;
     function GridValidation() {
         gridInput = 0;
@@ -700,16 +757,12 @@
                 if ((data[i].DoctorID == "") || (data[i].DoctorID == null)) {
                     gridInput = 0;
                 }
-
             }
         }
         else {
             gridInput = 1;
         }
     }
-
-
-
 
     $('#btnSave').click(function () {
         var model = { };
@@ -830,11 +883,11 @@
                 doctorDetail.Adoption = $("#Adoption").val();
                 doctorDetail.TeamTarget = $("#TeamTarget").val();
 
-                if (doctorDetail.DoctorID == null || doctorDetail.DoctorID == "") {
-                    ValidationMsg("Doctor ID is Required!");
-                    toastr.error($("#MessageText").html());
-                    return
-                }
+                //if (doctorDetail.DoctorID == null || doctorDetail.DoctorID == "") {
+                //    ValidationMsg("Doctor ID is Required!");
+                //    toastr.error($("#MessageText").html());
+                //    return
+                //}
                 if (doctorDetail.DoctorName == null || doctorDetail.DoctorName == "") {
                     ValidationMsg("Doctor Name is Required!");
                     toastr.error($("#MessageText").html());

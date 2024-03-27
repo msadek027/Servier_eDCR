@@ -120,7 +120,7 @@ namespace eDCR.Areas.DCR.Models.DAL.DAO
         }
         public List<DefaultBEL> GetMPOPopupList(string TerritoryManagerID)
         {
-            string Qry = "SELECT  LOC_CODE,MPO_NAME||' - '||MPO_CODE||' , '|| DESIGNATION||' | '||MARKET_NAME||' - '||MARKET_CODE MPO_NAME from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO') ";
+            string Qry = "SELECT  LOC_CODE,MPO_NAME||' - '||MPO_CODE||' | '||MARKET_NAME||' - '||MARKET_CODE||'R1'||PRODUCT_GROUP MPO_NAME from VW_HR_LOC_MAPPING_ALL Where DESIGNATION IN ('MPO','SMPO','MIO','SMIO') ";
             if (TerritoryManagerID != "" && TerritoryManagerID != null)
             {
                 Qry = Qry + " AND TERRITORY_CODE= '" + TerritoryManagerID + "'";

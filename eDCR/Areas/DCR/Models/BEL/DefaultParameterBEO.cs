@@ -52,5 +52,7 @@ namespace eDCR.Areas.DCR.Models.BEL
         public string SpecificEmployeeCode { get; set; }
         public string Operation { get;  set; }
         public string WhoWhom { get; set; }
+
+        public string MarketCode { get; set; }
     }
 }

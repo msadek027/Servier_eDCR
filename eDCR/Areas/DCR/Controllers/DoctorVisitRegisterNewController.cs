@@ -264,7 +264,7 @@ namespace eDCR.Areas.DCR.Controllers
                 doc.SetMargins(10, 10, 20, 10);
 
                 //Create PDF Table with 11 columns 
-                int PdfNoOfColumns = 73;
+                int PdfNoOfColumns = 75;
                 PdfPTable tableLayout = new PdfPTable(PdfNoOfColumns);
 
                 //file will created in this path  
@@ -356,7 +356,7 @@ namespace eDCR.Areas.DCR.Controllers
         {
 
 
-            float[] headers = { 30, 70, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30 }; //Header Widths  
+            float[] headers = { 30, 70, 30, 30, 30, 30, 30, 30, 30, 30,30,30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30 }; //Header Widths  
             tableLayout.SetWidths(headers); //Set the pdf headers  
             tableLayout.WidthPercentage = 100; //Set the PDF File witdh percentage  
             //tableLayout.HeaderRows = 2;  //1 for First page and 2 for each page Repeat  
@@ -380,12 +380,16 @@ namespace eDCR.Areas.DCR.Controllers
             AddCellToHeaderMain(tableLayout, "", 1);
             AddCellToHeaderMain(tableLayout, "", 1);
             AddCellToHeaderMain(tableLayout, "", 1);
+            AddCellToHeaderMain(tableLayout, "", 1);
+            AddCellToHeaderMain(tableLayout, "", 1);
             AddCellToHeaderMain(tableLayout, "MORNING", 32);
             AddCellToHeaderMain(tableLayout, "EVENING", 32);
             ////Add header  
             AddCellToHeader(tableLayout, "SL", 0);
             AddCellToHeader(tableLayout, "Doctor Name", 0);
-            AddCellToHeader(tableLayout, "Ca", 0);
+            AddCellToHeader(tableLayout, "Potential", 0);
+            AddCellToHeader(tableLayout, "Adoption", 0);
+            AddCellToHeader(tableLayout, "Frequency", 0);
             AddCellToHeader(tableLayout, "Shift", 0);
             AddCellToHeader(tableLayout, "MIO", 0);
             AddCellToHeader(tableLayout, "MED", 0);
@@ -468,12 +472,14 @@ namespace eDCR.Areas.DCR.Controllers
                 AddCellToBody(tableLayout, emp.SL);
                 AddCellToBody(tableLayout, emp.DoctorName);
                 AddCellToBody(tableLayout, emp.Potential);
+                AddCellToBody(tableLayout, emp.Adoption);
+                AddCellToBody(tableLayout, emp.Frequency);
                 AddCellToBody(tableLayout, emp.ShiftName);
                 AddCellToBody(tableLayout, emp.MPOCode);
                 AddCellToBody(tableLayout, emp.MED);
-                AddCellToBody(tableLayout, emp.MEP);
-                AddCellToBody(tableLayout, emp.MEE);
-                AddCellToBody(tableLayout, emp.MEA);
+                //AddCellToBody(tableLayout, emp.MEP);
+                //AddCellToBody(tableLayout, emp.MEE);
+                //AddCellToBody(tableLayout, emp.MEA);
                 AddCellToBody(tableLayout, emp.MD);
                 AddCellToBody(tableLayout, emp.md01);
                 AddCellToBody(tableLayout, emp.md02);
@@ -546,9 +552,9 @@ namespace eDCR.Areas.DCR.Controllers
             {
                 AddCellToFooterSum(tableLayout, "Grand Total", 5);
                 AddCellToFooterSum(tableLayout, emp.MED, 1);
-                AddCellToFooterSum(tableLayout, emp.MEP, 1);
-                AddCellToFooterSum(tableLayout, emp.MEE, 1);
-                AddCellToFooterSum(tableLayout, emp.MEA, 1);
+                //AddCellToFooterSum(tableLayout, emp.MEP, 1);
+                //AddCellToFooterSum(tableLayout, emp.MEE, 1);
+                //AddCellToFooterSum(tableLayout, emp.MEA, 1);
 
                 AddCellToFooterSum(tableLayout, emp.MD, 1);
                 AddCellToFooterSum(tableLayout, "", 31);

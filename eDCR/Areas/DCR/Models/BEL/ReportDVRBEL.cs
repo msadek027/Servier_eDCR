@@ -12,6 +12,8 @@ namespace eDCR.Areas.DCR.Models.BEL
         public string DoctorName { get; set; }
         public string ShiftName { get; set; }
         public string Potential { get; set; }
+        public string Adoption { get;  set; }
+        public string Frequency { get;  set; }
         public string MPOCode { get; set; }
         public string MPGroup { get; set; }
         public string MED { get; set; }       
@@ -86,6 +88,7 @@ namespace eDCR.Areas.DCR.Models.BEL
         public string ed29 { get; set; }
         public string ed30 { get; set; }
         public string ed31 { get; set; }
+     
     }
 
     public class WorkPlan
